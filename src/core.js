@@ -429,6 +429,39 @@ var STUDIES = [
     out.sort(function (a, b) { return a[0] - b[0] }); var seen = {}; return out.filter(function (b) { if (seen[b[0]]) return false; seen[b[0]] = 1; return true });
   }
 
-  return { etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+
+  /* ---------- NYSE calendar 2015 to 2027: full closures and 1pm closes (used to tell complete weeks and sessions from missing data) ---------- */
+  var NYSE_HOL = ('20150101 20150119 20150216 20150403 20150525 20150703 20150907 20151126 20151225 20160101 20160118 20160215 20160325 20160530 20160704 20160905 20161124 20161226 ' +
+    '20170102 20170116 20170220 20170414 20170529 20170704 20170904 20171123 20171225 20180101 20180115 20180219 20180330 20180528 20180704 20180903 20181122 20181205 20181225 ' +
+    '20190101 20190121 20190218 20190419 20190527 20190704 20190902 20191128 20191225 20200101 20200120 20200217 20200410 20200525 20200703 20200907 20201126 20201225 ' +
+    '20210101 20210118 20210215 20210402 20210531 20210705 20210906 20211125 20211224 20220117 20220221 20220415 20220530 20220620 20220704 20220905 20221124 20221226 ' +
+    '20230102 20230116 20230220 20230407 20230529 20230619 20230704 20230904 20231123 20231225 20240101 20240115 20240219 20240329 20240527 20240619 20240704 20240902 20241128 20241225 ' +
+    '20250101 20250109 20250120 20250217 20250418 20250526 20250619 20250704 20250901 20251127 20251225 20260101 20260119 20260216 20260403 20260525 20260619 20260703 20260907 20261126 20261225 ' +
+    '20270101 20270118 20270215 20270326 20270531 20270618 20270705 20270906 20271125 20271224').split(' ').map(Number);
+  var NYSE_HALF = '20151127 20151224 20161125 20170703 20171124 20180703 20181123 20181224 20190703 20191129 20191224 20201127 20201224 20211126 20221125 20230703 20231124 20240703 20241129 20241224 20250703 20251128 20251224 20261127 20261224 20271126'.split(' ').map(Number);
+  var HSET = {}, HALFSET = {}; NYSE_HOL.forEach(function (d) { HSET[d] = 1 }); NYSE_HALF.forEach(function (d) { HALFSET[d] = 1 });
+  function ymdAdd(d, n) { var t = Date.UTC(Math.floor(d / 1e4), Math.floor(d / 100) % 100 - 1, d % 100) + n * 864e5, x = new Date(t); return x.getUTCFullYear() * 1e4 + (x.getUTCMonth() + 1) * 100 + x.getUTCDate() }
+  function isTradingDay(d) { var w = ymdDow(d); return w >= 0 && w <= 4 && !HSET[d] }
+  function isHalfDay(d) { return !!HALFSET[d] }
+  /* expected trading days of the Monday to Friday week containing d */
+  function weekDays(d) { var m = ymdAdd(d, -ymdDow(d)), out = []; for (var i = 0; i < 5; i++) { var x = ymdAdd(m, i); if (isTradingDay(x)) out.push(x) } return out }
+  /* a week is complete only when every expected trading day is present and the last one has closed (asOf is the last date with data) */
+  function weekComplete(W, asOf) { var exp = weekDays(W[0][0]), have = W.map(function (r) { return r[0] }); return exp.length > 0 && exp.every(function (x) { return have.indexOf(x) >= 0 }) && asOf >= exp[exp.length - 1] }
+  function calendarCovered(d) { return d >= 20150101 && d <= 20271231 }
+
+
+  /* One definition of an intraday session for training, validation, the perp transfer test and the live page.
+     o: {bars, ref, res, d, dly, vix, rsp, spy, earn, prior, src, perpPrev}
+     bars and ref are completed regular session bars [hm,o,h,l,c,v] of the same resolution. For src 'perp' the previous close is the perp
+     price at the prior 4pm cash close (perpPrev) and relative volume is not used, exactly as in the transfer test. */
+  function iSession(o) {
+    var cx = iDayCtx(o.dly, o.vix, o.rsp, o.spy, o.earn || [], o.d); if (!cx) return null;
+    var perp = o.src === 'perp'; if (perp && !(o.perpPrev > 0)) return null;
+    var full = o.res === 5 ? 78 : 13;
+    return { b: o.bars, res: o.res, prev: perp ? o.perpPrev : cx.prev, prevRet: cx.prevRet, atr: cx.atr, vix: cx.vix, brd: cx.brd, earn: cx.earn, dow: cx.dow,
+      cumv: perp ? null : iCumv((o.prior || []).filter(function (b) { return b.length === full }), full), ref: o.ref && o.ref.length ? o.ref : null, src: o.src || 'cash', ctx: cx };
+  }
+
+  return { iSession: iSession, isTradingDay: isTradingDay, isHalfDay: isHalfDay, weekDays: weekDays, weekComplete: weekComplete, ymdAdd: ymdAdd, calendarCovered: calendarCovered, etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;

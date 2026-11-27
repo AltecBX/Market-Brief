@@ -21,12 +21,17 @@ function cashBars(sym) {
 }
 function perpBars(sym) {
   var o = lastOpenMs(Date.now()); if (!o) return Promise.resolve([]);
-  return post({ type: 'candleSnapshot', req: { coin: I2PERP[sym], interval: '5m', startTime: o, endTime: Date.now() } }).then(function (k) { return CORE.completed(k || [], Date.now(), 3e5).map(function (c) { var q = etp(+c.t); return [q.hm, +c.o, +c.h, +c.l, +c.c, 0] }).filter(function (b) { return b[0] >= 930 && b[0] < 1600 }) });
+  return post({ type: 'candleSnapshot', req: { coin: I2PERP[sym], interval: '5m', startTime: o, endTime: Date.now() } }).then(function (k) { return CORE.completed(k || [], Date.now(), 3e5).map(function (c) { var q = etp(+c.t); return [q.hm, +c.o, +c.h, +c.l, +c.c, +c.v] }).filter(function (b) { return b[0] >= 930 && b[0] < 1600 }) });
 }
+/* perp price at the last 4pm cash close: the close of the 3:55pm 5 minute candle, the same reference the transfer test used */
+function perpPrevClose(sym) {
+  var lc = lastCloseMs(Date.now() - 6 * 36e5); return post({ type: 'candleSnapshot', req: { coin: I2PERP[sym], interval: '5m', startTime: lc - 6e5, endTime: lc + 6e4 } }).then(function (k) { var c = (k || []).filter(function (z) { return +z.t === lc - 3e5 })[0]; return c ? +c.c : null });
+}
+function prevTradingDay(d) { var x = CORE.ymdAdd(d, -1); while (!CORE.isTradingDay(x)) x = CORE.ymdAdd(x, -1); return x }
 function liveSession(sym) {
   var st = session(Date.now()).st; if (st !== 'open') return Promise.resolve(null);
   var src = getKey() ? 'cash' : 'perp', get = src === 'cash' ? cashBars : perpBars;
-  return Promise.all([get(sym), get(I2REF[sym])]).then(function (x) { return x[0].length ? { src: src, b: x[0], ref: x[1] } : null }).catch(function () { return src === 'cash' ? Promise.all([perpBars(sym), perpBars(I2REF[sym])]).then(function (x) { return x[0].length ? { src: 'perp', b: x[0], ref: x[1] } : null }) : null });
+  return Promise.all([get(sym), get(I2REF[sym]), src === 'perp' ? perpPrevClose(sym) : null]).then(function (x) { return x[0].length ? { src: src, b: x[0], ref: x[1], perpPrev: x[2] } : null }).catch(function () { return src === 'cash' ? Promise.all([perpBars(sym), perpBars(I2REF[sym]), perpPrevClose(sym)]).then(function (x) { return x[0].length ? { src: 'perp', b: x[0], ref: x[1], perpPrev: x[2], keyFailed: true } : null }) : null });
 }
 
 /* ---- the intraday state and model outputs for one instrument at one checkpoint ---- */
@@ -37,13 +42,14 @@ function intraState(sym, slot, live) {
     if (live) { d = etp(Date.now()).d; bars = res === 5 ? live.b : to30(live.b); refb = live.ref && live.ref.length ? (res === 5 ? live.ref : to30(live.ref)) : null; src = live.src }
     else { var ok = days.filter(function (q) { return by[q].length === full }); d = ok[ok.length - 1]; bars = by[d]; refb = rb[d] || null; src = 'replay' }
     var k = slot[2]; if (!bars || bars.length < k) return { wait: true, src: src, d: d, have: bars ? bars.length : 0, need: k };
-    var earn = (x[6].dates[sym] || []).map(function (e) { return [ymdOf(e[0]), e[1]] }), cx = CORE.iDayCtx(x[2], x[3], x[4], x[5], earn, d); if (!cx) return null;
-    var prior = days.filter(function (q) { return q < d && by[q].length === full }).map(function (q) { return by[q] });
-    var S = { b: bars, res: res, prev: cx.prev, prevRet: cx.prevRet, atr: cx.atr, vix: cx.vix, brd: cx.brd, earn: cx.earn, dow: cx.dow, cumv: src === 'perp' ? null : CORE.iCumv(prior, full), ref: refb };
+    var earn = (x[6].dates[sym] || []).map(function (e) { return [ymdOf(e[0]), e[1]] }), lastHist = x[2][x[2].length - 1][0];
+    if (live && lastHist < prevTradingDay(d)) return { stale: true, lastHist: lastHist, src: src, d: d };
+    var prior = days.filter(function (q) { return q < d }).map(function (q) { return by[q] });
+    var S = CORE.iSession({ bars: bars, ref: refb, res: res, d: d, dly: x[2], vix: x[3], rsp: x[4], spy: x[5], earn: earn, prior: prior, src: src === 'perp' ? 'perp' : 'cash', perpPrev: live && live.perpPrev }); if (!S) return { noref: true, src: src, d: d };
+    var cx = S.ctx;
     var xv = CORE.ifeat(S, k), M = x[7].inst[sym][slot[1]], V = x[8].inst[sym], W = V.windows[slot[1]], o = {};
-    CORE.OUT2.forEach(function (n) { var m = M.outcomes[n]; o[n] = { p: CORE.mlPredict(m.model, xv), fam: m.family, promoted: m.promoted } });
-    var lastHist = x[2][x[2].length - 1][0], lc = etp(lastCloseMs(live ? Date.now() - 6e4 * 60 * 7 : Date.now())).d, behind = lastHist < lc ? lastHist : null;
-    return { sym: sym, d: d, k: k, slot: slot, src: src, x: xv, out: o, q: CORE.qLookup(M.q, xv), px: bars[k - 1][4], open: bars[0][1], prev: cx.prev, W: W, transfer: V.transfer, earn: cx.earn, histBehind: behind, ranges: W.ranges };
+    CORE.OUT2.forEach(function (n) { var m = M.outcomes[n], tr = V.transfer && V.transfer[slot[1]] && V.transfer[slot[1]][n] && V.transfer[slot[1]][n][m.family], blocked = src === 'perp' && !(tr && tr.ok); o[n] = { p: blocked ? null : CORE.mlPredict(m.model, xv), fam: m.family, promoted: m.promoted, blocked: blocked, tr: tr } });
+    return { sym: sym, d: d, k: k, slot: slot, src: src, x: xv, out: o, q: CORE.qLookup(M.q, xv), px: bars[k - 1][4], open: bars[0][1], prev: cx.prev, W: W, transfer: V.transfer, earn: cx.earn, ranges: W.ranges, keyFailed: live && live.keyFailed };
   });
 }
 function curSlot(live) {
@@ -57,14 +63,15 @@ function renderI2() {
     return intraState(R2.sym, slot, live).then(function (S) {
       var h = chips(I2SYMS, R2.sym, 'i2sym');
       if (!live) h += chips(I2SLOTS.map(function (s, i) { return [i, s[3]] }), R2.bar == null ? 3 : R2.bar, 'i2bar');
-      if (!S) { el.innerHTML = h + '<div class="r mut">Not enough history for this session.</div>'; return }
+      if (!S || S.noref) { el.innerHTML = h + '<div class="r mut">' + (S && S.src === 'perp' ? 'The perp reference price at the last close is unavailable, so no live estimate.' : 'Not enough history for this session.') + '</div>'; return }
+      if (S.stale) { el.innerHTML = h + '<div class="r k">Live estimates paused: daily history ends ' + dlab(S.lastHist) + ', so the previous close and volatility the models need are out of date. The close run refreshes it.</div>'; return }
       if (S.wait) { el.innerHTML = h + '<div class="r k">Waiting for more completed bars.</div>'; return }
-      var srcTxt = S.src === 'cash' ? 'Live cash 5 minute bars (data key on this device).' : S.src === 'perp' ? 'Live perp bars as a proxy for ' + R2.sym + '. ' + (S.slot[1] === 'late' && S.transfer && S.transfer.ok ? 'Validated: on ' + S.transfer.sessions + ' synchronized sessions the perp gave the same answers as cash (mean difference ' + pc(S.transfer.meanAbsProbDiff) + ').' : 'Not validated before 10am: perp history at 5 minute resolution is too short to test. Add the data key for cash bars.') : 'Market closed: replaying ' + dlab(S.d) + '.';
-      h += '<div class="r k">' + srcTxt + ' At ' + S.slot[3] + ': gap ' + sg((S.open / S.prev - 1) * 100) + ', from the open ' + sg((S.px / S.open - 1) * 100) + ', at ' + Math.round(S.x[CORE.IFEAT.indexOf('pos')] * 100) + '% of the range so far' + (S.earn ? ', earnings reaction day' : '') + '. Only bars up to that time are used.' + (S.histBehind ? ' Daily history ends ' + dlab(S.histBehind) + ', so the previous close may be stale.' : '') + '</div>';
+      var srcTxt = S.src === 'cash' ? 'Live cash 5 minute bars (data key on this device).' : S.src === 'perp' ? 'Live perp bars as a stand in for ' + R2.sym + (S.keyFailed ? ' (the saved data key was refused, check it in Customize)' : ' (save a data key for cash bars)') + '. Each estimate below is shown only where the perp passed its own transfer test for this time window, outcome and model.' : 'Market closed: replaying ' + dlab(S.d) + '.';
+      h += '<div class="r k">' + srcTxt + ' At ' + S.slot[3] + ': gap ' + sg((S.open / S.prev - 1) * 100) + ', from the open ' + sg((S.px / S.open - 1) * 100) + ', at ' + Math.round(S.x[CORE.IFEAT.indexOf('pos')] * 100) + '% of the range so far' + (S.earn ? ', earnings reaction day' : '') + '. Only bars up to that time are used.</div>';
       h += '<div class="r hrow head"><span>Outcome</span><b>Chance</b><b>Source</b></div>';
-      CORE.OUT2.forEach(function (n) { var q = S.out[n], E = S.W.outcomes[n]; h += '<div class="r hrow"><span>' + esc(E.name) + '</span><span class="num">' + pc(q.p) + '</span><span class="k">' + (q.promoted ? esc(E.models[q.fam].name) + ', validated' : 'historical frequency; no model beat it') + '</span></div>' });
-      if (S.q) h += '<div class="r hrow"><span>Further room, rest of the session <span class="k">10th, 50th, 90th percentile, ' + S.q.n + ' past cases</span></span><span class="num">up ' + S.q.up.map(nm).join(' / ') + '%</span><span class="num">down ' + S.q.dn.map(nm).join(' / ') + '%</span></div>';
-      if (S.ranges && S.ranges.n) h += '<div class="r k">The 10th to 90th ranges held ' + pc(S.ranges.coverUp) + ' (up) and ' + pc(S.ranges.coverDn) + ' (down) of the time on untouched sessions; 80% is the target.</div>';
+      CORE.OUT2.forEach(function (n) { var q = S.out[n], E = S.W.outcomes[n]; h += '<div class="r hrow"><span>' + esc(E.name) + '</span><span class="num">' + (q.blocked ? 'n/a' : pc(q.p)) + '</span><span class="k">' + (q.blocked ? 'perp not validated here' + (q.tr && q.tr.why ? ': ' + esc(q.tr.why) : '') : q.promoted ? esc(E.models[q.fam].name) + ', validated' : 'historical frequency; no model beat it') + '</span></div>' });
+      if (S.q && S.src !== 'perp') h += '<div class="r hrow"><span>Further room, rest of the session <span class="k">10th, 50th, 90th percentile, ' + S.q.n + ' past cases</span></span><span class="num">up ' + S.q.up.map(nm).join(' / ') + '%</span><span class="num">down ' + S.q.dn.map(nm).join(' / ') + '%</span></div>';
+      if (S.q && S.ranges && S.ranges.n && S.src !== 'perp') h += '<div class="r k">The 10th to 90th ranges held ' + pc(S.ranges.coverUp) + ' (up) and ' + pc(S.ranges.coverDn) + ' (down) of the time on untouched sessions; 80% is the target.</div>';
       h += i2table(S.W);
       el.innerHTML = h;
     });
@@ -86,9 +93,9 @@ function weeklyState(sym) {
     var rows = x[0], Wk = CORE.weeksOf(rows), wi = Wk.length - 1, w = Wk[wi], j = w.length - 1, k = rows.length - 1, vm = {}; x[1].forEach(function (r) { vm[r[0]] = r[4] });
     var I = x[2].inst[sym]; if (!I || I.error) return null;
     var cx = CORE.wctx(Wk, wi, rows, k, vm), s = CORE.wstate(w, j, cx), out = {};
-    Object.keys(I.outcomes).forEach(function (o) { var q = I.outcomes[o]; if (o === 'recover' && s.c >= s.o) return; out[o] = { p: CORE.wpred(q.model, s.x), name: q.name, validated: q.beatsBench, fam: q.display } });
+    Object.keys(I.outcomes).forEach(function (o) { var q = I.outcomes[o]; if (o === 'recover' && s.c >= s.o) return; out[o] = { p: CORE.wpred(q.model, s.x), name: q.name, validated: !!q.promoted, beats: q.beatsBench, fam: q.display } });
     var rk = Math.round(s.x[3] * 4) + '|' + Math.min(2, Math.floor(s.x[1] * 3));
-    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.ymdDow(rows[k][0]) === 4 };
+    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.weekComplete(w, rows[k][0]) };
   });
 }
 function renderWeekly() {
@@ -96,13 +103,13 @@ function renderWeekly() {
   weeklyState(R2.wsym).then(function (S) {
     var h = chips(I2SYMS, R2.wsym, 'wsym'); if (!S) { el.innerHTML = h + '<div class="r mut">Not available.</div>'; return }
     var I = S.I, days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-    h += '<div class="r k">As of the ' + dlab(S.d) + ' close' + (S.fri ? ', the last day of the week, so the next row starts a new week' : '') + ': week so far ' + sg((S.s.c / S.s.o - 1) * 100) + ' from the Monday open ' + f(S.s.o, 2) + ', at ' + Math.round(S.s.x[1] * 100) + '% of the week\'s range. ' + I.weeks + ' weeks of history from ' + dlab(I.from) + '.</div>';
+    h += '<div class="r k">As of the ' + dlab(S.d) + ' close' + (S.fri ? ', the last trading day of the week, so this week is finished' : '') + ': week so far ' + sg((S.s.c / S.s.o - 1) * 100) + ' from the Monday open ' + f(S.s.o, 2) + ', at ' + Math.round(S.s.x[1] * 100) + '% of the week\'s range. ' + I.weeks + ' weeks of history from ' + dlab(I.from) + '.</div>';
     if (!S.fri) { h += '<div class="r hrow head"><span>Rest of the week</span><b>Chance</b><b>Source</b></div>';
-      Object.keys(S.out).forEach(function (o) { var q = S.out[o]; h += '<div class="r hrow"><span>' + esc(q.name) + '</span><span class="num">' + pc(q.p) + '</span><span class="k">' + (q.validated ? 'model, beat the benchmarks' : 'day and position frequency') + '</span></div>' });
+      Object.keys(S.out).forEach(function (o) { var q = S.out[o]; h += '<div class="r hrow"><span>' + esc(q.name) + '</span><span class="num">' + pc(q.p) + '</span><span class="k">' + (q.validated ? 'model, validated' : q.beats ? 'frequency; the model was more accurate but not economically useful' : 'day and position frequency') + '</span></div>' });
       if (S.rng) h += '<div class="r hrow"><span>Further room this week <span class="k">10th, 50th, 90th percentile, ' + S.rng.n + ' cases</span></span><span class="num">up ' + S.rng.up.map(nm).join(' / ') + '%</span><span class="num">down ' + S.rng.dn.map(nm).join(' / ') + '%</span></div>' }
     h += '<div class="r hrow head"><span>Day that set the weekly</span><b>High</b><b>Low</b></div>';
     days.forEach(function (dn, i) { h += '<div class="r hrow"><span>' + dn + '</span><span class="num">' + pc(I.highDay[i]) + '</span><span class="num">' + pc(I.lowDay[i]) + '</span></div>' });
-    h += '<div class="r k">' + esc(RES.weekly.note.split('. Covered call')[0]) + '. Full five day weeks only for the day table (' + I.fullWeeks + ').</div>';
+    h += '<div class="r k">' + esc(RES.weekly.note.split('. Covered call')[0]) + '. The day table uses only finished weeks with every trading day present (' + (I.completeWeeks || I.fullWeeks) + ', including ' + (I.shortWeeks || 0) + ' holiday weeks); the current week is never counted as finished.</div>';
     el.innerHTML = h;
   }).catch(function () { el.innerHTML = '<div class="r mut">Weekly research unavailable.</div>' });
 }

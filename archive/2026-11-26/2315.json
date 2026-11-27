@@ -1,0 +1,427 @@
+{
+ "updated": "2026-11-26T23:15:00-05:00",
+ "updatedLabel": "Thu 11:15pm ET",
+ "next": "7:30am",
+ "kicker": "THANKSGIVING NIGHT · MARKETS CLOSED THU · FRIDAY HALF DAY, STOCKS CLOSE 1:00PM",
+ "headline": "S&P perps near 7,300. Chips keep pulling the bounce higher.",
+ "lede": "S&P perps are up about 1.7% vs Wednesday's close and about 1% since 4pm, led by memory and chip names. Nasdaq 100 perps are up about 2.5%.",
+ "pills": [
+  [
+   "g",
+   "S&P perps 7,306 · +1.7% vs Wed"
+  ],
+  [
+   "g",
+   "SK Hynix +6.1% · MU +4.5% since 4pm"
+  ],
+  [
+   "g",
+   "Kospi +2.2% · Nikkei +0.7%"
+  ],
+  [
+   "r",
+   "Brent $96.29 · Hormuz mines"
+  ],
+  [
+   "r",
+   "NVDA export curbs · S&P credit watch"
+  ],
+  [
+   "a",
+   "Half day · thin liquidity"
+  ]
+ ],
+ "drivers": [
+  [
+   "g",
+   "CHIPS LEAD THE REBOUND",
+   "Since 4pm: SK Hynix perp +6.1%, MU +4.5%, AMD +4.3%, SMH +2.7%, NVDA +2.1%. In Tokyo, Kioxia and Socionext up 5% to 6%."
+  ],
+  [
+   "g",
+   "ASIA FOLLOWS THROUGH",
+   "Kospi +2.2% to 4,813 and Nikkei +0.7% to 57,919 in Friday morning trade. Korea 200 perp +3.7% since 4pm."
+  ],
+  [
+   "r",
+   "OIL AND HORMUZ",
+   "Iran says mines hit ships in the Strait of Hormuz. Brent $96.29, WTI $85.43, up 2.1%. Keeps inflation and Fed hike fears alive."
+  ],
+  [
+   "r",
+   "NVIDIA OVERHANG",
+   "Server shipments to four SE Asian countries halted under new curbs. S&P has its AA rating on watch for a cut. Huang hearings Dec 1 and Dec 3."
+  ]
+ ],
+ "picks": [
+  [
+   "Thu 11:15pm",
+   "FUT",
+   "up",
+   "S&P perps at 7,306, +1.7% vs Wed close and +1.0% since 4pm. Nasdaq 100 perps +2.5% vs Wed. SK Hynix +6.1%, MU +4.5%, AMD +4.3% since 4pm."
+  ],
+  [
+   "Fri Asia",
+   "ASIA",
+   "up",
+   "Tokyo chip and power names lead: Socionext +6%, Kioxia +5%, IHI and Resonac near +6%. SoftBank and Tokyo Electron down about 3%."
+  ],
+  [
+   "Thu 9:18pm",
+   "FUT",
+   "up",
+   "CME futures: S&P +1.27% to 7,287.25, Nasdaq 100 +1.8% to 26,571, Dow +0.82% to 50,638."
+  ],
+  [
+   "Thu 9:18pm",
+   "ASIA",
+   "up",
+   "Friday morning in Asia: Nikkei +0.7% to 57,919, Kospi +2.2% to 4,813, Hang Seng +0.4%, ASX +0.4%. Shanghai −0.1%."
+  ],
+  [
+   "Thu 9:18pm",
+   "OIL",
+   "dn",
+   "WTI +2.1% to $85.43 as it catches up after the holiday. Brent $96.29, −0.3%. Yen at 159.25 per dollar."
+  ],
+  [
+   "Thu 6:00pm",
+   "FUT",
+   "",
+   "CME equity futures reopen after the 1:00pm holiday halt."
+  ],
+  [
+   "Thu",
+   "OIL",
+   "dn",
+   "Brent settles $96.57, +1.2%, third straight gain and about 8% in 3 sessions. Saudi says air defenses intercepted drones aimed at Ras Tanura."
+  ],
+  [
+   "Thu AM",
+   "OIL",
+   "dn",
+   "Iran says mines struck ships in the Strait of Hormuz, reviving supply fears."
+  ],
+  [
+   "Thu AM",
+   "MACRO",
+   "up",
+   "Europe rallies: DAX +1.9%, CAC +1.8%, FTSE +1.6%."
+  ],
+  [
+   "Thu early",
+   "AI",
+   "dn",
+   "FT: Nvidia tells Dell and Supermicro to stop server shipments to Malaysia, Singapore, Thailand and Indonesia under new US export curbs."
+  ],
+  [
+   "Thu Asia",
+   "ASIA",
+   "up",
+   "Asia rebounds: Nikkei +0.9%, SoftBank +7.3%, Kioxia +12.6% on an Nvidia memory demo, Taiex +2.5%. Kospi +0.3% after −6.2%."
+  ],
+  [
+   "Thu",
+   "AI",
+   "dn",
+   "Huang faces a closed door House interview Dec 1, then public Senate Banking testimony Dec 3."
+  ],
+  [
+   "Wed 4:00pm",
+   "MACRO",
+   "",
+   "Wed close: S&P 7,182.78 (−0.25%) after a 3.2% intraday drop. See the Wed recap tab."
+  ]
+ ],
+ "planTitle": "FRIDAY GAME PLAN",
+ "means": [
+  "Perps near <b>7,300</b> put the implied open about 100 points above <b>7,201</b>, Wednesday's bull trigger. Chips leading is the confirmation that was missing.",
+  "A gap this size on a half day can fade. Holding above 7,201 after 9:30am keeps the bounce; back under it puts the 7,060 to 7,200 range back in play.",
+  "Oil is the risk. Brent near $96 with mines in Hormuz feeds inflation fears and a Dec 9 hike that is already priced at 97.8%.",
+  "Thin books. Moves can be exaggerated both ways, like Wednesday."
+ ],
+ "calTitle": "FRIDAY CALENDAR · ET",
+ "calendar": [
+  [
+   "Overnight",
+   "Europe opens 3:00am. Watch if Asia's chip bid carries"
+  ],
+  [
+   "8:30am",
+   "Advance goods trade, retail and wholesale inventories"
+  ],
+  [
+   "9:30am",
+   "Cash open vs 7,201 trigger"
+  ],
+  [
+   "All day",
+   "Black Friday reads. Adobe forecast: $12.9B online, +9.2%"
+  ],
+  [
+   "1:00pm",
+   "Stocks close. Bonds close 2:00pm"
+  ],
+  [
+   "Mon to Wed",
+   "Huang before House Dec 1, Senate Banking Dec 3"
+  ]
+ ],
+ "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can run ahead of CME futures in thin holiday hours. CME ES and NQ reopened 6:00pm ET. Options levels are from Wednesday, the last session.",
+ "base": {
+  "label": "Wed close",
+  "spx": 7182.78,
+  "closes": {
+   "xyz:SP500": 7182.78,
+   "xyz:XYZ100": 26046.9,
+   "xyz:NVDA": 149.3,
+   "xyz:LRCX": 185.01
+  }
+ },
+ "anchor": {
+  "label": "Since 4pm",
+  "prices": {
+   "xyz:SP500": 7231.4,
+   "xyz:XYZ100": 26227.0,
+   "xyz:NVDA": 151.59,
+   "xyz:MU": 610.9,
+   "xyz:SKHX": 777.93,
+   "xyz:SMH": 428.73,
+   "xyz:GOLD": 3575.3,
+   "xyz:BRENTOIL": 91.568,
+   "xyz:CL": 84.779,
+   "xyz:JP225": 57683.0,
+   "xyz:KR200": 730.43,
+   "xyz:AMD": 408.66,
+   "xyz:ORCL": 105.99,
+   "xyz:TSM": 348.71,
+   "BTC": 60742.0
+  }
+ },
+ "ladder": {
+  "bull": 7201.09,
+  "floor": 7060.33,
+  "marks": [
+   [
+    6970.11,
+    "Low 6,970",
+    0
+   ],
+   [
+    7060.33,
+    "Open 7,060",
+    1
+   ],
+   [
+    7182.78,
+    "Close 7,183",
+    0
+   ],
+   [
+    7201.09,
+    "Trigger 7,201",
+    1
+   ],
+   [
+    7300,
+    "Perps 7,300",
+    0
+   ]
+  ],
+  "bullText": "Above the 7,201 trigger. Perps near 7,300; needs to hold through the 9:30am open with chips leading.",
+  "rangeText": "Between 7,060 and 7,201. Rotation without confirmation.",
+  "riskText": "Below Wednesday's open. 7,000 and 6,970 are next."
+ },
+ "chart": {
+  "title": "OVERNIGHT PATH · WED 4PM TO NOW",
+  "start": "2026-11-25T16:00:00-05:00",
+  "startLabel": "Wed 4pm",
+  "marker": [
+   "2026-11-26T19:00:00-05:00",
+   "Asia opens 7pm"
+  ]
+ },
+ "opt": {
+  "asof": "Wed close",
+  "base": 7182.78,
+  "em": [
+   [
+    "Friday, half day",
+    1.2162,
+    "Nov 27 expiry"
+   ],
+   [
+    "Through next Friday",
+    2.7927,
+    "Dec 4 expiry"
+   ]
+  ],
+  "vix": {
+   "idx": [
+    [
+     "9D",
+     9,
+     29.6
+    ],
+    [
+     "VIX",
+     30,
+     28.29
+    ],
+    [
+     "3M",
+     91,
+     26.3
+    ]
+   ],
+   "fut": [
+    [
+     "Dec",
+     21,
+     25.03
+    ],
+    [
+     "Jan",
+     56,
+     24.29
+    ],
+    [
+     "Feb",
+     84,
+     24.0
+    ],
+    [
+     "Mar",
+     112,
+     23.6
+    ],
+    [
+     "Apr",
+     147,
+     23.4
+    ],
+    [
+     "May",
+     175,
+     23.1
+    ],
+    [
+     "Jun",
+     203,
+     23.1
+    ]
+   ]
+  },
+  "levels": [
+   [
+    "Magnet",
+    7000,
+    "a"
+   ],
+   [
+    "Put wall",
+    7095,
+    "r"
+   ],
+   [
+    "Gamma flip",
+    7186.58,
+    "b"
+   ],
+   [
+    "Flow put wall",
+    7175,
+    "r"
+   ],
+   [
+    "Flow call wall",
+    7200,
+    "g"
+   ],
+   [
+    "Dec max pain",
+    7400,
+    "b"
+   ]
+  ],
+  "gex": [
+   [
+    7000,
+    64763,
+    -73722
+   ],
+   [
+    7100,
+    2707,
+    -8295
+   ],
+   [
+    7150,
+    3254,
+    -8662
+   ],
+   [
+    7175,
+    1934,
+    -9078
+   ],
+   [
+    7180,
+    2843,
+    -7518
+   ],
+   [
+    7200,
+    10315,
+    -12899
+   ],
+   [
+    7250,
+    5215,
+    -11962
+   ],
+   [
+    7300,
+    4678,
+    -11913
+   ],
+   [
+    7350,
+    4516,
+    -6945
+   ],
+   [
+    7400,
+    8873,
+    -11337
+   ]
+  ]
+ },
+ "recapLabel": "Wed recap",
+ "sources": [
+  [
+   "AP via News4JAX: Asian shares mostly rise ahead of Wall Street's reopening",
+   "https://www.news4jax.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-the-thanksgiving-holiday/"
+  ],
+  [
+   "Al Jazeera: Asian stock markets rise after earlier tech rout",
+   "https://www.aljazeera.com/economy/2026/11/27/asian-stock-markets-rise-after-earlier-tech-rout"
+  ],
+  [
+   "Investing.com via Yahoo: US stock futures rise sharply",
+   "https://uk.finance.yahoo.com/news/u-stock-futures-rise-sharply-003408206.html"
+  ],
+  [
+   "RTTNews via finanzen.ch: Japanese market notably higher",
+   "https://www.finanzen.ch/nachrichten/aktien/japanese-market-notably-higher-1036804056"
+  ],
+  [
+   "investingLive: S&P puts Nvidia's AA rating on watch",
+   "https://investinglive.com/stocks/s-p-puts-nvidia-s-aa-rating-on-watch-for-a-possible-cut-as-moody-s-holds-steady/"
+  ],
+  [
+   "Hyperliquid perps (tools/prices.py)",
+   "https://app.hyperliquid.xyz/"
+  ]
+ ]
+}

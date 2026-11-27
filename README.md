@@ -1,54 +1,62 @@
 # Market Brief
 
-Phone market brief. Open it any time to see where markets are trading, what is driving them, and what to watch next.
+Phone market brief. Open it any time to see where markets trade, what changed since you last looked, what is driving it, and what to watch next.
 
 **Link:** https://altecbx.github.io/Market-Brief/
-On iPhone: open the link in Safari, tap Share, then Add to Home Screen. It opens full screen like an app, follows light and dark mode (or tap the sun and moon button to pick Light, Dark or Auto), and refreshes each time you open it.
+On iPhone: open the link in Safari, tap Share, then Add to Home Screen. It opens full screen like an app, follows light and dark mode (or tap the half circle button for Auto, Light or Dark), and refreshes each time you open it.
 
-## What updates and how often
+## Tabs
+| Tab | What it shows |
+|---|---|
+| Brief | Market session, regime with its evidence, what changed since your last visit, the 3 things that matter most, key readings, drivers, risks and catalysts, scenarios, and the distance to every key level. Reading modes: 30 seconds, 2 minutes (default) and Deep |
+| Board | Overnight chart, breadth across 59 stock perps, and the live board (semis, indexes, megacaps, commodities and FX, crypto). Pick one comparison basis at a time. Tap a row for mark, oracle, funding, open interest, volume and spread |
+| Options | SPX expected moves from SPX and SPXW options (SPY shown separately), how much of each move is used, a price scenario simulator, big option positions, and the VIX index and futures curves |
+| News | Live wire filtered to market moving headlines, with the perp reaction 5, 15, 30 and 60 minutes after each one, the move before it, and the move vs the S&P. Plus Claude's picks |
+| Recap | The day's close recap |
+| Memory | Every scheduled brief and recap as published. Never edited afterward |
 
+## Where the data comes from
 | Part | Source | How often |
 |---|---|---|
-| S&P implied level, overnight chart, live board | Hyperliquid xyz perps, the same feed Liquid uses | Every 15 seconds, in the page |
-| News that moves markets (live wire) | Unusual Whales news API, filtered in the page | Every 60 seconds, in the page |
-| Live VIX in the top strip and on the VIX curve | Unusual Whales, uses the same token as the news wire | Every 30 seconds, in the page. Without a token it shows the last close |
-| Headline, drivers, Claude's picks, game plan, calendar | Claude scheduled task | 6 times a weekday |
-| Options map: SPX expected move, VIX curve, big option positions | Unusual Whales and Cboe data, via the scheduled task | 6 times a weekday |
-| Day recap tab | Claude scheduled task | After the close |
+| Live prices, chart, breadth, regime, levels | Hyperliquid perps (the feed Liquid uses), websocket stream with a REST refresh | Streaming, REST every 15 seconds |
+| Live wire | Unusual Whales news API, filtered in the page | Every 60 seconds |
+| Headline, top 3, drivers, risks, scenarios, picks, calendar, cash closes | Claude scheduled task, from cited sources | 6 times a weekday |
+| Options map, expected moves, VIX curves | Unusual Whales and Cboe data, via the scheduled task | 6 times a weekday |
+
+Rules the page follows: every number shows its comparison basis and time. A price older than 45 seconds is marked stale, never shown as live. If a feed fails, the last good reading stays and is marked stale. Prices that a basis cannot supply show n/a instead of a substitute. Options exposure is an estimate from open interest, not verified dealer positions. A live VIX is not available on this page; it shows the last close.
 
 ## Schedule
-
 One scheduled task in Claude, **Market Brief updates**, runs weekdays (ET):
-
 | Starts | Ready about | Leads with |
 |---|---|---|
 | 7:02am | 7:15am | Overnight futures, Asia, Europe, today's data |
 | 9:02am | 9:15am | Futures vs the close, 8:30 data, what to watch at the open |
 | 12:02pm | 12:15pm | What the morning did and why |
 | 3:02pm | 3:15pm | Afternoon moves and setup into the close |
-| 4:02pm | 4:15pm | Close recap, plus the day's recap tab |
+| 4:02pm | 4:15pm | Close recap, plus the recap tab |
 | 8:02pm | 8:15pm | After hours earnings, futures, Asia open |
 
 An open page picks up a new update within 5 minutes. No phone notifications are sent.
 
 ## Turning on the live news wire
-
-1. In the page, scroll to **News that moves markets** and tap **Connect news**.
+1. Open the **News** tab and tap **Connect news**.
 2. Paste the Unusual Whales API token from unusualwhales.com/dashboard/api.
-3. Tap **Save and turn on**. This also turns on the live VIX price.
+3. Tap **Save and turn on**.
 
 The token is stored only in that browser on that device. It is never saved in this repo or in the page. The Home Screen app on iPhone keeps its own storage, so add the token there too.
 
 ## Files
-
 | File | What it is | Who changes it |
 |---|---|---|
-| `index.html` | The page: layout, live prices, live news wire, charts | Only when the design changes |
-| `brief.json` | All scheduled content: headline, drivers, picks, plan, levels, options data | The scheduled task, each run |
-| `recap.html` | The day's recap tab (created at the first 4:02pm run) | The scheduled task, after the close |
-| `manifest.json`, `icon-*.png` | Home Screen app name and icon | Rarely |
+| `index.html` | The page, built from `src/` | `python3 tools/build.py`, only when the design changes |
+| `src/page.html`, `src/app.js`, `src/recap_fallback.html` | Page layout, page code, built in recap | Design changes |
+| `brief.json` | All scheduled content | The scheduled task, each run |
+| `recap.html` | The day's recap tab | The scheduled task, after the close |
+| `archive/` | Every brief and recap as published, plus `index.json` | The scheduled task adds files; nothing is ever edited |
 | `UPDATE.md` | Step by step instructions every scheduled run follows | When the update rules change |
-| `tools/check.py` | Validates brief.json before any push | Rarely |
-| `tools/prices.py` | Pulls live and anchor prices from Hyperliquid | Rarely |
+| `tools/check.py` | Validates brief.json, recap.html and the archive before any push | When the schema changes |
+| `tools/prices.py` | Perp prices now, at an exact time, and instrument checks | Rarely |
+| `tools/archive.py` | Copies the brief into the archive | Rarely |
+| `manifest.json`, `icon-*.png` | Home Screen app name and icon | Rarely |
 
-If `brief.json` is missing or broken, the page falls back to the last content built into `index.html`.
+If `brief.json` is missing or broken, the page falls back to the brief built into `index.html`, labeled with its own time.

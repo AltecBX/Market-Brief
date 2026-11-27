@@ -1,34 +1,34 @@
 {
- "updated": "2026-11-27T13:42:44-05:00",
- "updatedLabel": "Fri 1:42pm ET",
- "next": "8:12pm",
- "kicker": "BLACK FRIDAY HALF DAY · STOCKS CLOSED 1:00PM ET · CLOSE BRIEF",
- "headline": "Memory stocks lead a 1.6% half day rally; Nvidia lags.",
- "lede": "The S&P 500 closed at 7,298.34, +1.61%, and the Nasdaq rose 2.31% (Reuters), past the ±1.17% options had priced. Sandisk +16% and Micron +7.6% led while Nvidia added only 0.8%.",
+ "updated": "2026-11-27T15:16:00-05:00",
+ "updatedLabel": "Fri 3:16pm ET",
+ "next": "4:12pm",
+ "kicker": "BLACK FRIDAY HALF DAY · CLOSED 1:00PM ET · EVENING BRIEF",
+ "headline": "Best week since April 2025: S&P +5.6% as the VIX closes at 23.81.",
+ "lede": "The S&P 500 ended Friday at 7,298.34, +1.61%, and +5.6% on the week, its strongest since April 2025 (AP). The VIX closed at 23.81, −11%, and the 10 year ended near 4.94%; futures reopen Sunday 6:00pm after OPEC+ meets.",
  "pills": [
   [
    "g",
-   "S&P +1.61% · Nasdaq +2.31%"
+   "Week: S&P +5.6%, best since Apr 2025"
   ],
   [
    "g",
-   "Sandisk +16% · Micron +7.6%"
+   "Fri: S&P +1.61% · Nasdaq +2.31%"
+  ],
+  [
+   "g",
+   "VIX 23.81, −11%"
+  ],
+  [
+   "r",
+   "10 year 4.94%"
   ],
   [
    "a",
    "Nvidia +0.8% only"
   ],
   [
-   "a",
-   "Beat the ±1.17% implied move"
-  ],
-  [
-   "r",
-   "Dec 9 hike near fully priced"
-  ],
-  [
    "b",
-   "Week: S&P +5.6%"
+   "OPEC+ Sunday · futures 6pm"
   ]
  ],
  "drivers": [
@@ -45,15 +45,45 @@
   [
    "r",
    "HIKE STILL PRICED",
-   "Reuters: traders almost fully price a December hike after Q3 GDP was revised to 4.3%. The 10 year was near 4.93% in Reuters' late quote."
+   "Reuters: traders almost fully price a December hike after Q3 GDP was revised to 4.3%. AP: the 10 year rose to 4.94% from 4.85% late Wednesday."
   ],
   [
    "g",
    "BROAD BUT THIN",
-   "All 11 SPDR sector ETFs rose: tech XLK +2.80% led, utilities and health care +0.28% lagged. Reuters: volumes were thin after Thanksgiving."
+   "AP: about 4 of every 5 S&P 500 stocks rose and all 11 SPDR sector ETFs gained, led by tech XLK +2.80%. Reuters: volumes were thin after Thanksgiving."
   ]
  ],
  "picks": [
+  [
+   "Fri 3:15pm",
+   "FUT",
+   "",
+   "Perps since the 1pm close: S&P perp 7,299.75 vs 7,305.5, Nvidia perp −0.6%, Micron perp −1.5%. Futures reopen Sunday 6:00pm."
+  ],
+  [
+   "Fri 2:00pm",
+   "MACRO",
+   "dn",
+   "Bonds closed: AP has the 10 year at 4.94% from 4.85% late Wednesday. Trading Economics: haven demand eased as tech rebounded and a December hike is priced."
+  ],
+  [
+   "Fri 1:15pm",
+   "FUT",
+   "up",
+   "VIX closed at 23.81, −2.99 (−11.2%) per Yahoo; down about 34% on the week from 35.89 on Nov 20 (Glass Desk)."
+  ],
+  [
+   "Fri 1:00pm",
+   "FUT",
+   "up",
+   "Week: S&P +5.6%, its strongest since April 2025 (AP); Nasdaq +6.68%, Dow +5.47% (Glass Desk)."
+  ],
+  [
+   "Sun",
+   "OIL",
+   "",
+   "OPEC+ meets Sunday; Reuters reported it is expected to keep output targets unchanged through at least Q1 2027, not yet final (via Eurasia Business News). Known."
+  ],
   [
    "Fri 1:00pm",
    "FUT",
@@ -107,31 +137,13 @@
    "OIL",
    "",
    "Late quotes (Reuters): WTI $83.02 (−0.8%), Brent $90.31 (−1.5%), gold futures $3,650 (+3.2%)."
-  ],
-  [
-   "Fri",
-   "AI",
-   "dn",
-   "TrendForce: limited demand visibility raises the risk of DRAM contract price declines in 2028. New."
-  ],
-  [
-   "Fri 8:30am",
-   "MACRO",
-   "dn",
-   "October goods deficit $149.5B vs $133.1B expected (ActionForex). Known since the pre open brief."
-  ],
-  [
-   "Fri 1:30am",
-   "ASIA",
-   "up",
-   "Closes: Kospi +4.34%, Nikkei +2.11%, Shanghai +3.7% after China signaled market support (AP)."
   ]
  ],
  "planTitle": "NEXT SESSION GAME PLAN",
  "means": [
-  "S&P closed at <b>7,298</b>, just under the <b>7,304</b> OI gamma flip and the <b>7,310</b> flow call wall. Above them dealers lean long gamma.",
-  "Friday ran past the ±1.17% implied move. SPXW options price <b>±1.00%</b> for Monday, about 73 points.",
-  "Leadership came from memory and chip equipment, not Nvidia. All 11 sector ETFs rose.",
+  "S&P closed at <b>7,298</b>, just above the final <b>7,294</b> OI gamma flip and under the <b>7,310</b> flow call wall.",
+  "SPXW options price <b>±1.00%</b> for Monday, about 73 points, after Friday ran past its ±1.17%.",
+  "The VIX closed at <b>23.81</b>, its lowest close of the week; a hold under 25 supports the rebound.",
   "Back under <b>7,211</b>, Friday's low, undoes the rebound; <b>7,183</b> is Wednesday's close."
  ],
  "calTitle": "NEXT WEEK · ET",
@@ -161,7 +173,7 @@
    "Jobs (Nov): payrolls 90K consensus vs 165K prior, unemployment 4.1%"
   ]
  ],
- "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can differ from cash. Cash closes are from Friday's 1:00pm close; the VIX curve is from Wednesday, the last Cboe close found.",
+ "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can differ from cash. Cash closes are from Friday's 1:00pm close. The VIX curve tiles are from Wednesday, the last full Cboe set found; Friday's VIX close was 23.81 (Yahoo).",
  "base": {
   "label": "Fri close",
   "spx": 7298.34,
@@ -269,90 +281,90 @@
   "prevChg": -0.25
  },
  "anchor": {
-  "label": "Since 9:30am",
-  "ts": "2026-11-27T09:30:00-05:00",
+  "label": "Since 1pm close",
+  "ts": "2026-11-27T13:00:00-05:00",
   "prices": {
-   "xyz:SP500": 7273.5,
-   "xyz:XYZ100": 26534.0,
-   "xyz:JP225": 58650.0,
-   "xyz:KR200": 753.94,
-   "xyz:NVDA": 151.98,
-   "xyz:AMD": 420.01,
-   "xyz:MU": 630.54,
-   "xyz:SNDK": 79.902,
-   "xyz:WDC": 285.88,
-   "xyz:AVGO": 306.63,
-   "xyz:TSM": 353.34,
-   "xyz:ASML": 1319.9,
-   "xyz:LRCX": 192.89,
-   "xyz:AMAT": 323.85,
-   "xyz:SMH": 435.17,
-   "xyz:SKHX": 823.66,
-   "xyz:SMSN": 133.44,
-   "xyz:KIOXIA": 52.148,
-   "xyz:ORCL": 106.74,
-   "xyz:AAPL": 358.38,
-   "xyz:MSFT": 499.41,
-   "xyz:GOOGL": 279.23,
-   "xyz:AMZN": 250.2,
-   "xyz:META": 628.38,
-   "xyz:TSLA": 391.5,
-   "xyz:GOLD": 3638.5,
-   "xyz:SILVER": 43.884,
-   "xyz:BRENTOIL": 91.28,
-   "xyz:CL": 84.13,
-   "xyz:COPPER": 5.6094,
-   "xyz:JPY": 159.48,
-   "xyz:EUR": 1.095,
-   "BTC": 61406.0,
-   "ETH": 1723.0,
-   "SOL": 72.983,
-   "xyz:HOOD": 68.827,
-   "xyz:INTC": 56.499,
-   "xyz:PLTR": 169.7,
-   "xyz:COIN": 108.47,
-   "xyz:MSTR": 84.367,
-   "xyz:CRCL": 50.295,
-   "xyz:NFLX": 60.058,
-   "xyz:COST": 1087.6,
-   "xyz:LLY": 1388.9,
-   "xyz:RIVN": 11.981,
-   "xyz:BABA": 89.933,
-   "xyz:CRWV": 43.863,
-   "xyz:GME": 26.837,
-   "xyz:HIMS": 15.255,
-   "xyz:DKNG": 17.781,
-   "xyz:LITE": 517.06,
-   "xyz:BX": 120.71,
-   "xyz:MRVL": 139.69,
-   "xyz:RKLB": 49.439,
-   "xyz:ZM": 89.379,
-   "xyz:EBAY": 116.13,
-   "xyz:ARM": 171.4,
-   "xyz:DELL": 307.11,
-   "xyz:IBM": 245.89,
-   "xyz:NOW": 93.614,
-   "xyz:NBIS": 90.026,
-   "xyz:NOK": 7.4237,
-   "xyz:BE": 161.28,
-   "xyz:QCOM": 173.05,
-   "xyz:GEV": 734.97,
-   "xyz:IREN": 13.692,
-   "xyz:NET": 291.09,
-   "xyz:CRWD": 210.0,
-   "xyz:RDDT": 93.882,
-   "xyz:AAOI": 40.734,
-   "xyz:MRNA": 224.46,
-   "xyz:CVX": 213.96,
-   "xyz:UMC": 13.26,
-   "xyz:GLW": 103.0,
-   "xyz:TTWO": 227.26,
-   "xyz:ICE": 178.2,
-   "xyz:PANW": 346.32
+   "xyz:SP500": 7305.5,
+   "xyz:XYZ100": 26758.0,
+   "xyz:JP225": 58921.0,
+   "xyz:KR200": 763.96,
+   "xyz:NVDA": 150.78,
+   "xyz:AMD": 426.17,
+   "xyz:MU": 654.01,
+   "xyz:SNDK": 85.393,
+   "xyz:WDC": 292.29,
+   "xyz:AVGO": 312.33,
+   "xyz:TSM": 353.6,
+   "xyz:ASML": 1327.9,
+   "xyz:LRCX": 192.57,
+   "xyz:AMAT": 322.61,
+   "xyz:SMH": 439.97,
+   "xyz:SKHX": 843.32,
+   "xyz:SMSN": 135.57,
+   "xyz:KIOXIA": 52.615,
+   "xyz:ORCL": 107.5,
+   "xyz:AAPL": 358.61,
+   "xyz:MSFT": 493.25,
+   "xyz:GOOGL": 274.93,
+   "xyz:AMZN": 254.19,
+   "xyz:META": 629.56,
+   "xyz:TSLA": 400.13,
+   "xyz:GOLD": 3651.3,
+   "xyz:SILVER": 43.706,
+   "xyz:BRENTOIL": 90.073,
+   "xyz:CL": 82.84,
+   "xyz:COPPER": 5.604,
+   "xyz:JPY": 159.47,
+   "xyz:EUR": 1.0942,
+   "BTC": 59929.0,
+   "ETH": 1672.2,
+   "SOL": 72.1,
+   "xyz:HOOD": 67.94,
+   "xyz:INTC": 58.085,
+   "xyz:PLTR": 172.13,
+   "xyz:COIN": 107.14,
+   "xyz:MSTR": 81.619,
+   "xyz:CRCL": 49.361,
+   "xyz:NFLX": 60.97,
+   "xyz:COST": 1099.0,
+   "xyz:LLY": 1395.6,
+   "xyz:RIVN": 12.184,
+   "xyz:BABA": 89.86,
+   "xyz:CRWV": 44.172,
+   "xyz:GME": 26.362,
+   "xyz:HIMS": 15.019,
+   "xyz:DKNG": 17.797,
+   "xyz:LITE": 515.11,
+   "xyz:BX": 121.53,
+   "xyz:MRVL": 141.11,
+   "xyz:RKLB": 50.927,
+   "xyz:ZM": 89.577,
+   "xyz:EBAY": 113.47,
+   "xyz:ARM": 171.68,
+   "xyz:DELL": 316.97,
+   "xyz:IBM": 248.05,
+   "xyz:NOW": 92.928,
+   "xyz:NBIS": 89.521,
+   "xyz:NOK": 7.5859,
+   "xyz:BE": 163.13,
+   "xyz:QCOM": 179.34,
+   "xyz:GEV": 736.05,
+   "xyz:IREN": 13.612,
+   "xyz:NET": 295.47,
+   "xyz:CRWD": 216.38,
+   "xyz:RDDT": 93.564,
+   "xyz:AAOI": 40.865,
+   "xyz:MRNA": 228.76,
+   "xyz:CVX": 212.44,
+   "xyz:UMC": 13.429,
+   "xyz:GLW": 104.94,
+   "xyz:TTWO": 230.18,
+   "xyz:ICE": 178.88,
+   "xyz:PANW": 366.59
   }
  },
  "ladder": {
-  "bull": 7303.7,
+  "bull": 7310,
   "floor": 7211.46,
   "marks": [
    [
@@ -386,8 +398,8 @@
     1
    ]
   ],
-  "bullText": "Above the 7,304 gamma flip and the 7,310 flow call wall: dealers lean long gamma and the rebound can extend.",
-  "rangeText": "Between 7,211 and 7,304, Friday's range. The close sits at the top of it.",
+  "bullText": "Above the 7,310 flow call wall the rebound can extend toward the 7,400 December max pain.",
+  "rangeText": "Between 7,211 and 7,310. The close sits just above the 7,294 OI gamma flip, where dealers turn long gamma.",
   "riskText": "Below Friday's 7,211 low; Wednesday's 7,183 close is next, then 7,000."
  },
  "chart": {
@@ -501,7 +513,7 @@
    ],
    [
     "Gamma flip",
-    7303.7,
+    7294.11,
     "b"
    ],
    [
@@ -621,6 +633,26 @@
  "recapLabel": "Fri recap",
  "sources": [
   [
+   "AP via Pittsburgh Post Gazette: Stocks jump to close out an erratic week",
+   "https://www.post-gazette.com/business/personal-finance/stock-markets-today-november-27-2026-2KMWD23HNN7BAM2FQEDY3KOQKU/"
+  ],
+  [
+   "Yahoo Finance live, Nov 27 (VIX, yields, gold quotes)",
+   "https://finance.yahoo.com/markets/live/stock-market-today-firday-november-27-dow-sp-500-nasdaq-black-friday-holiday-091152065.html"
+  ],
+  [
+   "The Glass Desk: Weekly market review, Nov 27 2026",
+   "https://theglassdesk.substack.com/p/weekly-market-review-nov-27-2026"
+  ],
+  [
+   "Eurasia Business News: U.S. stock market today, Nov 27 2026",
+   "https://eurasiabusinessnews.com/2026/11/27/u-s-stock-market-today-november-27-2026-tech-rebounds-in-shortened-black-friday-session/"
+  ],
+  [
+   "Trading Economics: US 10 year yield rises as haven demand eases",
+   "https://tradingeconomics.com/united-states/government-bond-yield/news/604880"
+  ],
+  [
    "Reuters via Investing.com: Wall Street ends higher as battered AI stocks gain",
    "https://ca.investing.com/news/economy-news/wall-street-ends-higher-as-battered-ai-stocks-gain-in-volatile-week-4983613"
   ],
@@ -711,22 +743,22 @@
  ],
  "top3": [
   [
-   "Memory leads a 1.6% rebound",
-   "S&P 7,298.34 (+1.61%), Nasdaq 24,129.50 (+2.31%), Dow +1.19% (Reuters). Sandisk +15.96%, Micron +7.60%, WDC +7.22%."
+   "Best week since April 2025",
+   "S&P 7,298.34 (+1.61% Friday, +5.6% on the week), its strongest week since April 2025 (AP). Nasdaq +6.68% and Dow +5.47% on the week (Glass Desk)."
   ],
   [
-   "Nvidia lags on a quiet close",
-   "Nvidia closed +0.80% after opening near +2%. FT reported it told Dell and Supermicro to halt AI server shipments to four Southeast Asian countries; no source ties the stock move to it."
+   "Memory leads, Nvidia lags",
+   "Sandisk +15.96%, Micron +7.60%, WDC +7.22% Friday while Nvidia added 0.80% after opening near +2%. FT reported it halted AI server shipments to four Southeast Asian countries."
   ],
   [
-   "Hike still priced, yields up",
-   "Reuters: traders almost fully price a Dec 9 hike. The 10 year was near 4.93%, up about 9 bp, in Reuters' late quote."
+   "VIX down, yields up",
+   "VIX closed at 23.81, −11.2% (Yahoo). The 10 year rose to 4.94% (AP) with a Dec 9 hike almost fully priced (Reuters)."
   ]
  ],
  "risks": [
   [
-   "Below 7,211",
-   "Friday's low. Under it the rebound fails and 7,183, Wednesday's close, is next."
+   "Sun 6:00pm",
+   "Futures reopen after OPEC+; a gap under Friday's 7,211 low would undo the rebound."
   ],
   [
    "Tue Dec 1",
@@ -748,7 +780,7 @@
  "scenarios": [
   {
    "n": "Bullish",
-   "cond": "S&P holds above 7,290 and clears the 7,304 gamma flip and 7,310 call wall on Monday.",
+   "cond": "S&P holds above the 7,294 gamma flip and clears the 7,310 call wall on Monday.",
    "confirm": "Memory and equipment hold gains, Nvidia joins, VIX stays under 25.",
    "risk": "Month end flows Monday and Tuesday's ISM can reverse thin holiday gains.",
    "inval": "A move back under 7,250, the OI gamma magnet."
@@ -941,8 +973,8 @@
   ]
  ],
  "priced": {
-  "asof": "Fri close",
-  "asofTs": "2026-11-27T13:15:00-05:00",
+  "asof": "Fri evening",
+  "asofTs": "2026-11-27T15:15:00-05:00",
   "fed": [
    [
     "Dec 9 FOMC",
@@ -1005,6 +1037,11 @@
     "BOJ Dec 18",
     "73.5% odds of a hike (MogWatch, Fri 1:07pm JST).",
     "exp"
+   ],
+   [
+    "OPEC+ Sunday",
+    "Expected to keep output targets unchanged through at least Q1 2027, per Reuters sources; not yet final (via Eurasia Business News).",
+    "exp"
    ]
   ]
  },
@@ -1031,8 +1068,8 @@
   ],
   [
    "Where are yields?",
-   "The 10 year was near 4.93% and the 2 year near 4.70% in Reuters' late quotes, both up 7 to 9 bp. Bonds close at 2:00pm, so these are not final.",
-   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+   "AP: the 10 year rose to 4.94% Friday from 4.85% late Wednesday. Trading Economics says haven demand eased as tech rebounded, with a December hike priced.",
+   "https://www.post%2Dgazette.com/business/personal%2Dfinance/stock%2Dmarkets%2Dtoday%2Dnovember%2D27%2D2026%2D2KMWD23HNN7BAM2FQEDY3KOQKU/"
   ],
   [
    "What are memory prices doing?",
@@ -1046,8 +1083,8 @@
   ],
   [
    "How was the week?",
-   "S&P +5.6% from the Nov 20 close of 6,910.39 (Cboe history). It is still down 3.7% in November from 7,580.07 on Oct 30.",
-   "https://www.cboe.com/us/indices/dashboard/spx/"
+   "S&P +5.6%, its strongest week since April 2025 (AP). Nasdaq +6.68% and Dow +5.47% (Glass Desk); the S&P is still down about 3.7% in November.",
+   "https://www.post%2Dgazette.com/business/personal%2Dfinance/stock%2Dmarkets%2Dtoday%2Dnovember%2D27%2D2026%2D2KMWD23HNN7BAM2FQEDY3KOQKU/"
   ],
   [
    "What are the biggest risks this week?",
@@ -1056,11 +1093,31 @@
   ],
   [
    "What changed since Wednesday?",
-   "Wednesday's S&P closed −0.25% after a 3.2% intraday drop with chips lagging. Friday added 1.61% with chips leading; Reuters quoted the VIX near 24.2 late, from 26.80 Thursday.",
-   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+   "Wednesday's S&P closed −0.25% with chips lagging; Friday added 1.61% with chips leading. The VIX closed Friday at 23.81 from 26.80 Thursday (Yahoo).",
+   "https://finance.yahoo.com/markets/live/stock%2Dmarket%2Dtoday%2Dfirday%2Dnovember%2D27%2Ddow%2Dsp%2D500%2Dnasdaq%2Dblack%2Dfriday%2Dholiday%2D091152065.html"
+  ],
+  [
+   "What happens over the weekend?",
+   "OPEC+ meets Sunday and is expected to keep output targets unchanged, per Reuters sources; futures reopen at 6:00pm ET Sunday. No weekend news yet explains a move.",
+   "https://eurasiabusinessnews.com/2026/11/27/u%2Ds%2Dstock%2Dmarket%2Dtoday%2Dnovember%2D27%2D2026%2Dtech%2Drebounds%2Din%2Dshortened%2Dblack%2Dfriday%2Dsession/"
   ]
  ],
  "stories": [
+  {
+   "t": "1:15pm",
+   "h": "Best week since April 2025",
+   "what": "S&P +5.6% on the week to 7,298.34, its strongest since April 2025 (AP). VIX closed at 23.81, −11.2% Friday and about −34% on the week.",
+   "why": "The rebound recovered about 60% of the prior week's 8.61% drop (Glass Desk); the Fed still looks set to hike Dec 9.",
+   "assets": "SPX, NDX, VIX",
+   "impl": "bull",
+   "read": "Fear has eased fast, but yields kept rising.",
+   "reacted": "After the close the S&P perp is little changed, 7,299.75 vs 7,305.5 at 1pm.",
+   "known": "new",
+   "material": false,
+   "confirm": "VIX stays under 25 and S&P holds 7,290 Monday.",
+   "invalid": "VIX back above 28, Wednesday's close.",
+   "src": "https://www.post%2Dgazette.com/business/personal%2Dfinance/stock%2Dmarkets%2Dtoday%2Dnovember%2D27%2D2026%2D2KMWD23HNN7BAM2FQEDY3KOQKU/"
+  },
   {
    "t": "1:00pm",
    "h": "Memory leads half day rally",
@@ -1070,7 +1127,7 @@
    "impl": "bull",
    "read": "An oversold bounce led by the hardest hit names, on thin volume.",
    "reacted": "SPY rose from a 719.62 low at 10:05am to a 729.15 high in the last bar. The rebound began in overnight trading Thursday.",
-   "known": "new",
+   "known": "known",
    "material": false,
    "confirm": "Memory holds gains Monday and SMH stays above 435.",
    "invalid": "SMH back under 422.46, Wednesday's close.",
@@ -1085,7 +1142,7 @@
    "impl": "bear",
    "read": "Export rules now reach regional data center demand, not only China.",
    "reacted": "First US session Friday: Nvidia opened near +2% and closed +0.80% at $150.49. No source ties the move to the report.",
-   "known": "new",
+   "known": "known",
    "material": true,
    "changes": "Adds export risk to Nvidia's demand outlook; watch license guidance and Huang's Dec 3 testimony.",
    "confirm": "Nvidia or Commerce confirms licensing delays.",
@@ -1101,7 +1158,7 @@
    "impl": "bear",
    "read": "Long range caution, not a near term price cut.",
    "reacted": "Memory stocks rallied anyway: Micron +7.60%, Sandisk +15.96%.",
-   "known": "new",
+   "known": "known",
    "material": false,
    "confirm": "1Q27 contract talks show declines.",
    "invalid": "Contract prices keep rising through 2027.",
@@ -1116,7 +1173,7 @@
    "impl": "bull",
    "read": "Holiday demand looks solid so far.",
    "reacted": "XLY +2.11%, second best sector ETF.",
-   "known": "new",
+   "known": "known",
    "material": false,
    "confirm": "Cyber Monday sales data.",
    "invalid": "Weak retail commentary next week.",
@@ -1180,58 +1237,53 @@
   "dir": "up",
   "date": "2026-11-30",
   "ref": 7298.34,
-  "basis": "Close at the session high area with chips leading; Morgan Stanley IM's Slimmon told Reuters fast money had delevered out of tech, so the bounce could persist."
+  "basis": "Close above the final 7,294 gamma flip with chips leading and the VIX down to 23.81; Morgan Stanley IM's Slimmon told Reuters fast money had delevered out of tech, so the bounce could persist."
  },
  "daily": {
-  "asofTs": "2026-11-27T13:15:00-05:00",
-  "happened": "From the 9:30am open the S&P dipped to 7,211.46 (SPY low in the 10:05am bar), then climbed to close at 7,298.34, +1.61% vs Wednesday. Nasdaq +2.31% to 24,129.50, Dow +1.19% to 50,780.64 (Reuters).",
-  "cause": "Reuters: investors returning from Thanksgiving flocked to hard hit AI shares, and a strategist called the market oversold; volume was thin. No source explains the push in the last minutes.",
-  "causeSrc": "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613",
-  "since": "Since the 9:19am brief the gap held and extended: the close at 7,298 is above the 7,267 implied top flagged then, confirming the bullish case. New: the FT Nvidia shipment halt report and TrendForce's 2028 DRAM warning. Reversed: Nvidia went from +2% at the open to +0.8%. No scheduled data since 9:19am.",
+  "asofTs": "2026-11-27T15:15:00-05:00",
+  "happened": "Since the 1:00pm close, perps barely moved: the S&P perp is 7,299.75 vs 7,305.5 at 1pm, Nvidia −0.6% and Micron −1.5%. Bonds closed at 2:00pm with the 10 year near 4.94% (AP). Cash ended at 7,298.34, +1.61%, and +5.6% on the week.",
+  "cause": "Not established for the small after close drift. For the day, Reuters says investors flocked back to hard hit AI shares, and Trading Economics says haven demand for Treasuries eased as tech rebounded.",
+  "causeSrc": "",
+  "since": "Since the 1:42pm brief: the VIX settled at 23.81 (−11.2%), lower than Reuters' 24.2 late quote. AP puts the 10 year at 4.94% from 4.85% and calls the week the best since April 2025. Unusual Whales' final OI gamma flip is 7,294, not 7,304, so the close sits just above it. No data was released since; the outlook is confirmed, not changed.",
   "expected": [],
   "affected": [
    [
-    "Memory (SNDK, MU, WDC)",
-    "up",
-    "Sandisk +15.96%, Micron +7.60%, WDC +7.22%, the biggest gains among chips."
-   ],
-   [
-    "Semis (SMH, SOXX, AMD, LRCX)",
-    "up",
-    "SMH +4.17%, SOXX +4.76%, AMD +4.56%, Lam +4.15%."
+    "Memory (MU, SNDK)",
+    "down",
+    "After the close the Micron perp is −1.5% and Sandisk −0.2% vs 1pm, after Friday's +7.60% and +15.96% cash gains."
    ],
    [
     "Nvidia",
-    "mixed",
-    "+0.80% after a 2% open; the FT shipment halt report is the main stock news."
-   ],
-   [
-    "Amazon",
-    "up",
-    "+3.96%; Motley Fool cites strong Black Friday demand."
-   ],
-   [
-    "Vertex",
     "down",
-    "About −5% after the FDA extended its kidney drug review (Reuters)."
+    "Perp −0.6% vs 1pm after a +0.80% cash close."
    ],
    [
     "Treasuries",
     "down",
-    "10 year near 4.93%, about +9 bp, in Reuters' late quote."
-   ]
-  ],
-  "priced": "SPXW options price ±1.00% for Monday and ±2.03% through Dec 4. CME FedWatch was near 99% for a Dec 9 hike Friday morning.",
-  "catalysts": [
-   [
-    "Tue 10:00am",
-    "ISM manufacturing (Nov), 55.2 expected",
-    "First big data after the rally; the prices index was 75.2."
+    "10 year 4.94% from 4.85% late Wednesday (AP)."
    ],
    [
-    "Tue after close",
-    "Marvell earnings",
-    "Next AI chip print after the memory rebound."
+    "Gold",
+    "up",
+    "Gold futures 3,668.50, +2.91% (Yahoo)."
+   ],
+   [
+    "Volatility",
+    "down",
+    "VIX 23.81, −11.2%, the low close of the week."
+   ]
+  ],
+  "priced": "SPXW options price ±1.00% for Monday and ±2.03% through Dec 4. Reuters: a Dec 9 hike is almost fully priced; CME FedWatch was near 99% Friday morning.",
+  "catalysts": [
+   [
+    "Sun",
+    "OPEC+ meeting; futures reopen 6:00pm, Tokyo 7:00pm",
+    "First read on whether the rebound holds; output is expected unchanged."
+   ],
+   [
+    "Tue 10:00am and after close",
+    "ISM manufacturing (55.2 expected) and Marvell earnings",
+    "First big data and chip print after the rally."
    ],
    [
     "Fri Dec 4 8:30am",
@@ -1241,11 +1293,19 @@
   ],
   "invalid": "A close back under 7,211, Friday's low, would undo the rebound; 7,183 is a full give back to Wednesday."
  },
- "gaps": [
+ "gaps": [],
+ "internals": [
   [
-   "internals",
-   "No NYSE breadth (advancers, decliners, highs and lows) published for the half day by run time"
+   "S&P 500 stocks rising",
+   "About 4 of every 5",
+   "AP via Pittsburgh Post Gazette",
+   "2026-11-27T12:27:00-05:00"
+  ],
+  [
+   "SPDR sector ETFs up",
+   "11 of 11, XLK +2.80% best, XLU and XLV +0.28% worst",
+   "Unusual Whales closes",
+   "2026-11-27T13:00:00-05:00"
   ]
- ],
- "internals": []
+ ]
 }

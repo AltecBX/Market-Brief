@@ -89,4 +89,44 @@ const k = 300; near(F2[k].zdd, F[k].zdd, 1e-9, 'scaling at a date does not chang
 const nb = C.neighbors(F, F.length - 1, ['dd', 'vix'], 10, 20, 20); ok(nb.every(x => x[1] < F.length - 1 - 20), 'matches exclude the last 20 sessions');
 ok(nb.every((x, i) => nb.every((y, j) => i === j || Math.abs(F[x[1]].i - F[y[1]].i) >= 20)), 'matches are at least 20 sessions apart');
 
+
+/* ---------- Leakage and inflation tests ---------- */
+/* 1. walk forward benchmark must not see the future: make the second half of history rise sharply; early predictions must not change */
+const lk = []; p = 100; for (let i = 0; i < 1200; i++) { p *= (i % 40 === 20) ? 0.97 : (i < 600 ? 1.0002 : 1.004); lk.push(p) }
+const lkA = C.runStudy(st, {}, { gap: 1 }, { X: series(lk) }), lk2 = lk.slice(0, 600); const lkB = C.runStudy(st, {}, { gap: 1 }, { X: series(lk2) });
+const wA = C.walkForward(lkA, 5, 3), wB = C.walkForward(lkB, 5, 3);
+ok(wB.n > 0 && wA.n > wB.n, 'walk forward ran on both samples');
+/* the first wB.n predictions in A must equal those of B, since later data must not influence them */
+function wfSeq(R, k, minPrior) { const a = R.sets[k], L = R.base[k].list; let li = 0, bs = 0, bn = 0; const done = [], seq = []; a.forEach(x => { while (li < L.length && L[li][0] + k <= x.ei) { bs += L[li][1]; bn++; li++ } const bench = bn ? bs / bn : 0, known = done.filter(q => q.e + k <= x.ei); if (known.length >= minPrior && bn >= 20) seq.push(C.mean(known.map(q => q.ex)) > 0); done.push({ e: x.ei, ex: x.r[k] - bench }) }); return seq }
+const sA = wfSeq(lkA, 5, 3), sB = wfSeq(lkB, 5, 3); ok(sB.every((v, i) => v === sA[i]), 'early walk forward decisions do not change when future data is added');
+/* 2. purge and embargo: no training window reaches the cut, no test entry starts inside the embargo */
+[1, 5, 20].forEach(k => { (lkA.sets[k] || []).forEach(x => { const tr = x.ei + k <= lkA.cutIdx, te = x.ei >= lkA.cutIdx + k; ok(!(tr && te), 'event is in at most one part'); if (tr) ok(x.ei + k <= lkA.cutIdx, 'training window ends before the cut') }) });
+const smT = C.summarize(lkA, 20, 'train'), smE = C.summarize(lkA, 20, 'test'), allN = lkA.sets[20].length; ok(smT.n + smE.n < allN, 'purge and embargo remove events near the split (' + smT.n + ' + ' + smE.n + ' of ' + allN + ')');
+ok(smE.base && smE.base.n > 0 && smE.base.n < lkA.base[20].n, 'test baseline uses only test period days');
+/* 3. overlapping samples: counting every daily signal would inflate n */
+const ovl = []; p = 100; for (let i = 0; i < 400; i++) { p *= i % 2 ? 0.97 : 1.035; ovl.push(p) }
+const Ro2 = C.runStudy(st, {}, { gap: 1 }, { X: series(ovl) }); ok(Ro2.all.length > 150 && Ro2.sets[20].length <= Math.ceil(400 / 20), 'a signal every other day yields at most one 20 session observation per 20 sessions');
+/* 4. inflated forecast accuracy: the same call repeated 10 times scores once */
+const rep = []; for (let q = 0; q < 10; q++) rep.push({ updated: day2 + 'T1' + q % 10 + ':00:00Z', forecast: { dir: 'up', date: day2, ref: 101 } });
+const scR = C.scoreForecasts(rep, SP, closeAt); ok(scR.dir.n === 1 && scR.dir.revisions === 9, 'ten copies of one call count once');
+/* 5. correlated implied move windows: overlapping expiries are not independent */
+const emDocs = [{ updated: day2 + 'T12:00:00Z', opt: { asof: 'A', asofTs: day2 + 'T21:15:00Z', base: 100, em: [['wk', 2, 'n', 'SPXW', day3], ['mo', 4, 'n', 'SPX', day3]] } }];
+const scE = C.scoreForecasts(emDocs, SP, closeAt); ok(scE.cov.n === 2 && scE.cov.eff === 1, 'two windows over the same dates count as one effective outcome');
+/* 6. a forecast issued after its session closed is not scored */
+const late = C.scoreForecasts([{ updated: day2 + 'T23:00:00Z', forecast: { dir: 'up', date: day2, ref: 101 } }], SP, closeAt); ok(late.dir.n === 0, 'a call made after the close is ignored');
+/* 7. intraday state never reads later bars */
+const bars = []; for (let q = 0; q < 13; q++) bars.push([q, 100 + q, 101 + q, 99 + q, 100.5 + q, 1000]);
+const Dd = { prev: 99, b: bars, semi: null }, s3 = C.dayState(Dd, 3, 5), bars2 = bars.map((b, q) => q > 3 ? [b[0], 1, 999, 0.5, 2, 9] : b), s3b = C.dayState({ prev: 99, b: bars2, semi: null }, 3, 5);
+ok(JSON.stringify(s3) === JSON.stringify(s3b), 'changing later bars does not change the state at bar 3');
+const oc = C.dayOutcome(Dd, s3); ok(oc.highDone === false && oc.newHigh === true, 'outcome uses later bars only');
+/* 8. intraday prediction uses only the supplied history */
+const histI = []; for (let q = 0; q < 40; q++) { const s0 = { gap: q % 5, ret: q % 3, pos: 0.5, rng: 1, semi: 0 }; histI.push({ s: s0, o: { closeUp: q % 2 === 0, highDone: true, lowDone: true, newHigh: false, newLow: false, openBack: null, vwapBack: null, rec25: null, rec50: null, rec75: null, rec100: null, up: 0.1, down: -0.1 } }) }
+const pr1 = C.intradayPredict(histI, { gap: 1, ret: 1, pos: 0.5, rng: 1, semi: 0 }, 30); ok(pr1.closeUp && pr1.closeUp.n === 30, 'uses 30 neighbours from the given history');
+/* 9. option strategy pricing: sells at bid, buys at ask */
+const snap = { underlying: 100, rows: [['P', 95, 1.0, 1.2, -0.20, 0.2, 10], ['P', 90, 0.4, 0.5, -0.10, 0.2, 10], ['C', 105, 0.9, 1.1, 0.20, 0.2, 10], ['C', 100, 2.9, 3.1, 0.50, 0.2, 10], ['C', 103, 1.4, 1.6, 0.30, 0.2, 10]] };
+const os1 = C.optionStrategies(snap, 92, 0); const csp = os1.find(o => /Cash secured/.test(o.name)), pcs = os1.find(o => /credit spread/.test(o.name));
+near(csp.pnl, 1.0 - 3, 1e-9, 'cash secured put fills at the bid and pays the intrinsic value'); near(pcs.pnl, (1.0 - 0.5) - (3 - 0), 1e-9, 'credit spread buys the wing at the ask'); ok(csp.assigned === true, 'assignment flagged when expiring in the money');
+/* 10. recovery engine respects corporate action breaks */
+const rc = series(cl.map((v, q) => v)); rc.breaks = [rc.d[26]]; rc.sym = 'T'; const RR = C.recovery([rc], 2.5, { days: 1 }); ok(RR.ev.every(e => e.d !== rc.d[26]), 'no decline is counted on a corporate action date');
+
 console.log(fails ? fails + ' of ' + n + ' failed' : 'all ' + n + ' passed'); process.exit(fails ? 1 : 0);

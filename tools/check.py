@@ -198,7 +198,7 @@ if os.path.isdir("data/hist"):
             err.append("data/hist/" + fn + " unreadable: " + str(e)[:60])
 
 # research outputs used by the page
-for fn, keys in (("fingerprint.json", ("models", "alwaysUp", "horizon")), ("seasonality.json", ("conds", "slots", "days")), ("semis.json", ("tests", "days", "note"))):
+for fn, keys in (("fingerprint.json", ("test", "promoted", "horizon")), ("registry.json", ("signals", "tests", "rules")), ("intraday.json", ("skill", "days")), ("options.json", ("snapshots", "summary")), ("ledger.json", ("entries",)), ("seasonality.json", ("conds", "slots", "days")), ("semis.json", ("tests", "days", "note"))):
     p = os.path.join("data", "research", fn)
     if os.path.exists(p):
         try:

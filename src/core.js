@@ -12,6 +12,36 @@ var CORE = (function () {
   function pProp(k, n, p0) { if (n < 3 || !(p0 > 0 && p0 < 1)) return null; return 2 * (1 - ncdf(Math.abs((k - n * p0) / Math.sqrt(n * p0 * (1 - p0))))) }
   function pearson(a, b) { var n = a.length; if (n < 10) return null; var ma = mean(a), mb = mean(b), sab = 0, sa = 0, sb = 0; for (var i = 0; i < n; i++) { sab += (a[i] - ma) * (b[i] - mb); sa += (a[i] - ma) * (a[i] - ma); sb += (b[i] - mb) * (b[i] - mb) } return sa && sb ? sab / Math.sqrt(sa * sb) : null }
 
+  function sg(v, d) { return (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(d == null ? 2 : d) + '%' }
+var STUDIES = [
+  { id: 'spxdown', name: 'S&P down day', data: ['SPX'], tgt: 'SPX', p: [['x', 'S&P closes down at least', 3, '%', 0.5]], desc: 'S&P 500 close to close decline. Cboe closes since 1975. Entry at the event close.',
+    ev: function (S, i, P) { var c = S.SPX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
+  { id: 'streak', name: 'S&P losing streak', data: ['SPX'], tgt: 'SPX', p: [['n', 'Down closes in a row', 4, '', 1]], desc: 'The day a streak of lower S&P closes reaches the length set. Entry at that close.',
+    ev: function (S, i, P) { var c = S.SPX.c, n = P.n; if (i < n + 1) return null; for (var k = 0; k < n; k++) if (!(c[i - k] < c[i - k - 1])) return null; if (c[i - n] < c[i - n - 1]) return null; return { v: (c[i] / c[i - n] - 1) * 100, ref: c[i - n] } } },
+  { id: 'ndxdown', name: 'Nasdaq 100 down day', data: ['NDX'], tgt: 'NDX', p: [['x', 'Nasdaq 100 closes down at least', 4, '%', 0.5]], desc: 'Nasdaq 100 close to close decline. FRED closes since 1986.',
+    ev: function (S, i, P) { var c = S.NDX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
+  { id: 'vixlevel', name: 'VIX above a level', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['L', 'VIX closes at or above', 30, '', 1], ['cross', 'Only the first close above (1 = yes)', 1, '', 1]], desc: 'The VIX closes at 4:15pm, after the S&P close, so entry is the next S&P close to avoid using information early. VIX since 1990.',
+    ev: function (S, i, P) { var v = S.VIX.c; if (i < 1 || v[i] < P.L || (P.cross && v[i - 1] >= P.L)) return null; return { v: v[i], lab: 'VIX ' + v[i].toFixed(2) } } },
+  { id: 'vixspike', name: 'VIX one day spike', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['x', 'VIX closes up at least', 25, '%', 5]], desc: 'VIX close to close jump. Entry is the next S&P close.',
+    ev: function (S, i, P) { var v = S.VIX.c; return i > 0 && (v[i] / v[i - 1] - 1) * 100 >= P.x ? { v: (v[i] / v[i - 1] - 1) * 100, lab: 'VIX ' + sg((v[i] / v[i - 1] - 1) * 100, 0) } : null } },
+  { id: 'vixrev', name: 'VIX spike then reversal', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', from: 1992, p: [['x', 'VIX intraday high above prior close by', 20, '%', 5], ['y', 'VIX closes no more than this above prior close', 5, '%', 1]], desc: 'Fear spikes intraday and fades by the close. VIX highs and lows since 1992. Entry is the next S&P close.',
+    ev: function (S, i, P) { var V = S.VIX; if (i < 1 || !V.h) return null; var pc = V.c[i - 1]; if ((V.h[i] / pc - 1) * 100 >= P.x && (V.c[i] / pc - 1) * 100 <= P.y) return { v: (V.h[i] / pc - 1) * 100, lab: 'VIX high ' + sg((V.h[i] / pc - 1) * 100, 0) + ', close ' + sg((V.c[i] / pc - 1) * 100, 0) }; return null } },
+  { id: 'recover', name: 'Intraday drop recovered', data: ['SPY'], tgt: 'SPY', p: [['x', 'SPY low below prior close by at least', 2, '%', 0.5], ['y', 'Share of the drop recovered by the close', 70, '%', 5]], desc: 'SPY daily highs and lows, about 2 years. Intraday data is only this long, so samples are small.',
+    ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100; if (dd > -P.x) return null; var rec = (T.c[i] - T.l[i]) / (pc - T.l[i]) * 100; return rec >= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', ' + rec.toFixed(0) + '% recovered', ref: pc } : null } },
+  { id: 'qqqhigh', name: 'Nasdaq drop, close near high', data: ['QQQ'], tgt: 'QQQ', p: [['x', 'QQQ low below prior close by at least', 3, '%', 0.5], ['y', 'Close in the top part of the range', 25, '%', 5]], desc: 'QQQ daily highs and lows, about 2 years.',
+    ev: function (S, i, P) { var T = S.QQQ; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100, rg = T.h[i] - T.l[i]; if (dd > -P.x || !rg) return null; return (T.h[i] - T.c[i]) / rg * 100 <= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', close ' + sg((T.c[i] / pc - 1) * 100), ref: pc } : null } },
+  { id: 'stock', name: 'Big chip stock drop', data: [], tgt: 'pick', pick: ['NVDA10', 'MU10', 'AMD10', 'WDC10', 'SMH10', 'SOXX10'], p: [['x', 'Closes down at least', 8, '%', 1]], desc: '10 years of split adjusted daily closes from Unusual Whales. Corporate actions (the SanDisk spin off from WDC, a bad SOXX stretch in 2022) are excluded.',
+    ev: function (S, i, P, T) { var c = T.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
+  { id: 'gap', name: 'SPY opening gap', data: ['SPY'], tgt: 'SPY', entry: 'open', p: [['x', 'Gap size at least', 1, '%', 0.25], ['dir', 'Direction (1 = up, 0 = down)', 0, '', 1]], desc: 'SPY open vs prior close, about 2 years. Entry at the open, when the gap is known.',
+    ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var g = (T.o[i] / T.c[i - 1] - 1) * 100; return (P.dir ? g >= P.x : g <= -P.x) ? { v: g, ref: T.c[i - 1], gap: 1 } : null } },
+  { id: 'breadth', name: 'Equal weight up, S&P down', data: ['SPY10', 'RSP10'], tgt: 'SPY10', p: [['x', 'SPY closes down at least', 0.5, '%', 0.25], ['y', 'RSP beats SPY by at least', 0.3, '%', 0.1]], desc: 'Equal weight (RSP) vs cap weight (SPY), 10 years of closes. A breadth proxy, not exchange breadth.',
+    ev: function (S, i, P) { var A = S.SPY10, R = S.RSP10, d = A.d[i], j = R.ix[d]; if (i < 1 || j == null || j < 1) return null; var a = (A.c[i] / A.c[i - 1] - 1) * 100, r = (R.c[j] / R.c[j - 1] - 1) * 100; return a <= -P.x && r - a >= P.y ? { v: a, lab: 'SPY ' + sg(a) + ', RSP ' + sg(r) } : null } },
+  { id: 'asia', name: 'Nikkei move, then Nasdaq', data: ['N225', 'NDX'], tgt: 'NDX', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1], ['ctrl', 'Prior US session move no bigger than (0 = off)', 0.5, '%', 0.25]], corr: 1,
+    desc: 'Tokyo closes before the US session of the same date. Daily closes only exist for the Nasdaq 100, so entry is that date\'s US close, after the information is known; the same day reaction is not measurable here without lookahead. The dollar conversion was removed because the only yen rate available is published after Tokyo closes.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i], X = S.NDX, j = X.ix[d]; if (i < 1 || j == null || j < 2) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100, u = (X.c[j - 1] / X.c[j - 2] - 1) * 100; if (P.ctrl > 0 && Math.abs(u) > P.ctrl) return null; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) + ', prior US day ' + sg(u) } : null } },
+  { id: 'asiasmh', name: 'Nikkei move, then US semis', data: ['N225', 'SMH'], tgt: 'SMH', entry: 'open', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1]], desc: 'Entry at the SMH open of the same date, which comes after Tokyo has closed. About 2 years of SMH bars.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i]; if (i < 1 || S.SMH.ix[d] == null) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) } : null } }
+];
   /* Series: {d:[YYYYMMDD], c:[], o?, h?, l?, ix:{d:i}, breaks?:[YYYYMMDD]} */
   function crossesBreak(T, i0, i1) { if (!T.breaks) return false; for (var b = 0; b < T.breaks.length; b++) { var x = T.breaks[b]; if (T.d[i0] < x && T.d[i1] >= x) return true } return false }
   var HZ = [1, 2, 3, 5, 10, 20];
@@ -42,23 +72,31 @@ var CORE = (function () {
     var sets = {}; HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var last = -1e9, a = []; ev.forEach(function (x) { if (x.cluster || x.open || !isNum(x.r[k])) return; if (x.ei - last < Math.max(k, 1)) return; last = x.ei; a.push(x) }); sets[k] = a });
     /* Baseline: every eligible day in the same window and data span, same entry and exit rule */
     var bfrom = Math.max(from, base.d[1], T.d[1]), bl = {};
-    HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var a = []; for (var i2 = 1; i2 < T.c.length; i2++) { var d2 = T.d[i2]; if (d2 < bfrom || d2 > to) continue; if (base !== T && base.ix[d2] == null) continue; var e2 = entryIdx(st, i2); if (e2 >= T.c.length) continue; var v = fwd(st, T, e2, k); if (isNum(v)) a.push(v) } bl[k] = stats(a) });
+    HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var a = [], L = []; for (var i2 = 1; i2 < T.c.length; i2++) { var d2 = T.d[i2]; if (d2 < bfrom || d2 > to) continue; if (base !== T && base.ix[d2] == null) continue; var e2 = entryIdx(st, i2); if (e2 >= T.c.length) continue; var v = fwd(st, T, e2, k); if (isNum(v)) { a.push(v); L.push([e2, v]) } } bl[k] = stats(a); bl[k].list = L });
     /* Untouched test period: the last 25% of the target's dates in range are held out and reported separately */
-    var span = T.d.filter(function (d3) { return d3 >= bfrom && d3 <= to }), cut = span.length ? span[Math.floor(span.length * 0.75)] : 0;
-    return { st: st, T: Tsym, all: ev, sets: sets, base: bl, cut: cut, hasHL: !!T.h, src: T.src, asof: T.asof, start: Math.max(bfrom, T.d[0]) };
+    var span = T.d.filter(function (d3) { return d3 >= bfrom && d3 <= to }), cut = span.length ? span[Math.floor(span.length * 0.75)] : 0, cutIdx = T.ix[cut] != null ? T.ix[cut] : T.c.length;
+    return { st: st, T: Tsym, all: ev, sets: sets, base: bl, cut: cut, cutIdx: cutIdx, hasHL: !!T.h, src: T.src, asof: T.asof, start: Math.max(bfrom, T.d[0]) };
   }
+  /* Train: outcome window must end before the cut (purged). Test: entries start k sessions after the cut (embargo), so no window straddles the split.
+     Each part is compared with all days from the same part, using the same purge and embargo. */
+  function inPart(R, k, ei, part) { if (part === 'train') return ei + Math.max(k, 1) <= R.cutIdx; if (part === 'test') return ei >= R.cutIdx + Math.max(k, 1); return true }
   function summarize(R, k, part) {
-    var a = (R.sets[k] || []).filter(function (x) { return part === 'train' ? x.d < R.cut : part === 'test' ? x.d >= R.cut : true }).map(function (x) { return x.r[k] });
-    var b = R.base[k], s = stats(a), up = a.filter(function (v) { return v > 0 }).length;
-    return { n: a.length, s: s, up: up, pUp: b && b.n ? pProp(up, a.length, b.up) : null, pMean: b && b.n ? pMean(a, b.mean) : null, excess: s.n ? s.mean - (b ? b.mean : 0) : null };
+    var a = (R.sets[k] || []).filter(function (x) { return inPart(R, k, x.ei, part) }).map(function (x) { return x.r[k] });
+    var bl = R.base[k], bv = part && bl && bl.list ? bl.list.filter(function (p) { return inPart(R, k, p[0], part) }).map(function (p) { return p[1] }) : null, b = bv ? stats(bv) : bl;
+    var s = stats(a), up = a.filter(function (v) { return v > 0 }).length;
+    return { n: a.length, s: s, up: up, base: b, pUp: b && b.n ? pProp(up, a.length, b.up) : null, pMean: b && b.n ? pMean(a, b.mean) : null, excess: s.n && b && b.n ? s.mean - b.mean : null };
   }
-  /* Walk forward: for each event in time order, use only earlier events to decide long or short (sign of their mean excess), then score the event. */
+  /* Walk forward: at each event, the side is chosen from earlier events only, and the benchmark is the average of all days whose outcome was already known at that entry (expanding, no future data). */
   function walkForward(R, k, minPrior) {
-    var a = R.sets[k] || [], b = R.base[k] ? R.base[k].mean : 0, done = [], hits = 0, n = 0, pnl = [];
-    a.forEach(function (x) { if (done.length >= (minPrior || 10)) { var m = mean(done) || 0, ex = x.r[k] - b; if (m !== 0) { n++; if ((m > 0) === (ex > 0)) hits++; pnl.push(m > 0 ? ex : -ex) } } done.push(x.r[k] - b) });
-    return { n: n, hits: hits, avg: pnl.length ? mean(pnl) : null, ci: n ? wilson(hits, n) : [NaN, NaN] };
+    var a = R.sets[k] || [], L = (R.base[k] && R.base[k].list) || [], li = 0, bs = 0, bn = 0, done = [], hits = 0, n = 0, pnl = [];
+    a.forEach(function (x) {
+      while (li < L.length && L[li][0] + k <= x.ei) { bs += L[li][1]; bn++; li++ }
+      var bench = bn ? bs / bn : 0, known = done.filter(function (p) { return p.e + k <= x.ei });
+      if (known.length >= (minPrior || 10) && bn >= 20) { var m = mean(known.map(function (p) { return p.ex })), ex = x.r[k] - bench; if (m !== 0) { n++; if ((m > 0) === (ex > 0)) hits++; pnl.push(m > 0 ? ex : -ex) } }
+      done.push({ e: x.ei, ex: x.r[k] - bench });
+    });
+    return { n: n, hits: hits, avg: pnl.length ? mean(pnl) : null, sdv: pnl.length > 1 ? sd(pnl) : null, ci: n ? wilson(hits, n) : [NaN, NaN] };
   }
-
   /* ---------- Intraday structure: completed candles only ---------- */
   function completed(K, now, ms) { return K.filter(function (c) { return +c.t + ms <= now }) }
   function pivots(K, kind) { var p = []; for (var i = 1; i < K.length - 1; i++) { if (kind === 'low' ? (+K[i].l < +K[i - 1].l && +K[i].l <= +K[i + 1].l) : (+K[i].h > +K[i - 1].h && +K[i].h >= +K[i + 1].h)) p.push(i) } return p }
@@ -131,12 +169,15 @@ var CORE = (function () {
     docs.forEach(function (d) {
       var u = new Date(d.updated).getTime();
       if (d.forecast && d.forecast.dir && d.forecast.date && isNum(d.forecast.ref)) { var key = d.forecast.date; var tclose = etClose(d.forecast.date); if (u < tclose) { tg[key] = tg[key] || []; tg[key].push({ u: u, f: d.forecast }) } }
-      (d.opt && d.opt.em || []).forEach(function (e) { if (!e[4]) return; var k2 = e[4] + '|' + e[3] + '|' + (d.opt.asof || ''); em[k2] = em[k2] || { exp: e[4], pct: e[1], base: d.opt.base, label: e[0], n: 0 }; em[k2].n++ });
+      (d.opt && d.opt.em || []).forEach(function (e) { if (!e[4]) return; var k2 = e[3] + '|' + e[4] + '|' + (d.opt.asof || ''); var st0 = d.opt.asofTs ? +String(d.opt.asofTs).slice(0, 10).replace(/-/g, '') : +String(d.updated).slice(0, 10).replace(/-/g, ''); em[k2] = em[k2] || { exp: e[4], pct: e[1], base: d.opt.base, label: e[0], und: e[3], start: st0, n: 0 }; em[k2].n++ });
     });
     var dir = { n: 0, hit: 0, revisions: 0, pend: 0, up: 0, rows: [] };
     Object.keys(tg).forEach(function (k) { var L = tg[k].sort(function (a, b) { return a.u - b.u }), last = L[L.length - 1].f, j = S.ix[+k.replace(/-/g, '')]; dir.revisions += L.length - 1; if (j == null) { dir.pend++; return } var up = S.c[j] > last.ref; dir.n++; if ((last.dir === 'up') === up) dir.hit++; if (up) dir.up++; dir.rows.push({ date: k, dir: last.dir, ref: last.ref, close: S.c[j], hit: (last.dir === 'up') === up, regime: last.regime || null, versions: L.length }) });
-    var cov = { n: 0, hit: 0, pend: 0, dup: 0 };
-    Object.keys(em).forEach(function (k) { var e = em[k], j = S.ix[+String(e.exp).replace(/-/g, '')]; cov.dup += e.n - 1; if (j == null) { cov.pend++; return } var r = emRange(e.base, e.pct); cov.n++; if (S.c[j] >= r.lo && S.c[j] <= r.hi) cov.hit++ });
+    /* Implied moves: one outcome per (underlying, expiry). Copies from later briefs are revisions. Windows that overlap in time are correlated, so the
+       effective sample counts only expiries whose windows do not overlap. */
+    var cov = { n: 0, hit: 0, pend: 0, dup: 0, eff: 0, effHit: 0, byH: {}, rows: [] }, seen = {};
+    Object.keys(em).forEach(function (k) { var e = em[k], key = e.und + '|' + e.exp; if (seen[key]) { cov.dup += e.n; return } seen[key] = 1; cov.dup += e.n - 1; var j = S.ix[+String(e.exp).replace(/-/g, '')]; if (j == null) { cov.pend++; return } var r = emRange(e.base, e.pct), hit = S.c[j] >= r.lo && S.c[j] <= r.hi; cov.n++; if (hit) cov.hit++; var hk = e.label; cov.byH[hk] = cov.byH[hk] || [0, 0]; cov.byH[hk][0]++; if (hit) cov.byH[hk][1]++; cov.rows.push({ start: e.start, exp: +String(e.exp).replace(/-/g, ''), hit: hit, und: e.und }) });
+    cov.rows.sort(function (a, b) { return a.exp - b.exp }); var lastEnd = 0; cov.rows.forEach(function (r) { if (r.start >= lastEnd) { cov.eff++; if (r.hit) cov.effHit++; lastEnd = r.exp } });
     return { dir: dir, cov: cov };
   }
 
@@ -170,6 +211,62 @@ var CORE = (function () {
   }
   function fwdRet(S, i, k) { return i + k < S.c.length ? (S.c[i + k] / S.c[i] - 1) * 100 : null }
 
-  return { isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+
+  /* ---------- Conditional intraday engine ----------
+     Day objects: {d, prev (prior close), b: [[hm, o, h, l, c, v], ...13 bars], semi: same for SMH or null}.
+     State after bar t uses bars 0..t only. Outcomes use bars after t. */
+  function dayState(D, t, atr) {
+    var b = D.b.slice(0, t + 1), o = b[0][1], c = b[t][4], hi = -1e18, lo = 1e18, pv = 0, vv = 0;
+    b.forEach(function (x) { hi = Math.max(hi, x[2]); lo = Math.min(lo, x[3]); var tp = (x[2] + x[3] + x[4]) / 3; pv += tp * x[5]; vv += x[5] });
+    var s = { t: t, o: o, c: c, hi: hi, lo: lo, vwap: vv ? pv / vv : c, gap: D.prev ? (o / D.prev - 1) * 100 : 0, ret: (c / o - 1) * 100, pos: hi > lo ? (c - lo) / (hi - lo) : 0.5, rng: atr ? (hi - lo) / atr : null };
+    if (D.semi && D.semi.length > t) s.semi = (D.semi[t][4] / D.semi[0][1] - 1) * 100 - s.ret; else s.semi = null;
+    return s;
+  }
+  function dayOutcome(D, s) {
+    var rest = D.b.slice(s.t + 1), close = D.b[D.b.length - 1][4], laterHi = -1e18, laterLo = 1e18, vwapBack = false, pv = 0, vv = 0;
+    D.b.slice(0, s.t + 1).forEach(function (x) { var tp = (x[2] + x[3] + x[4]) / 3; pv += tp * x[5]; vv += x[5] });
+    rest.forEach(function (x) { laterHi = Math.max(laterHi, x[2]); laterLo = Math.min(laterLo, x[3]); var tp = (x[2] + x[3] + x[4]) / 3; pv += tp * x[5]; vv += x[5]; if (vv && x[4] > pv / vv) vwapBack = true });
+    var none = !rest.length, dec = s.hi - s.lo;
+    return { highDone: none || laterHi <= s.hi, lowDone: none || laterLo >= s.lo, newHigh: !none && laterHi > s.hi, newLow: !none && laterLo < s.lo, openBack: s.c < s.o ? (!none && laterHi >= s.o) : null, vwapBack: s.c < s.vwap ? vwapBack : null, closeUp: D.prev ? close > D.prev : null, up: none ? 0 : (laterHi / s.c - 1) * 100, down: none ? 0 : (laterLo / s.c - 1) * 100,
+      rec25: dec > 0 && s.c < s.hi ? (!none && (laterHi - s.lo) / dec >= 0.25) : null, rec50: dec > 0 && s.c < s.hi ? (!none && (laterHi - s.lo) / dec >= 0.5) : null, rec75: dec > 0 && s.c < s.hi ? (!none && (laterHi - s.lo) / dec >= 0.75) : null, rec100: dec > 0 && s.c < s.hi ? (!none && laterHi >= s.hi) : null };
+  }
+  var IKEYS = ['gap', 'ret', 'pos', 'rng', 'semi'], OUT = ['highDone', 'lowDone', 'newHigh', 'newLow', 'openBack', 'vwapBack', 'closeUp', 'rec25', 'rec50', 'rec75', 'rec100'];
+  function intradayPredict(hist, s, K) {
+    /* hist: [{s, o}] from earlier days at the same bar. Features are scaled with those earlier days only. */
+    var sc = {}; IKEYS.forEach(function (k) { var v = hist.map(function (h) { return h.s[k] }).filter(isNum); sc[k] = v.length > 10 ? [mean(v), sd(v) || 1] : null });
+    var dist = hist.map(function (h) { var q = 0, m = 0; IKEYS.forEach(function (k) { if (!sc[k] || !isNum(s[k]) || !isNum(h.s[k])) return; var z = (s[k] - h.s[k]) / sc[k][1]; q += z * z; m++ }); return [m ? Math.sqrt(q / m) : 1e9, h] }).sort(function (a, b) { return a[0] - b[0] }).slice(0, K || 30);
+    var p = {}; OUT.forEach(function (k) { var v = dist.map(function (x) { return x[1].o[k] }).filter(function (x) { return x === true || x === false }); p[k] = v.length >= 10 ? { p: v.filter(Boolean).length / v.length, n: v.length } : null });
+    p.up = stats(dist.map(function (x) { return x[1].o.up })); p.down = stats(dist.map(function (x) { return x[1].o.down })); p.n = dist.length; return p;
+  }
+  function brierSkill(preds) { /* preds: [[p, outcome, baseP]] */ var b = 0, b0 = 0; preds.forEach(function (x) { b += (x[0] - (x[1] ? 1 : 0)) * (x[0] - (x[1] ? 1 : 0)); b0 += (x[2] - (x[1] ? 1 : 0)) * (x[2] - (x[1] ? 1 : 0)) }); return preds.length && b0 ? 1 - b / b0 : null }
+
+  /* ---------- Recovery after extreme declines, pooled across tickers, one cluster per ticker ---------- */
+  function recovery(list, X, opt) {
+    var ev = [], win = (opt && opt.days) || 1;
+    list.forEach(function (T) { var last = -1e9; for (var i = win; i < T.c.length; i++) { var r = (T.c[i] / T.c[i - win] - 1) * 100; if (r > -X || i - last < 20 || crossesBreak(T, i - win, i)) continue; last = i; var ref = T.c[i - win], x = { sym: T.sym, d: T.d[i], drop: r, rec: {}, t: null };
+      [20, 60, 120].forEach(function (h) { var j1 = i + h; if (j1 >= T.c.length || crossesBreak(T, i, j1)) { x.rec[h] = null; return } var got = false; for (var j = i + 1; j <= j1; j++) if (T.c[j] >= ref) { got = true; if (x.t == null) x.t = j - i; break } x.rec[h] = got });
+      var j2 = Math.min(T.c.length - 1, i + 60); if (i + 60 < T.c.length && !crossesBreak(T, i, i + 60)) { var mn = 1e18, mx = -1e18; for (var j3 = i + 1; j3 <= j2; j3++) { mn = Math.min(mn, T.c[j3]); mx = Math.max(mx, T.c[j3]) } x.mae = (mn / T.c[i] - 1) * 100; x.mfe = (mx / T.c[i] - 1) * 100 }
+      if (i + 20 < T.c.length) { var f = false; for (var j4 = i + 1; j4 <= i + 20; j4++) if ((T.c[j4] / T.c[i] - 1) * 100 <= -X / 2) f = true; x.more = f }
+      ev.push(x) } });
+    var pr = function (h) { var v = ev.filter(function (x) { return x.rec[h] === true || x.rec[h] === false }); return { n: v.length, k: v.filter(function (x) { return x.rec[h] }).length } };
+    var m = ev.filter(function (x) { return isNum(x.mae) }), mo = ev.filter(function (x) { return x.more === true || x.more === false });
+    return { ev: ev, r20: pr(20), r60: pr(60), r120: pr(120), tmed: median(ev.filter(function (x) { return x.t != null }).map(function (x) { return x.t })), mae: median(m.map(function (x) { return x.mae })), mfe: median(m.map(function (x) { return x.mfe })), more: { n: mo.length, k: mo.filter(function (x) { return x.more }).length } };
+  }
+
+  /* ---------- Options strategies held to expiry from saved chain snapshots ----------
+     Sells fill at the bid, buys at the ask, plus a commission per contract. Settlement uses the underlying close on expiry. */
+  function pickDelta(rows, type, target) { var c = rows.filter(function (r) { return r[0] === type }); if (!c.length) return null; return c.reduce(function (a, r) { return Math.abs(Math.abs(r[4]) - target) < Math.abs(Math.abs(a[4]) - target) ? r : a }) }
+  function optionStrategies(snap, closeAtExpiry, fee) {
+    fee = fee == null ? 0.0065 : fee; var R = snap.rows, S = snap.underlying, E = closeAtExpiry, out = [];
+    var put = function (k) { return Math.max(0, k - E) }, call = function (k) { return Math.max(0, E - k) };
+    var p20 = pickDelta(R, 'P', 0.20), p10 = pickDelta(R, 'P', 0.10), c20 = pickDelta(R, 'C', 0.20), c30 = pickDelta(R, 'C', 0.30), c50 = pickDelta(R, 'C', 0.50);
+    if (p20) out.push({ name: 'Cash secured put, 0.20 delta', credit: p20[2], pnl: p20[2] - put(p20[1]) - fee, maxLoss: p20[1] - p20[2], capital: p20[1], assigned: E < p20[1], spread: p20[3] - p20[2] });
+    if (c20) out.push({ name: 'Covered call, 0.20 delta', credit: c20[2], pnl: (Math.min(E, c20[1]) - S) + c20[2] - fee, maxLoss: S - c20[2], capital: S, assigned: E > c20[1], spread: c20[3] - c20[2] });
+    if (p20 && p10 && p10[1] < p20[1]) { var cr = p20[2] - p10[3]; out.push({ name: 'Put credit spread, 0.20 / 0.10', credit: cr, pnl: cr - (put(p20[1]) - put(p10[1])) - 2 * fee, maxLoss: (p20[1] - p10[1]) - cr, capital: (p20[1] - p10[1]) - cr, assigned: E < p20[1], spread: (p20[3] - p20[2]) + (p10[3] - p10[2]) }) }
+    if (c50 && c30 && c30[1] > c50[1]) { var db = c50[3] - c30[2]; out.push({ name: 'Call debit spread, 0.50 / 0.30', credit: -db, pnl: (call(c50[1]) - call(c30[1])) - db - 2 * fee, maxLoss: db, capital: db, assigned: false, spread: (c50[3] - c50[2]) + (c30[3] - c30[2]) }) }
+    out.forEach(function (o) { o.ret = o.capital > 0 ? o.pnl / o.capital * 100 : null }); return out;
+  }
+
+  return { dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;

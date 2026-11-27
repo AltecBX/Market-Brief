@@ -137,7 +137,7 @@ function scorecard() {
     h += '<div class="r"><b>Directional calls</b><div class="k">' + (dir.n ? dir.hit + ' of ' + dir.n + ' sessions called right (' + (dir.hit / dir.n * 100).toFixed(0) + '%, range ' + (CORE.wilson(dir.hit, dir.n)[0] * 100).toFixed(0) + ' to ' + (CORE.wilson(dir.hit, dir.n)[1] * 100).toFixed(0) + '%). Calling up every time: ' + (dir.up / dir.n * 100).toFixed(0) + '%. ' : 'No session scored yet. Briefs record one call per session from now on. ') + (dir.revisions ? dir.revisions + ' later briefs revised a call for the same session; only the last call made before that session closed is scored, so revisions do not inflate the count. ' : '') + (dir.pend ? dir.pend + ' sessions pending.' : '') + '</div></div>';
     var byR = {}; dir.rows.forEach(function (r) { if (!r.regime) return; byR[r.regime] = byR[r.regime] || [0, 0]; byR[r.regime][0]++; if (r.hit) byR[r.regime][1]++ });
     if (Object.keys(byR).length) h += '<div class="r k">By regime: ' + Object.keys(byR).map(function (k) { return esc(k) + ' ' + byR[k][1] + ' of ' + byR[k][0] }).join(', ') + '</div>';
-    h += '<div class="r"><b>Implied move coverage</b><div class="k">' + (cov.n ? cov.hit + ' of ' + cov.n + ' expiries closed inside the implied move (' + (cov.hit / cov.n * 100).toFixed(0) + '%); about 68% is what a one standard deviation move implies. ' : 'No expiry has passed yet. ') + (cov.dup ? cov.dup + ' repeat copies of the same option data were collapsed. ' : '') + (cov.pend ? cov.pend + ' expiries pending.' : '') + '</div></div>';
+    h += '<div class="r"><b>Implied move coverage</b><div class="k">' + (cov.n ? cov.hit + ' of ' + cov.n + ' expiries closed inside the implied move (' + (cov.hit / cov.n * 100).toFixed(0) + '%); about 68% is what a one standard deviation move implies. Windows that overlap share the same market moves, so the effective sample is ' + cov.eff + ' (' + cov.effHit + ' inside' + (cov.eff ? ', range ' + (CORE.wilson(cov.effHit, cov.eff)[0] * 100).toFixed(0) + ' to ' + (CORE.wilson(cov.effHit, cov.eff)[1] * 100).toFixed(0) + '%' : '') + '). By horizon: ' + Object.keys(cov.byH).map(function (k) { return esc(k) + ' ' + cov.byH[k][1] + ' of ' + cov.byH[k][0] }).join(', ') + '. ' : 'No expiry has passed yet. ') + (cov.dup ? cov.dup + ' repeat copies from later briefs were collapsed into one outcome per expiry. ' : '') + (cov.pend ? cov.pend + ' expiries pending.' : '') + '</div></div>';
     h += '<div class="r k">Scores read the archive exactly as published and Cboe S&P closes. Fewer than 20 scored sessions says little.</div>';
     $('score').innerHTML = h;
   });
@@ -278,3 +278,26 @@ function renderOutlook() {
 }
 var _render2 = render;
 render = function () { _render2(); try { renderOutlook() } catch (e) { } };
+
+/* ---------- Is the brief's analysis still valid? Checked against the S&P perp at publication time ---------- */
+var PUB = null;
+function loadPub() {
+  if (!B.updated) return; var t = new Date(B.updated).getTime(), t5 = t - t % 3e5; if (PUB && PUB.t === t5) return;
+  post({ type: 'candleSnapshot', req: { coin: 'xyz:SP500', interval: '5m', startTime: t5, endTime: t5 + 3e5 } }).then(function (k) { var c = (k || []).filter(function (z) { return +z.t === t5 })[0]; if (c) { PUB = { t: t5, px: +c.o }; renderInval() } }).catch(function () { });
+}
+function renderInval() {
+  var s = px('xyz:SP500'), el = $('inval'), sec = $('secInval'); if (!PUB || !s || !fresh('xyz:SP500')) { sec.style.display = 'none'; return }
+  var z0 = zoneOf(PUB.px), z1 = zoneOf(s), items = [], e0 = B.opt.em && B.opt.em[0], mv = (s / PUB.px - 1) * 100;
+  if (z0 !== z1) items.push('The brief was written in the <b>' + z0 + '</b> zone (S&amp;P perp ' + f(PUB.px, 0) + '); it is now in the <b>' + z1 + '</b> zone (' + f(s, 0) + '). Its scenario no longer applies.');
+  var name = z0 === 'Bull' ? 'Bullish' : z0 === 'Range' ? 'Neutral' : 'Bearish', sc = (B.scenarios || []).filter(function (q) { return q.n === name })[0];
+  if (sc && sc.inval) { var m = String(sc.inval).match(/([\d,]{4,})/); if (m) { var L = +m[1].replace(/,/g, ''); if ((PUB.px - L) * (s - L) < 0) items.push('Crossed the brief\'s invalidation level ' + f(L, 0) + ': "' + esc(sc.inval) + '".') } }
+  if (e0) { var daily = e0[1]; if (Math.abs(mv) >= daily * 0.75) items.push('The S&amp;P perp moved ' + sg(mv) + ' since the brief, ' + (Math.abs(mv) / daily * 100).toFixed(0) + '% of the nearest implied move, so its levels may be stale.') }
+  var gf = gammaFlip(); if (gf && (PUB.px - gf) * (s - gf) < 0) items.push('Crossed the gamma flip ' + f(gf, 0) + ' since the brief (estimate from open interest).');
+  if (REV && REV.label && /sustainable/.test(REV.label)) items.push('A ' + esc(REV.label.toLowerCase()) + ' is forming, see Reversal watch.');
+  if (!items.length) { sec.style.display = 'none'; return }
+  sec.style.display = ''; el.innerHTML = items.map(function (i) { return '<div class="r full">' + i + '</div>' }).join('') + '<div class="r full k">Brief published ' + esc(B.updatedLabel) + '. The next scheduled update is ' + esc(B.next || 'pending') + '.</div>';
+}
+var _applyBrief4 = applyBrief;
+applyBrief = function (nb) { _applyBrief4(nb); PUB = null; try { loadPub() } catch (e) { } };
+var _render3 = render;
+render = function () { _render3(); try { renderInval() } catch (e) { } };

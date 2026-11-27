@@ -7,22 +7,42 @@ function load(sym) { const j = JSON.parse(fs.readFileSync(path.join(D, 'hist', s
 function save(name, obj) { fs.mkdirSync(path.join(D, 'research'), { recursive: true }); fs.writeFileSync(path.join(D, 'research', name), JSON.stringify(obj)); console.log('wrote', name) }
 const now = new Date().toISOString();
 
-/* 1. Fingerprint validation: walk forward, one test date every 20 sessions so outcome windows never overlap */
+/* Permanent experiment ledger: every configuration ever tested, including failures. Multiple testing uses its full size. */
+const LEDGER = path.join(D, 'research', 'ledger.json');
+const ledger = fs.existsSync(LEDGER) ? JSON.parse(fs.readFileSync(LEDGER)) : { note: 'Every research configuration tested, kept permanently, including failed ones. The count sets the multiple testing adjustment.', entries: [] };
+function logExp(kind, config, result) { const id = kind + ':' + JSON.stringify(config); const e = ledger.entries.find(x => x.id === id); const row = { id, kind, config, first: e ? e.first : now.slice(0, 10), last: now.slice(0, 10), runs: e ? e.runs + 1 : 1, result }; if (e) Object.assign(e, row); else ledger.entries.push(row) }
+
+/* 1. Fingerprint: tune on 2005 to 2015 only, then test the chosen setting once on 2016 onward. Every model is scored on the same test dates. */
 function fingerprint() {
   const H = { SPX: load('SPX'), VIX: load('VIX'), NDX: load('NDX'), US10Y: load('US10Y'), RSP10: load('RSP10'), SPY10: load('SPY10'), SMH10: load('SMH10'), QQQ10: load('QQQ10') };
-  const F = C.features(H), S = H.SPX, K = 20, HOR = 20, keys = C.FEAT.map(x => x[0]);
-  const models = [['All conditions', keys]].concat(C.FEAT.map(x => [x[1] + ' only', [x[0]]]));
-  const res = models.map(m => ({ name: m[0], keys: m[1], pred: [], real: [] })), base = { pred: [], real: [] };
-  let last = -1e9;
-  for (let t = 0; t < F.length; t++) {
-    if (F[t].d < 20050101 || F[t].i - last < HOR) continue; const real = C.fwdRet(S, F[t].i, HOR); if (real == null) continue; last = F[t].i;
-    res.forEach(r => { const nb = C.neighbors(F, t, r.keys, K, 20, HOR); if (nb.length < 10) return; const p = C.mean(nb.map(x => C.fwdRet(S, F[x[1]].i, HOR))); r.pred.push(p); r.real.push(real) });
-    const past = []; for (let j = 0; j < t - HOR; j += 5) { const v = C.fwdRet(S, F[j].i, HOR); if (v != null) past.push(v) } base.pred.push(C.mean(past)); base.real.push(real);
-  }
-  const score = r => { const n = r.pred.length, hit = r.pred.filter((p, i) => (p > 0) === (r.real[i] > 0)).length; return { n, hit, rate: n ? hit / n : null, ci: C.wilson(hit, n), ic: C.pearson(r.pred, r.real) } };
-  const out = { asof: now, dataAsof: S.asof, horizon: HOR, k: K, from: 20050101, models: res.map(r => Object.assign({ name: r.name }, score(r))), baseline: score(base), alwaysUp: (() => { const n = base.real.length, h = base.real.filter(x => x > 0).length; return { n, hit: h, rate: h / n } })(),
-    note: 'Each test date uses only features known that day and matches whose 20 session outcome had finished by then. Test dates are 20 sessions apart, so no outcome is counted twice. 10 single feature models were also tested, so treat a small edge as likely noise.' };
-  save('fingerprint.json', out);
+  const F = C.features(H), S = H.SPX, HOR = 20, all = C.FEAT.map(x => x[0]);
+  const SETS = { all, price: ['dd', 'r5', 'r20', 'rv', 'ma'], macro: ['vix', 'dvix', 'y20', 'tech'], core: ['dd', 'r20', 'vix', 'rv'] };
+  const vb = v => v < 15 ? 0 : v < 20 ? 1 : v < 30 ? 2 : 3;
+  function nbr(ti, cfg) { const t = F[ti], keys = SETS[cfg.set], c = [];
+    for (let i = 0; i < ti - HOR; i++) { const f = F[i]; if (cfg.regime && vb(f.vix) !== vb(t.vix)) continue; let s = 0, m = 0;
+      for (const k of keys) { let a = t['z' + k], b = f['z' + k]; if (!C.isNum(a) || !C.isNum(b)) continue; if (cfg.scale === 'cdf') { a = C.ncdf(a); b = C.ncdf(b) } s += cfg.dist === 'l1' ? Math.abs(a - b) : (a - b) ** 2; m++ }
+      if (m >= Math.max(1, keys.length - 2)) c.push([cfg.dist === 'l1' ? s / m : Math.sqrt(s / m), i]) }
+    c.sort((a, b) => a[0] - b[0]); const pick = []; for (const x of c) { if (pick.length >= cfg.k) break; if (pick.every(p => Math.abs(F[p[1]].i - F[x[1]].i) >= 20)) pick.push(x) } return pick }
+  const dates = (lo, hi) => { const out = []; let last = -1e9; for (let t = 0; t < F.length; t++) { if (F[t].d < lo || F[t].d >= hi || F[t].i - last < HOR) continue; if (C.fwdRet(S, F[t].i, HOR) == null) continue; last = F[t].i; out.push(t) } return out };
+  const trainD = dates(20050101, 20151201), testD = dates(20160201, 99999999);  /* two months of embargo between them */
+  function evalCfg(cfg, D) { const pred = [], real = [], bh = []; for (const t of D) { const nb = nbr(t, cfg); if (nb.length < 5) return null; pred.push(C.mean(nb.map(x => C.fwdRet(S, F[x[1]].i, HOR)))); real.push(C.fwdRet(S, F[t].i, HOR)) } return { pred, real } }
+  function score(pr, D) { const n = pr.real.length, hit = pr.pred.filter((p, i) => (p > 0) === (pr.real[i] > 0)).length, up = pr.real.filter(x => x > 0).length;
+    const strat = pr.pred.map((p, i) => p > 0 ? pr.real[i] : 0), mae = C.mean(pr.pred.map((p, i) => Math.abs(p - pr.real[i])));
+    const exp = []; for (const t of D) { const past = []; for (let j = 0; j < t - HOR; j += 5) { const v = C.fwdRet(S, F[j].i, HOR); if (v != null) past.push(v) } exp.push(C.mean(past)) }
+    const maeBase = C.mean(exp.map((p, i) => Math.abs(p - pr.real[i])));
+    return { n, hit, rate: hit / n, ci: C.wilson(hit, n), upRate: up / n, ic: C.pearson(pr.pred, pr.real), mae, maeBase, longFlat: C.mean(strat), buyHold: C.mean(pr.real), inMarket: pr.pred.filter(p => p > 0).length / n } }
+  const grid = []; for (const set of Object.keys(SETS)) for (const scale of ['z', 'cdf']) for (const dist of ['l2', 'l1']) for (const k of [10, 20, 40]) for (const regime of [0, 1]) grid.push({ set, scale, dist, k, regime });
+  const tr = grid.map(cfg => { const pr = evalCfg(cfg, trainD); const sc = pr ? score(pr, trainD) : null; logExp('fingerprint', cfg, sc ? { train: { n: sc.n, rate: sc.rate, ic: sc.ic } } : { train: null }); return { cfg, sc } }).filter(x => x.sc);
+  tr.sort((a, b) => (b.sc.rate - b.sc.upRate) - (a.sc.rate - a.sc.upRate) || (b.sc.ic || 0) - (a.sc.ic || 0));
+  const best = tr[0], defaultCfg = { set: 'all', scale: 'z', dist: 'l2', k: 20, regime: 0 };
+  const models = [['Tuned on 2005 to 2015', best.cfg], ['Default, all conditions', defaultCfg]].concat(C.FEAT.map(x => [x[1] + ' only', { set: 'one', one: x[0], scale: 'z', dist: 'l2', k: 20, regime: 0 }]));
+  SETS.one = null; const res = models.map(([name, cfg]) => { if (cfg.set === 'one') SETS.one = [cfg.one]; const pr = evalCfg(cfg, testD); return { name, cfg, pr } }).filter(x => x.pr);
+  const test = res.map(x => Object.assign({ name: x.name, cfg: x.cfg }, score(x.pr, testD)));
+  const T0 = test[0], promoted = T0.ci[0] > T0.upRate && T0.mae < T0.maeBase && T0.longFlat > T0.buyHold;
+  logExp('fingerprint-test', best.cfg, { test: { n: T0.n, rate: T0.rate, ic: T0.ic } });
+  save('fingerprint.json', { asof: now, dataAsof: S.asof, horizon: HOR, gridSize: grid.length, trainDates: trainD.length, testDates: testD.length, best: best.cfg, bestTrain: best.sc, test, promoted,
+    note: 'Settings were tuned only on 2005 to 2015 and tested once on 2016 onward, with a 2 month gap. Every model is scored on the same ' + testD.length + ' test dates, 20 sessions apart, so outcomes never overlap. Matched baselines: calling up every time, and the average 20 day return known at each date. A model is promoted only if its hit rate range clears calling up, its error beats the baseline and long or flat beats buy and hold.' });
+  return { promoted, T0 };
 }
 
 /* 2. Intraday timing from SPY 30 minute bars */
@@ -79,4 +99,55 @@ async function semis() {
     note: 'Perp prices on Hyperliquid. Asian move: prior US close to 07:00 UTC, after Seoul, Tokyo and Taipei have closed. Outcome: 07:00 UTC to the US close, so it starts after the Asian information is known. Controls: the stock\'s prior US session and the S&P perp over the same night. Days with under 30% of normal Asian trading volume are treated as Asian holidays and dropped. The gain is out of sample (walk forward after 60 days): above 0 means the Asian move reduced forecast error. p values are adjusted for the 16 pairs tested. SOXX has no perp on the provider. About 7 months of data.' });
 }
 
-(async () => { fingerprint(); seasonality(); try { await semis() } catch (e) { console.log('semis skipped:', e.message) } })();
+/* 4. Conditional intraday engine, walk forward: each day is predicted from earlier days only */
+function loadDays(sym) { const p = path.join(D, 'intraday', sym + '30.json'); if (!fs.existsSync(p)) return null; const j = JSON.parse(fs.readFileSync(p)), by = {}; j.rows.forEach(r => (by[r[0]] = by[r[0]] || []).push([r[1], r[2], r[3], r[4], r[5], r[6]])); return by }
+function intraday() {
+  const S = loadDays('SPY'), M = loadDays('SMH'), keys = Object.keys(S).map(Number).sort(), days = [];
+  let prev = null; const rngs = [];
+  for (const d of keys) { const b = S[d].sort((a, c) => a[0] - c[0]); if (b.length !== 13) { prev = b[b.length - 1][4]; continue } const m = M && M[d] && M[d].length === 13 ? M[d].sort((a, c) => a[0] - c[0]) : null;
+    const atr = rngs.length >= 10 ? C.mean(rngs.slice(-20)) : null; days.push({ d, prev, b, semi: m, atr }); rngs.push(Math.max(...b.map(x => x[2])) - Math.min(...b.map(x => x[3]))); prev = b[12][4] }
+  const out = {}; C.OUT.forEach(k => out[k] = []); const upE = [], dnE = [];
+  for (let i = 60; i < days.length; i++) for (const t of [0, 1, 3, 5, 7, 9]) {
+    const hist = days.slice(0, i).map(D2 => { const s = C.dayState(D2, t, D2.atr); return { s, o: C.dayOutcome(D2, s) } });
+    const s = C.dayState(days[i], t, days[i].atr), o = C.dayOutcome(days[i], s), p = C.intradayPredict(hist, s, 30);
+    C.OUT.forEach(k => { if (!p[k] || o[k] == null) return; const v = hist.map(h => h.o[k]).filter(x => x === true || x === false); const base = v.length ? v.filter(Boolean).length / v.length : 0.5; out[k].push([p[k].p, o[k], base]) });
+    if (p.up.n) { upE.push(Math.abs(p.up.mean - o.up)); dnE.push(Math.abs(p.down.mean - o.down)) }
+  }
+  const skill = {}; C.OUT.forEach(k => { const h = Math.floor(out[k].length / 2); skill[k] = { n: out[k].length, skill: C.brierSkill(out[k]), first: C.brierSkill(out[k].slice(0, h)), second: C.brierSkill(out[k].slice(h)) }; logExp('intraday', { outcome: k, k: 30, bars: [0, 1, 3, 5, 7, 9] }, skill[k]) });
+  save('intraday.json', { asof: now, days: days.length, from: days[0].d, to: days[days.length - 1].d, tested: days.length - 60, skill, upMAE: C.mean(upE), downMAE: C.mean(dnE),
+    note: 'SPY 30 minute bars, regular session, about one year. Each test day is predicted from earlier days only, using the state at the end of a bar: opening gap, move since the open, position in the day\'s range, range so far vs the average daily range, and semis vs SPY. Breadth has no intraday history here, so it is not used. Skill compares the Brier score with the base rate known at the time: above 0 is better than the base rate, 0 or below is no better.' });
+  return skill;
+}
+
+/* 5. Options strategies from saved chain snapshots whose expiry has passed */
+function options() {
+  const dir = path.join(D, 'chains', 'SPY'); const snaps = fs.existsSync(dir) ? fs.readdirSync(dir).map(f => JSON.parse(fs.readFileSync(path.join(dir, f)))) : []; const S = load('SPY10'), V = load('VIX'), res = [];
+  snaps.forEach(sn => { const j = S.ix[+sn.expiry.replace(/-/g, '')]; if (j == null) return; const vi = V.ix[+sn.session.replace(/-/g, '')]; C.optionStrategies(sn, S.c[j], 0.0065).forEach(o => res.push(Object.assign({ session: sn.session, expiry: sn.expiry, vix: vi != null ? V.c[vi] : null }, o))) });
+  const by = {}; res.forEach(r => (by[r.name] = by[r.name] || []).push(r));
+  const summary = Object.keys(by).map(n => { const a = by[n], rets = a.map(x => x.ret).filter(C.isNum); let eq = 0, peak = 0, dd = 0; rets.forEach(r => { eq += r; peak = Math.max(peak, eq); dd = Math.min(dd, eq - peak) }); return { name: n, n: a.length, win: a.filter(x => x.pnl > 0).length, avgRet: C.mean(rets), worst: Math.min(...rets), maxDD: dd, assigned: a.filter(x => x.assigned).length, avgSpread: C.mean(a.map(x => x.spread)) } });
+  save('options.json', { asof: now, snapshots: snaps.length, pending: snaps.filter(s => S.ix[+s.expiry.replace(/-/g, '')] == null).length, trades: res, summary,
+    note: 'Built only from real end of session SPY chains saved by the close run (bid, ask, delta). Sells fill at the bid and buys at the ask, plus $0.65 a contract. Held to expiry and settled on the SPY close, so early assignment and intraday management are not modeled. Bulk historical chains are not available on the current subscriptions, so this sample grows one snapshot per session from Nov 25 2026.' });
+}
+
+/* 6. Signal reliability registry */
+function registry(fpRes, intra) {
+  const H = {}; ['SPX', 'VIX', 'NDX', 'SPY', 'QQQ', 'N225', 'SMH', 'SPY10', 'RSP10', 'NVDA10'].forEach(s => { try { H[s] = load(s) } catch (e) { } });
+  const total = ledger.entries.length + C.STUDIES.length, out = [];
+  C.STUDIES.forEach(st => {
+    const need = st.tgt === 'pick' ? ['NVDA10'] : st.data; if (need.some(s => !H[s])) { out.push({ name: st.name, cls: 'Data unavailable' }); return }
+    const P = {}; st.p.forEach(p => P[p[0]] = p[2]); const R = C.runStudy(st, P, { gap: 5, pick: 'NVDA10' }, H);
+    const tr = C.summarize(R, 5, 'train'), te = C.summarize(R, 5, 'test'), wf = C.walkForward(R, 5, 10), pAdj = tr.pMean == null ? 1 : Math.min(1, tr.pMean * total);
+    let cls; if (tr.n + te.n < 30 || te.n < 10) cls = 'Insufficient evidence'; else if (pAdj < 0.05 && te.excess != null && (te.excess > 0) === (tr.excess > 0) && te.pMean != null && te.pMean < 0.1 && wf.n >= 20 && wf.ci[0] > 0.5) cls = 'Validated'; else if (tr.pMean != null && tr.pMean < 0.05 && (te.excess > 0) === (tr.excess > 0)) cls = 'Promising but unconfirmed'; else cls = 'Failed validation';
+    logExp('study', { id: st.id, P, horizon: 5 }, { cls, trainN: tr.n, testN: te.n });
+    out.push({ name: st.name, id: st.id, cls, horizon: 5, train: { n: tr.n, excess: tr.excess, p: tr.pMean, pAdj }, test: { n: te.n, excess: te.excess, p: te.pMean }, wf: { n: wf.n, hits: wf.hits, lo: wf.ci[0], hi: wf.ci[1], avg: wf.avg }, data: R.src + ', ' + R.start + ' to ' + R.asof });
+  });
+  out.push({ name: 'Market fingerprint', cls: fpRes.promoted ? 'Validated' : 'Failed validation', test: { n: fpRes.T0.n, rate: fpRes.T0.rate, upRate: fpRes.T0.upRate } });
+  const sm = JSON.parse(fs.readFileSync(path.join(D, 'research', 'semis.json'))); sm.tests.forEach(t => { const cls = t.n < 60 ? 'Insufficient evidence' : t.pAdj < 0.05 && t.oosGain > 0 ? 'Validated' : t.pAdj < 0.05 ? 'Failed validation' : t.oosGain > 0 ? 'Promising but unconfirmed' : 'Failed validation'; out.push({ name: t.asia + ' perp then ' + t.target, cls, test: { n: t.oosN, gain: t.oosGain }, train: { pAdj: t.pAdj } }) });
+  out.push({ name: 'Asian chip stocks, local cash markets (KRX, TSE, TWSE)', cls: 'Data unavailable', why: 'No official local cash data feed is reachable from this project; only Hyperliquid perps (24 hour proxies) and the TSM ADR are available.' });
+  const INAME = { highDone: 'Daily high already set', lowDone: 'Daily low already set', newHigh: 'New high later', newLow: 'New low later', openBack: 'Reclaims the open', vwapBack: 'Reclaims VWAP', closeUp: 'Closes above the prior close', rec25: 'Recovers 25% of the decline', rec50: 'Recovers 50%', rec75: 'Recovers 75%', rec100: 'Recovers 100%' };
+  Object.keys(intra).forEach(k => { const s = intra[k]; out.push({ name: 'Intraday: ' + INAME[k], key: k, cls: s.n < 200 ? 'Insufficient evidence' : s.skill > 0.05 && s.first > 0.05 && s.second > 0.05 ? 'Validated' : s.skill > 0.05 ? 'Promising but unconfirmed' : 'Failed validation', test: { n: s.n, skill: s.skill, first: s.first, second: s.second } }) });
+  const op = JSON.parse(fs.readFileSync(path.join(D, 'research', 'options.json'))); out.push({ name: 'Option strategies (CSP, covered call, spreads)', cls: op.trades.length < 30 ? 'Insufficient evidence' : 'Promising but unconfirmed', why: op.trades.length + ' settled trades from ' + op.snapshots + ' saved chains' });
+  save('registry.json', { asof: now, tests: total, rules: 'Intraday outcomes are validated when walk forward skill beats the base rate by more than 0.05 in both halves of the test period. Validated: research period significant after adjusting for every test in the ledger, the untouched period agrees (p under 0.10), and walk forward is right more than half the time with its 95% range above 50%. Promising: significant before adjustment and the test period agrees in direction. Insufficient: under 30 events or under 10 in the test period. Failed: anything else.', signals: out });
+}
+
+(async () => { const fpRes = fingerprint(); seasonality(); try { await semis() } catch (e) { console.log('semis skipped:', e.message) } const intra = intraday(); options(); registry(fpRes, intra); fs.writeFileSync(LEDGER, JSON.stringify(ledger)); console.log('ledger', ledger.entries.length, 'configurations') })();

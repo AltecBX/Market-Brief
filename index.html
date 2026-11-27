@@ -225,6 +225,7 @@ html.m30 .x30h{display:none!important}
 <div class="pills" id="healthSec" style="display:none;margin-top:6px"><span class="k" style="align-self:center">Data as of</span><span id="health" style="display:contents"></span></div>
 
 
+<div class="sec" id="secInval" style="display:none"><div class="sh"><h2 class="dn" style="color:var(--red)">The brief may be out of date</h2></div><div class="grp" id="inval"></div></div>
 <div class="sec since" id="sinceSec" style="display:none">
 <div class="sh"><h2>What changed since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
 <div class="grp" id="since"></div>
@@ -313,12 +314,16 @@ html.m30 .x30h{display:none!important}
 
 <!-- HISTORY -->
 <div class="panel" id="p-hist">
+<div class="sec"><div class="sh"><h2>Signal reliability</h2><span>What has an edge, what does not</span></div><div class="grp" id="rreg"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>Intraday probabilities</h2><span>From the state so far</span></div><div class="grp hist" id="rintra"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Historical probability engine</h2></div><div class="chips" id="hstudies"></div><div class="grp pad" id="hparams"></div></div>
 <div class="sec"><div class="sh"><h2>Results</h2><span>95% ranges in brackets</span></div><div class="grp hist" id="hres"></div>
 <div class="note">Point in time: each event uses only data up to that day; results use later sessions only. Overlapping events are skipped. Probabilities are shown only with 10 or more events. History describes the past and is not a forecast.</div></div>
 <div class="sec"><div class="sh"><h2>Comparable dates</h2><span>Tap a date</span></div><div class="grp hist" id="hlist"></div></div>
+<div class="sec"><div class="sh"><h2>Recovery after big declines</h2><span>Chip stocks, 10 years</span></div><div class="grp pad hist" id="rrec"></div></div>
 <div class="sec"><div class="sh"><h2>Market fingerprint</h2><span>Closest past environments</span></div><div class="grp hist" id="rfp"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Intraday timing</h2><span>When highs and lows form</span></div><div class="grp hist" id="rseas"></div></div>
+<div class="sec"><div class="sh"><h2>Option strategy research</h2><span>Real chains only</span></div><div class="grp hist" id="ropt"></div></div>
 <div class="sec"><div class="sh"><h2>Asia to US chips</h2><span>Does the Asian session add anything</span></div><div class="grp hist" id="rsemis"></div></div>
 </div>
 
@@ -523,6 +528,36 @@ var CORE = (function () {
   function pProp(k, n, p0) { if (n < 3 || !(p0 > 0 && p0 < 1)) return null; return 2 * (1 - ncdf(Math.abs((k - n * p0) / Math.sqrt(n * p0 * (1 - p0))))) }
   function pearson(a, b) { var n = a.length; if (n < 10) return null; var ma = mean(a), mb = mean(b), sab = 0, sa = 0, sb = 0; for (var i = 0; i < n; i++) { sab += (a[i] - ma) * (b[i] - mb); sa += (a[i] - ma) * (a[i] - ma); sb += (b[i] - mb) * (b[i] - mb) } return sa && sb ? sab / Math.sqrt(sa * sb) : null }
 
+  function sg(v, d) { return (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(d == null ? 2 : d) + '%' }
+var STUDIES = [
+  { id: 'spxdown', name: 'S&P down day', data: ['SPX'], tgt: 'SPX', p: [['x', 'S&P closes down at least', 3, '%', 0.5]], desc: 'S&P 500 close to close decline. Cboe closes since 1975. Entry at the event close.',
+    ev: function (S, i, P) { var c = S.SPX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
+  { id: 'streak', name: 'S&P losing streak', data: ['SPX'], tgt: 'SPX', p: [['n', 'Down closes in a row', 4, '', 1]], desc: 'The day a streak of lower S&P closes reaches the length set. Entry at that close.',
+    ev: function (S, i, P) { var c = S.SPX.c, n = P.n; if (i < n + 1) return null; for (var k = 0; k < n; k++) if (!(c[i - k] < c[i - k - 1])) return null; if (c[i - n] < c[i - n - 1]) return null; return { v: (c[i] / c[i - n] - 1) * 100, ref: c[i - n] } } },
+  { id: 'ndxdown', name: 'Nasdaq 100 down day', data: ['NDX'], tgt: 'NDX', p: [['x', 'Nasdaq 100 closes down at least', 4, '%', 0.5]], desc: 'Nasdaq 100 close to close decline. FRED closes since 1986.',
+    ev: function (S, i, P) { var c = S.NDX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
+  { id: 'vixlevel', name: 'VIX above a level', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['L', 'VIX closes at or above', 30, '', 1], ['cross', 'Only the first close above (1 = yes)', 1, '', 1]], desc: 'The VIX closes at 4:15pm, after the S&P close, so entry is the next S&P close to avoid using information early. VIX since 1990.',
+    ev: function (S, i, P) { var v = S.VIX.c; if (i < 1 || v[i] < P.L || (P.cross && v[i - 1] >= P.L)) return null; return { v: v[i], lab: 'VIX ' + v[i].toFixed(2) } } },
+  { id: 'vixspike', name: 'VIX one day spike', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['x', 'VIX closes up at least', 25, '%', 5]], desc: 'VIX close to close jump. Entry is the next S&P close.',
+    ev: function (S, i, P) { var v = S.VIX.c; return i > 0 && (v[i] / v[i - 1] - 1) * 100 >= P.x ? { v: (v[i] / v[i - 1] - 1) * 100, lab: 'VIX ' + sg((v[i] / v[i - 1] - 1) * 100, 0) } : null } },
+  { id: 'vixrev', name: 'VIX spike then reversal', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', from: 1992, p: [['x', 'VIX intraday high above prior close by', 20, '%', 5], ['y', 'VIX closes no more than this above prior close', 5, '%', 1]], desc: 'Fear spikes intraday and fades by the close. VIX highs and lows since 1992. Entry is the next S&P close.',
+    ev: function (S, i, P) { var V = S.VIX; if (i < 1 || !V.h) return null; var pc = V.c[i - 1]; if ((V.h[i] / pc - 1) * 100 >= P.x && (V.c[i] / pc - 1) * 100 <= P.y) return { v: (V.h[i] / pc - 1) * 100, lab: 'VIX high ' + sg((V.h[i] / pc - 1) * 100, 0) + ', close ' + sg((V.c[i] / pc - 1) * 100, 0) }; return null } },
+  { id: 'recover', name: 'Intraday drop recovered', data: ['SPY'], tgt: 'SPY', p: [['x', 'SPY low below prior close by at least', 2, '%', 0.5], ['y', 'Share of the drop recovered by the close', 70, '%', 5]], desc: 'SPY daily highs and lows, about 2 years. Intraday data is only this long, so samples are small.',
+    ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100; if (dd > -P.x) return null; var rec = (T.c[i] - T.l[i]) / (pc - T.l[i]) * 100; return rec >= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', ' + rec.toFixed(0) + '% recovered', ref: pc } : null } },
+  { id: 'qqqhigh', name: 'Nasdaq drop, close near high', data: ['QQQ'], tgt: 'QQQ', p: [['x', 'QQQ low below prior close by at least', 3, '%', 0.5], ['y', 'Close in the top part of the range', 25, '%', 5]], desc: 'QQQ daily highs and lows, about 2 years.',
+    ev: function (S, i, P) { var T = S.QQQ; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100, rg = T.h[i] - T.l[i]; if (dd > -P.x || !rg) return null; return (T.h[i] - T.c[i]) / rg * 100 <= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', close ' + sg((T.c[i] / pc - 1) * 100), ref: pc } : null } },
+  { id: 'stock', name: 'Big chip stock drop', data: [], tgt: 'pick', pick: ['NVDA10', 'MU10', 'AMD10', 'WDC10', 'SMH10', 'SOXX10'], p: [['x', 'Closes down at least', 8, '%', 1]], desc: '10 years of split adjusted daily closes from Unusual Whales. Corporate actions (the SanDisk spin off from WDC, a bad SOXX stretch in 2022) are excluded.',
+    ev: function (S, i, P, T) { var c = T.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
+  { id: 'gap', name: 'SPY opening gap', data: ['SPY'], tgt: 'SPY', entry: 'open', p: [['x', 'Gap size at least', 1, '%', 0.25], ['dir', 'Direction (1 = up, 0 = down)', 0, '', 1]], desc: 'SPY open vs prior close, about 2 years. Entry at the open, when the gap is known.',
+    ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var g = (T.o[i] / T.c[i - 1] - 1) * 100; return (P.dir ? g >= P.x : g <= -P.x) ? { v: g, ref: T.c[i - 1], gap: 1 } : null } },
+  { id: 'breadth', name: 'Equal weight up, S&P down', data: ['SPY10', 'RSP10'], tgt: 'SPY10', p: [['x', 'SPY closes down at least', 0.5, '%', 0.25], ['y', 'RSP beats SPY by at least', 0.3, '%', 0.1]], desc: 'Equal weight (RSP) vs cap weight (SPY), 10 years of closes. A breadth proxy, not exchange breadth.',
+    ev: function (S, i, P) { var A = S.SPY10, R = S.RSP10, d = A.d[i], j = R.ix[d]; if (i < 1 || j == null || j < 1) return null; var a = (A.c[i] / A.c[i - 1] - 1) * 100, r = (R.c[j] / R.c[j - 1] - 1) * 100; return a <= -P.x && r - a >= P.y ? { v: a, lab: 'SPY ' + sg(a) + ', RSP ' + sg(r) } : null } },
+  { id: 'asia', name: 'Nikkei move, then Nasdaq', data: ['N225', 'NDX'], tgt: 'NDX', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1], ['ctrl', 'Prior US session move no bigger than (0 = off)', 0.5, '%', 0.25]], corr: 1,
+    desc: 'Tokyo closes before the US session of the same date. Daily closes only exist for the Nasdaq 100, so entry is that date\'s US close, after the information is known; the same day reaction is not measurable here without lookahead. The dollar conversion was removed because the only yen rate available is published after Tokyo closes.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i], X = S.NDX, j = X.ix[d]; if (i < 1 || j == null || j < 2) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100, u = (X.c[j - 1] / X.c[j - 2] - 1) * 100; if (P.ctrl > 0 && Math.abs(u) > P.ctrl) return null; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) + ', prior US day ' + sg(u) } : null } },
+  { id: 'asiasmh', name: 'Nikkei move, then US semis', data: ['N225', 'SMH'], tgt: 'SMH', entry: 'open', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1]], desc: 'Entry at the SMH open of the same date, which comes after Tokyo has closed. About 2 years of SMH bars.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i]; if (i < 1 || S.SMH.ix[d] == null) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) } : null } }
+];
   /* Series: {d:[YYYYMMDD], c:[], o?, h?, l?, ix:{d:i}, breaks?:[YYYYMMDD]} */
   function crossesBreak(T, i0, i1) { if (!T.breaks) return false; for (var b = 0; b < T.breaks.length; b++) { var x = T.breaks[b]; if (T.d[i0] < x && T.d[i1] >= x) return true } return false }
   var HZ = [1, 2, 3, 5, 10, 20];
@@ -553,23 +588,31 @@ var CORE = (function () {
     var sets = {}; HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var last = -1e9, a = []; ev.forEach(function (x) { if (x.cluster || x.open || !isNum(x.r[k])) return; if (x.ei - last < Math.max(k, 1)) return; last = x.ei; a.push(x) }); sets[k] = a });
     /* Baseline: every eligible day in the same window and data span, same entry and exit rule */
     var bfrom = Math.max(from, base.d[1], T.d[1]), bl = {};
-    HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var a = []; for (var i2 = 1; i2 < T.c.length; i2++) { var d2 = T.d[i2]; if (d2 < bfrom || d2 > to) continue; if (base !== T && base.ix[d2] == null) continue; var e2 = entryIdx(st, i2); if (e2 >= T.c.length) continue; var v = fwd(st, T, e2, k); if (isNum(v)) a.push(v) } bl[k] = stats(a) });
+    HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var a = [], L = []; for (var i2 = 1; i2 < T.c.length; i2++) { var d2 = T.d[i2]; if (d2 < bfrom || d2 > to) continue; if (base !== T && base.ix[d2] == null) continue; var e2 = entryIdx(st, i2); if (e2 >= T.c.length) continue; var v = fwd(st, T, e2, k); if (isNum(v)) { a.push(v); L.push([e2, v]) } } bl[k] = stats(a); bl[k].list = L });
     /* Untouched test period: the last 25% of the target's dates in range are held out and reported separately */
-    var span = T.d.filter(function (d3) { return d3 >= bfrom && d3 <= to }), cut = span.length ? span[Math.floor(span.length * 0.75)] : 0;
-    return { st: st, T: Tsym, all: ev, sets: sets, base: bl, cut: cut, hasHL: !!T.h, src: T.src, asof: T.asof, start: Math.max(bfrom, T.d[0]) };
+    var span = T.d.filter(function (d3) { return d3 >= bfrom && d3 <= to }), cut = span.length ? span[Math.floor(span.length * 0.75)] : 0, cutIdx = T.ix[cut] != null ? T.ix[cut] : T.c.length;
+    return { st: st, T: Tsym, all: ev, sets: sets, base: bl, cut: cut, cutIdx: cutIdx, hasHL: !!T.h, src: T.src, asof: T.asof, start: Math.max(bfrom, T.d[0]) };
   }
+  /* Train: outcome window must end before the cut (purged). Test: entries start k sessions after the cut (embargo), so no window straddles the split.
+     Each part is compared with all days from the same part, using the same purge and embargo. */
+  function inPart(R, k, ei, part) { if (part === 'train') return ei + Math.max(k, 1) <= R.cutIdx; if (part === 'test') return ei >= R.cutIdx + Math.max(k, 1); return true }
   function summarize(R, k, part) {
-    var a = (R.sets[k] || []).filter(function (x) { return part === 'train' ? x.d < R.cut : part === 'test' ? x.d >= R.cut : true }).map(function (x) { return x.r[k] });
-    var b = R.base[k], s = stats(a), up = a.filter(function (v) { return v > 0 }).length;
-    return { n: a.length, s: s, up: up, pUp: b && b.n ? pProp(up, a.length, b.up) : null, pMean: b && b.n ? pMean(a, b.mean) : null, excess: s.n ? s.mean - (b ? b.mean : 0) : null };
+    var a = (R.sets[k] || []).filter(function (x) { return inPart(R, k, x.ei, part) }).map(function (x) { return x.r[k] });
+    var bl = R.base[k], bv = part && bl && bl.list ? bl.list.filter(function (p) { return inPart(R, k, p[0], part) }).map(function (p) { return p[1] }) : null, b = bv ? stats(bv) : bl;
+    var s = stats(a), up = a.filter(function (v) { return v > 0 }).length;
+    return { n: a.length, s: s, up: up, base: b, pUp: b && b.n ? pProp(up, a.length, b.up) : null, pMean: b && b.n ? pMean(a, b.mean) : null, excess: s.n && b && b.n ? s.mean - b.mean : null };
   }
-  /* Walk forward: for each event in time order, use only earlier events to decide long or short (sign of their mean excess), then score the event. */
+  /* Walk forward: at each event, the side is chosen from earlier events only, and the benchmark is the average of all days whose outcome was already known at that entry (expanding, no future data). */
   function walkForward(R, k, minPrior) {
-    var a = R.sets[k] || [], b = R.base[k] ? R.base[k].mean : 0, done = [], hits = 0, n = 0, pnl = [];
-    a.forEach(function (x) { if (done.length >= (minPrior || 10)) { var m = mean(done) || 0, ex = x.r[k] - b; if (m !== 0) { n++; if ((m > 0) === (ex > 0)) hits++; pnl.push(m > 0 ? ex : -ex) } } done.push(x.r[k] - b) });
-    return { n: n, hits: hits, avg: pnl.length ? mean(pnl) : null, ci: n ? wilson(hits, n) : [NaN, NaN] };
+    var a = R.sets[k] || [], L = (R.base[k] && R.base[k].list) || [], li = 0, bs = 0, bn = 0, done = [], hits = 0, n = 0, pnl = [];
+    a.forEach(function (x) {
+      while (li < L.length && L[li][0] + k <= x.ei) { bs += L[li][1]; bn++; li++ }
+      var bench = bn ? bs / bn : 0, known = done.filter(function (p) { return p.e + k <= x.ei });
+      if (known.length >= (minPrior || 10) && bn >= 20) { var m = mean(known.map(function (p) { return p.ex })), ex = x.r[k] - bench; if (m !== 0) { n++; if ((m > 0) === (ex > 0)) hits++; pnl.push(m > 0 ? ex : -ex) } }
+      done.push({ e: x.ei, ex: x.r[k] - bench });
+    });
+    return { n: n, hits: hits, avg: pnl.length ? mean(pnl) : null, sdv: pnl.length > 1 ? sd(pnl) : null, ci: n ? wilson(hits, n) : [NaN, NaN] };
   }
-
   /* ---------- Intraday structure: completed candles only ---------- */
   function completed(K, now, ms) { return K.filter(function (c) { return +c.t + ms <= now }) }
   function pivots(K, kind) { var p = []; for (var i = 1; i < K.length - 1; i++) { if (kind === 'low' ? (+K[i].l < +K[i - 1].l && +K[i].l <= +K[i + 1].l) : (+K[i].h > +K[i - 1].h && +K[i].h >= +K[i + 1].h)) p.push(i) } return p }
@@ -642,12 +685,15 @@ var CORE = (function () {
     docs.forEach(function (d) {
       var u = new Date(d.updated).getTime();
       if (d.forecast && d.forecast.dir && d.forecast.date && isNum(d.forecast.ref)) { var key = d.forecast.date; var tclose = etClose(d.forecast.date); if (u < tclose) { tg[key] = tg[key] || []; tg[key].push({ u: u, f: d.forecast }) } }
-      (d.opt && d.opt.em || []).forEach(function (e) { if (!e[4]) return; var k2 = e[4] + '|' + e[3] + '|' + (d.opt.asof || ''); em[k2] = em[k2] || { exp: e[4], pct: e[1], base: d.opt.base, label: e[0], n: 0 }; em[k2].n++ });
+      (d.opt && d.opt.em || []).forEach(function (e) { if (!e[4]) return; var k2 = e[3] + '|' + e[4] + '|' + (d.opt.asof || ''); var st0 = d.opt.asofTs ? +String(d.opt.asofTs).slice(0, 10).replace(/-/g, '') : +String(d.updated).slice(0, 10).replace(/-/g, ''); em[k2] = em[k2] || { exp: e[4], pct: e[1], base: d.opt.base, label: e[0], und: e[3], start: st0, n: 0 }; em[k2].n++ });
     });
     var dir = { n: 0, hit: 0, revisions: 0, pend: 0, up: 0, rows: [] };
     Object.keys(tg).forEach(function (k) { var L = tg[k].sort(function (a, b) { return a.u - b.u }), last = L[L.length - 1].f, j = S.ix[+k.replace(/-/g, '')]; dir.revisions += L.length - 1; if (j == null) { dir.pend++; return } var up = S.c[j] > last.ref; dir.n++; if ((last.dir === 'up') === up) dir.hit++; if (up) dir.up++; dir.rows.push({ date: k, dir: last.dir, ref: last.ref, close: S.c[j], hit: (last.dir === 'up') === up, regime: last.regime || null, versions: L.length }) });
-    var cov = { n: 0, hit: 0, pend: 0, dup: 0 };
-    Object.keys(em).forEach(function (k) { var e = em[k], j = S.ix[+String(e.exp).replace(/-/g, '')]; cov.dup += e.n - 1; if (j == null) { cov.pend++; return } var r = emRange(e.base, e.pct); cov.n++; if (S.c[j] >= r.lo && S.c[j] <= r.hi) cov.hit++ });
+    /* Implied moves: one outcome per (underlying, expiry). Copies from later briefs are revisions. Windows that overlap in time are correlated, so the
+       effective sample counts only expiries whose windows do not overlap. */
+    var cov = { n: 0, hit: 0, pend: 0, dup: 0, eff: 0, effHit: 0, byH: {}, rows: [] }, seen = {};
+    Object.keys(em).forEach(function (k) { var e = em[k], key = e.und + '|' + e.exp; if (seen[key]) { cov.dup += e.n; return } seen[key] = 1; cov.dup += e.n - 1; var j = S.ix[+String(e.exp).replace(/-/g, '')]; if (j == null) { cov.pend++; return } var r = emRange(e.base, e.pct), hit = S.c[j] >= r.lo && S.c[j] <= r.hi; cov.n++; if (hit) cov.hit++; var hk = e.label; cov.byH[hk] = cov.byH[hk] || [0, 0]; cov.byH[hk][0]++; if (hit) cov.byH[hk][1]++; cov.rows.push({ start: e.start, exp: +String(e.exp).replace(/-/g, ''), hit: hit, und: e.und }) });
+    cov.rows.sort(function (a, b) { return a.exp - b.exp }); var lastEnd = 0; cov.rows.forEach(function (r) { if (r.start >= lastEnd) { cov.eff++; if (r.hit) cov.effHit++; lastEnd = r.exp } });
     return { dir: dir, cov: cov };
   }
 
@@ -681,7 +727,63 @@ var CORE = (function () {
   }
   function fwdRet(S, i, k) { return i + k < S.c.length ? (S.c[i + k] / S.c[i] - 1) * 100 : null }
 
-  return { isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+
+  /* ---------- Conditional intraday engine ----------
+     Day objects: {d, prev (prior close), b: [[hm, o, h, l, c, v], ...13 bars], semi: same for SMH or null}.
+     State after bar t uses bars 0..t only. Outcomes use bars after t. */
+  function dayState(D, t, atr) {
+    var b = D.b.slice(0, t + 1), o = b[0][1], c = b[t][4], hi = -1e18, lo = 1e18, pv = 0, vv = 0;
+    b.forEach(function (x) { hi = Math.max(hi, x[2]); lo = Math.min(lo, x[3]); var tp = (x[2] + x[3] + x[4]) / 3; pv += tp * x[5]; vv += x[5] });
+    var s = { t: t, o: o, c: c, hi: hi, lo: lo, vwap: vv ? pv / vv : c, gap: D.prev ? (o / D.prev - 1) * 100 : 0, ret: (c / o - 1) * 100, pos: hi > lo ? (c - lo) / (hi - lo) : 0.5, rng: atr ? (hi - lo) / atr : null };
+    if (D.semi && D.semi.length > t) s.semi = (D.semi[t][4] / D.semi[0][1] - 1) * 100 - s.ret; else s.semi = null;
+    return s;
+  }
+  function dayOutcome(D, s) {
+    var rest = D.b.slice(s.t + 1), close = D.b[D.b.length - 1][4], laterHi = -1e18, laterLo = 1e18, vwapBack = false, pv = 0, vv = 0;
+    D.b.slice(0, s.t + 1).forEach(function (x) { var tp = (x[2] + x[3] + x[4]) / 3; pv += tp * x[5]; vv += x[5] });
+    rest.forEach(function (x) { laterHi = Math.max(laterHi, x[2]); laterLo = Math.min(laterLo, x[3]); var tp = (x[2] + x[3] + x[4]) / 3; pv += tp * x[5]; vv += x[5]; if (vv && x[4] > pv / vv) vwapBack = true });
+    var none = !rest.length, dec = s.hi - s.lo;
+    return { highDone: none || laterHi <= s.hi, lowDone: none || laterLo >= s.lo, newHigh: !none && laterHi > s.hi, newLow: !none && laterLo < s.lo, openBack: s.c < s.o ? (!none && laterHi >= s.o) : null, vwapBack: s.c < s.vwap ? vwapBack : null, closeUp: D.prev ? close > D.prev : null, up: none ? 0 : (laterHi / s.c - 1) * 100, down: none ? 0 : (laterLo / s.c - 1) * 100,
+      rec25: dec > 0 && s.c < s.hi ? (!none && (laterHi - s.lo) / dec >= 0.25) : null, rec50: dec > 0 && s.c < s.hi ? (!none && (laterHi - s.lo) / dec >= 0.5) : null, rec75: dec > 0 && s.c < s.hi ? (!none && (laterHi - s.lo) / dec >= 0.75) : null, rec100: dec > 0 && s.c < s.hi ? (!none && laterHi >= s.hi) : null };
+  }
+  var IKEYS = ['gap', 'ret', 'pos', 'rng', 'semi'], OUT = ['highDone', 'lowDone', 'newHigh', 'newLow', 'openBack', 'vwapBack', 'closeUp', 'rec25', 'rec50', 'rec75', 'rec100'];
+  function intradayPredict(hist, s, K) {
+    /* hist: [{s, o}] from earlier days at the same bar. Features are scaled with those earlier days only. */
+    var sc = {}; IKEYS.forEach(function (k) { var v = hist.map(function (h) { return h.s[k] }).filter(isNum); sc[k] = v.length > 10 ? [mean(v), sd(v) || 1] : null });
+    var dist = hist.map(function (h) { var q = 0, m = 0; IKEYS.forEach(function (k) { if (!sc[k] || !isNum(s[k]) || !isNum(h.s[k])) return; var z = (s[k] - h.s[k]) / sc[k][1]; q += z * z; m++ }); return [m ? Math.sqrt(q / m) : 1e9, h] }).sort(function (a, b) { return a[0] - b[0] }).slice(0, K || 30);
+    var p = {}; OUT.forEach(function (k) { var v = dist.map(function (x) { return x[1].o[k] }).filter(function (x) { return x === true || x === false }); p[k] = v.length >= 10 ? { p: v.filter(Boolean).length / v.length, n: v.length } : null });
+    p.up = stats(dist.map(function (x) { return x[1].o.up })); p.down = stats(dist.map(function (x) { return x[1].o.down })); p.n = dist.length; return p;
+  }
+  function brierSkill(preds) { /* preds: [[p, outcome, baseP]] */ var b = 0, b0 = 0; preds.forEach(function (x) { b += (x[0] - (x[1] ? 1 : 0)) * (x[0] - (x[1] ? 1 : 0)); b0 += (x[2] - (x[1] ? 1 : 0)) * (x[2] - (x[1] ? 1 : 0)) }); return preds.length && b0 ? 1 - b / b0 : null }
+
+  /* ---------- Recovery after extreme declines, pooled across tickers, one cluster per ticker ---------- */
+  function recovery(list, X, opt) {
+    var ev = [], win = (opt && opt.days) || 1;
+    list.forEach(function (T) { var last = -1e9; for (var i = win; i < T.c.length; i++) { var r = (T.c[i] / T.c[i - win] - 1) * 100; if (r > -X || i - last < 20 || crossesBreak(T, i - win, i)) continue; last = i; var ref = T.c[i - win], x = { sym: T.sym, d: T.d[i], drop: r, rec: {}, t: null };
+      [20, 60, 120].forEach(function (h) { var j1 = i + h; if (j1 >= T.c.length || crossesBreak(T, i, j1)) { x.rec[h] = null; return } var got = false; for (var j = i + 1; j <= j1; j++) if (T.c[j] >= ref) { got = true; if (x.t == null) x.t = j - i; break } x.rec[h] = got });
+      var j2 = Math.min(T.c.length - 1, i + 60); if (i + 60 < T.c.length && !crossesBreak(T, i, i + 60)) { var mn = 1e18, mx = -1e18; for (var j3 = i + 1; j3 <= j2; j3++) { mn = Math.min(mn, T.c[j3]); mx = Math.max(mx, T.c[j3]) } x.mae = (mn / T.c[i] - 1) * 100; x.mfe = (mx / T.c[i] - 1) * 100 }
+      if (i + 20 < T.c.length) { var f = false; for (var j4 = i + 1; j4 <= i + 20; j4++) if ((T.c[j4] / T.c[i] - 1) * 100 <= -X / 2) f = true; x.more = f }
+      ev.push(x) } });
+    var pr = function (h) { var v = ev.filter(function (x) { return x.rec[h] === true || x.rec[h] === false }); return { n: v.length, k: v.filter(function (x) { return x.rec[h] }).length } };
+    var m = ev.filter(function (x) { return isNum(x.mae) }), mo = ev.filter(function (x) { return x.more === true || x.more === false });
+    return { ev: ev, r20: pr(20), r60: pr(60), r120: pr(120), tmed: median(ev.filter(function (x) { return x.t != null }).map(function (x) { return x.t })), mae: median(m.map(function (x) { return x.mae })), mfe: median(m.map(function (x) { return x.mfe })), more: { n: mo.length, k: mo.filter(function (x) { return x.more }).length } };
+  }
+
+  /* ---------- Options strategies held to expiry from saved chain snapshots ----------
+     Sells fill at the bid, buys at the ask, plus a commission per contract. Settlement uses the underlying close on expiry. */
+  function pickDelta(rows, type, target) { var c = rows.filter(function (r) { return r[0] === type }); if (!c.length) return null; return c.reduce(function (a, r) { return Math.abs(Math.abs(r[4]) - target) < Math.abs(Math.abs(a[4]) - target) ? r : a }) }
+  function optionStrategies(snap, closeAtExpiry, fee) {
+    fee = fee == null ? 0.0065 : fee; var R = snap.rows, S = snap.underlying, E = closeAtExpiry, out = [];
+    var put = function (k) { return Math.max(0, k - E) }, call = function (k) { return Math.max(0, E - k) };
+    var p20 = pickDelta(R, 'P', 0.20), p10 = pickDelta(R, 'P', 0.10), c20 = pickDelta(R, 'C', 0.20), c30 = pickDelta(R, 'C', 0.30), c50 = pickDelta(R, 'C', 0.50);
+    if (p20) out.push({ name: 'Cash secured put, 0.20 delta', credit: p20[2], pnl: p20[2] - put(p20[1]) - fee, maxLoss: p20[1] - p20[2], capital: p20[1], assigned: E < p20[1], spread: p20[3] - p20[2] });
+    if (c20) out.push({ name: 'Covered call, 0.20 delta', credit: c20[2], pnl: (Math.min(E, c20[1]) - S) + c20[2] - fee, maxLoss: S - c20[2], capital: S, assigned: E > c20[1], spread: c20[3] - c20[2] });
+    if (p20 && p10 && p10[1] < p20[1]) { var cr = p20[2] - p10[3]; out.push({ name: 'Put credit spread, 0.20 / 0.10', credit: cr, pnl: cr - (put(p20[1]) - put(p10[1])) - 2 * fee, maxLoss: (p20[1] - p10[1]) - cr, capital: (p20[1] - p10[1]) - cr, assigned: E < p20[1], spread: (p20[3] - p20[2]) + (p10[3] - p10[2]) }) }
+    if (c50 && c30 && c30[1] > c50[1]) { var db = c50[3] - c30[2]; out.push({ name: 'Call debit spread, 0.50 / 0.30', credit: -db, pnl: (call(c50[1]) - call(c30[1])) - db - 2 * fee, maxLoss: db, capital: db, assigned: false, spread: (c50[3] - c50[2]) + (c30[3] - c30[2]) }) }
+    out.forEach(function (o) { o.ret = o.capital > 0 ? o.pnl / o.capital * 100 : null }); return out;
+  }
+
+  return { dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;
 
@@ -1310,42 +1412,14 @@ function loadHist(syms) {
 }
 function dstr(d) { var s = String(d); return s.slice(0, 4) + '-' + s.slice(4, 6) + '-' + s.slice(6) }
 function dlab(d) { var s = String(d); return ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+s.slice(4, 6)] + ' ' + (+s.slice(6)) + ' ' + s.slice(0, 4) }
-var STUDIES = [
-  { id: 'spxdown', name: 'S&P down day', data: ['SPX'], tgt: 'SPX', p: [['x', 'S&P closes down at least', 3, '%', 0.5]], desc: 'S&P 500 close to close decline. Cboe closes since 1975. Entry at the event close.',
-    ev: function (S, i, P) { var c = S.SPX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
-  { id: 'streak', name: 'S&P losing streak', data: ['SPX'], tgt: 'SPX', p: [['n', 'Down closes in a row', 4, '', 1]], desc: 'The day a streak of lower S&P closes reaches the length set. Entry at that close.',
-    ev: function (S, i, P) { var c = S.SPX.c, n = P.n; if (i < n + 1) return null; for (var k = 0; k < n; k++) if (!(c[i - k] < c[i - k - 1])) return null; if (c[i - n] < c[i - n - 1]) return null; return { v: (c[i] / c[i - n] - 1) * 100, ref: c[i - n] } } },
-  { id: 'ndxdown', name: 'Nasdaq 100 down day', data: ['NDX'], tgt: 'NDX', p: [['x', 'Nasdaq 100 closes down at least', 4, '%', 0.5]], desc: 'Nasdaq 100 close to close decline. FRED closes since 1986.',
-    ev: function (S, i, P) { var c = S.NDX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
-  { id: 'vixlevel', name: 'VIX above a level', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['L', 'VIX closes at or above', 30, '', 1], ['cross', 'Only the first close above (1 = yes)', 1, '', 1]], desc: 'The VIX closes at 4:15pm, after the S&P close, so entry is the next S&P close to avoid using information early. VIX since 1990.',
-    ev: function (S, i, P) { var v = S.VIX.c; if (i < 1 || v[i] < P.L || (P.cross && v[i - 1] >= P.L)) return null; return { v: v[i], lab: 'VIX ' + v[i].toFixed(2) } } },
-  { id: 'vixspike', name: 'VIX one day spike', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['x', 'VIX closes up at least', 25, '%', 5]], desc: 'VIX close to close jump. Entry is the next S&P close.',
-    ev: function (S, i, P) { var v = S.VIX.c; return i > 0 && (v[i] / v[i - 1] - 1) * 100 >= P.x ? { v: (v[i] / v[i - 1] - 1) * 100, lab: 'VIX ' + sg((v[i] / v[i - 1] - 1) * 100, 0) } : null } },
-  { id: 'vixrev', name: 'VIX spike then reversal', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', from: 1992, p: [['x', 'VIX intraday high above prior close by', 20, '%', 5], ['y', 'VIX closes no more than this above prior close', 5, '%', 1]], desc: 'Fear spikes intraday and fades by the close. VIX highs and lows since 1992. Entry is the next S&P close.',
-    ev: function (S, i, P) { var V = S.VIX; if (i < 1 || !V.h) return null; var pc = V.c[i - 1]; if ((V.h[i] / pc - 1) * 100 >= P.x && (V.c[i] / pc - 1) * 100 <= P.y) return { v: (V.h[i] / pc - 1) * 100, lab: 'VIX high ' + sg((V.h[i] / pc - 1) * 100, 0) + ', close ' + sg((V.c[i] / pc - 1) * 100, 0) }; return null } },
-  { id: 'recover', name: 'Intraday drop recovered', data: ['SPY'], tgt: 'SPY', p: [['x', 'SPY low below prior close by at least', 2, '%', 0.5], ['y', 'Share of the drop recovered by the close', 70, '%', 5]], desc: 'SPY daily highs and lows, about 2 years. Intraday data is only this long, so samples are small.',
-    ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100; if (dd > -P.x) return null; var rec = (T.c[i] - T.l[i]) / (pc - T.l[i]) * 100; return rec >= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', ' + rec.toFixed(0) + '% recovered', ref: pc } : null } },
-  { id: 'qqqhigh', name: 'Nasdaq drop, close near high', data: ['QQQ'], tgt: 'QQQ', p: [['x', 'QQQ low below prior close by at least', 3, '%', 0.5], ['y', 'Close in the top part of the range', 25, '%', 5]], desc: 'QQQ daily highs and lows, about 2 years.',
-    ev: function (S, i, P) { var T = S.QQQ; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100, rg = T.h[i] - T.l[i]; if (dd > -P.x || !rg) return null; return (T.h[i] - T.c[i]) / rg * 100 <= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', close ' + sg((T.c[i] / pc - 1) * 100), ref: pc } : null } },
-  { id: 'stock', name: 'Big chip stock drop', data: [], tgt: 'pick', pick: ['NVDA10', 'MU10', 'AMD10', 'WDC10', 'SMH10', 'SOXX10'], p: [['x', 'Closes down at least', 8, '%', 1]], desc: '10 years of split adjusted daily closes from Unusual Whales. Corporate actions (the SanDisk spin off from WDC, a bad SOXX stretch in 2022) are excluded.',
-    ev: function (S, i, P, T) { var c = T.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
-  { id: 'gap', name: 'SPY opening gap', data: ['SPY'], tgt: 'SPY', entry: 'open', p: [['x', 'Gap size at least', 1, '%', 0.25], ['dir', 'Direction (1 = up, 0 = down)', 0, '', 1]], desc: 'SPY open vs prior close, about 2 years. Entry at the open, when the gap is known.',
-    ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var g = (T.o[i] / T.c[i - 1] - 1) * 100; return (P.dir ? g >= P.x : g <= -P.x) ? { v: g, ref: T.c[i - 1], gap: 1 } : null } },
-  { id: 'breadth', name: 'Equal weight up, S&P down', data: ['SPY10', 'RSP10'], tgt: 'SPY10', p: [['x', 'SPY closes down at least', 0.5, '%', 0.25], ['y', 'RSP beats SPY by at least', 0.3, '%', 0.1]], desc: 'Equal weight (RSP) vs cap weight (SPY), 10 years of closes. A breadth proxy, not exchange breadth.',
-    ev: function (S, i, P) { var A = S.SPY10, R = S.RSP10, d = A.d[i], j = R.ix[d]; if (i < 1 || j == null || j < 1) return null; var a = (A.c[i] / A.c[i - 1] - 1) * 100, r = (R.c[j] / R.c[j - 1] - 1) * 100; return a <= -P.x && r - a >= P.y ? { v: a, lab: 'SPY ' + sg(a) + ', RSP ' + sg(r) } : null } },
-  { id: 'asia', name: 'Nikkei move, then Nasdaq', data: ['N225', 'NDX'], tgt: 'NDX', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1], ['ctrl', 'Prior US session move no bigger than (0 = off)', 0.5, '%', 0.25]], corr: 1,
-    desc: 'Tokyo closes before the US session of the same date. Daily closes only exist for the Nasdaq 100, so entry is that date\'s US close, after the information is known; the same day reaction is not measurable here without lookahead. The dollar conversion was removed because the only yen rate available is published after Tokyo closes.',
-    ev: function (S, i, P) { var N = S.N225, d = N.d[i], X = S.NDX, j = X.ix[d]; if (i < 1 || j == null || j < 2) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100, u = (X.c[j - 1] / X.c[j - 2] - 1) * 100; if (P.ctrl > 0 && Math.abs(u) > P.ctrl) return null; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) + ', prior US day ' + sg(u) } : null } },
-  { id: 'asiasmh', name: 'Nikkei move, then US semis', data: ['N225', 'SMH'], tgt: 'SMH', entry: 'open', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1]], desc: 'Entry at the SMH open of the same date, which comes after Tokyo has closed. About 2 years of SMH bars.',
-    ev: function (S, i, P) { var N = S.N225, d = N.d[i]; if (i < 1 || S.SMH.ix[d] == null) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) } : null } }
-];
+var STUDIES = CORE.STUDIES;
 var HS = { id: 'spxdown', P: {}, from: 0, to: 9999, gap: 5, pick: 'NVDA10', open: null }, HR = null;
-var TRIED = (function () { var t = LS('mb_tried'), day = new Date().toISOString().slice(0, 10); return t && t.day === day ? t : { day: day, k: [] } })();
-function noteTried(key) { if (TRIED.k.indexOf(key) < 0) { TRIED.k.push(key); LS('mb_tried', TRIED) } }
+var TRIED = (function () { var t = LS('mb_tried_all'); return t && t.k ? t : { k: [] } })(), LEDGER_N = 0;
+function noteTried(key) { if (TRIED.k.indexOf(key) < 0) { TRIED.k.push(key); if (TRIED.k.length > 2000) TRIED.k.shift(); LS('mb_tried_all', TRIED) } }
 function pTxt(p, mult) { if (p == null) return 'n/a'; var a = Math.min(1, p * mult); return (p < 0.001 ? '<0.001' : p.toFixed(3)) + (a < 0.05 ? ' <b class="up">holds after adjustment</b>' : p < 0.05 ? ' <span class="am">not after adjustment</span>' : '') }
 function cell(sm, pct) { if (!sm || sm.n < 10) return '<span class="k">' + (sm ? sm.n : 0) + ' events, too few</span>'; return sg(sm.s.mean) + ' <span class="k">(' + sg(sm.s.lo, 1) + ' to ' + sg(sm.s.hi, 1) + ') n ' + sm.n + '</span>' }
 function renderStudy(R) {
-  var st = R.st, h = '', mult = Math.max(1, TRIED.k.length) * 6, tname = R.T === 'SPX' ? 'S&P 500' : R.T === 'NDX' ? 'Nasdaq 100' : R.T.replace(/10$/, '');
+  var st = R.st, h = '', mult = Math.max(1, TRIED.k.length + LEDGER_N) * 6, tname = R.T === 'SPX' ? 'S&P 500' : R.T === 'NDX' ? 'Nasdaq 100' : R.T.replace(/10$/, '');
   var raw = R.all.length, cl = R.all.filter(function (x) { return !x.cluster && !x.open }).length;
   h += '<div class="r"><b>' + raw + ' raw events, ' + cl + ' after the ' + HS.gap + ' session cluster rule</b><div class="k">Outcomes on ' + esc(tname) + ', ' + esc(R.src) + ', ' + dlab(R.start) + ' to ' + dlab(R.asof) + '. Each horizon counts only events whose holding windows do not overlap, so n shrinks as the horizon grows. Entry: ' + (st.entry === 'open' ? 'event day open' : st.entry === 'next' ? 'next session close' : 'event day close') + '; the all days column uses the same entry and exit rule over the same dates.</div></div>';
   h += '<div class="r hrow head"><span>Horizon</span><b>Events: mean (95% range)</b><b>All days</b></div>';
@@ -1364,7 +1438,7 @@ function renderStudy(R) {
     var rc = p20.filter(function (x) { return x.rec !== undefined && !x.recOpen }), got = rc.filter(function (x) { return x.rec != null }); if (rc.length >= 10) h += '<div class="r hrow"><span>Back to the prior close within 60</span><span>' + (got.length / rc.length * 100).toFixed(0) + '%, median ' + (got.length ? CORE.median(got.map(function (x) { return x.rec })) : 'n/a') + ' sessions</span><span></span></div>';
     var g0 = p20.filter(function (x) { return x.fill0 !== undefined }); if (g0.length >= 10) h += '<div class="r hrow"><span>Gap filled same day, within 5</span><span>' + (g0.filter(function (x) { return x.fill0 }).length / g0.length * 100).toFixed(0) + '%, ' + (g0.filter(function (x) { return x.fill5 }).length / g0.length * 100).toFixed(0) + '%</span><span></span></div>';
   }
-  h += '<div class="r k">Tests tried today: ' + TRIED.k.length + ' settings x 6 horizons. "Holds after adjustment" means p stays under 0.05 after multiplying by that count (Bonferroni), which guards against finding patterns by trying many settings.</div>';
+  h += '<div class="r k">Multiple testing: ' + LEDGER_N + ' configurations in the permanent research ledger plus ' + TRIED.k.length + ' settings tried on this device, times 6 horizons. "Holds after adjustment" means p stays under 0.05 after multiplying by that count (Bonferroni). The count never resets.</div>';
   if (st.corr) h += corrBlock(R);
   $('hres').innerHTML = h;
   var L = '';
@@ -1418,20 +1492,20 @@ function renderResearch() {
     h += '<div class="r k">' + c.n + ' days. Low set in the first hour ' + (c.lowFirstHour || 0).toFixed(0) + '% of days, high in the last hour ' + (c.highLastHour || 0).toFixed(0) + '%. ' + esc(s.note) + ' ' + dlab(s.from) + ' to ' + dlab(s.to) + '.</div>';
     $('rseas').innerHTML = h;
   }).catch(function () { $('rseas').innerHTML = '<div class="r mut">Not computed yet.</div>' });
-  renderFingerprint();
+  renderFingerprint(); renderRegistry(); renderIntra(); renderRecovery(); renderOptions();
 }
 $('rseas').addEventListener('click', function (e) { var b = e.target.closest('[data-seas]'); if (b) { HS.seas = +b.dataset.seas; renderResearch() } });
 function renderFingerprint() {
   Promise.all([loadHist(['SPX', 'VIX', 'NDX', 'US10Y', 'RSP10', 'SPY10', 'SMH10', 'QQQ10']), loadRes('fingerprint')]).then(function (x) {
-    var V = x[1], F = CORE.features(HIST), S = HIST.SPX, t = F.length - 1, keys = CORE.FEAT.map(function (f) { return f[0] }), nb = CORE.neighbors(F, t, keys, 15, 20, 60), cur = F[t];
-    var o = function (k) { return nb.map(function (m) { return CORE.fwdRet(S, F[m[1]].i, k) }).filter(CORE.isNum) }, h = '';
-    h += '<div class="r k">Today\'s conditions on ' + dlab(cur.d) + ': ' + CORE.FEAT.filter(function (f) { return CORE.isNum(cur[f[0]]) }).map(function (f) { return esc(f[1]) + ' ' + cur[f[0]].toFixed(1) + f[2] }).join(', ') + '.</div>';
-    [5, 20, 60].forEach(function (k) { var a = o(k), s = CORE.stats(a); h += '<div class="r hrow"><span>' + k + ' sessions after the matches</span><span>' + (s.n >= 10 ? sg(s.mean) + ' <span class="k">(' + sg(s.lo, 1) + ' to ' + sg(s.hi, 1) + ') n ' + s.n + ', up ' + (s.up * 100).toFixed(0) + '%</span>' : 'n ' + s.n + ', too few') + '</span><span></span></div>' });
-    var mv = V.models[0], best = V.models.slice(1).sort(function (a, b) { return (b.rate || 0) - (a.rate || 0) })[0];
-    h += '<div class="r"><b>' + (mv.rate > V.alwaysUp.rate ? 'The combined match beat simply calling up in testing.' : 'In testing, these matches did not beat simply calling the market up.') + '</b><div class="k">Walk forward since 2005, ' + mv.n + ' non overlapping 20 session tests: matches called the direction right ' + (mv.rate * 100).toFixed(0) + '% (range ' + (mv.ci[0] * 100).toFixed(0) + ' to ' + (mv.ci[1] * 100).toFixed(0) + '%), calling up every time was right ' + (V.alwaysUp.rate * 100).toFixed(0) + '%. Best single condition: ' + esc(best.name) + ' at ' + (best.rate * 100).toFixed(0) + '%. Use the matches as context for what has happened before, not as a forecast. ' + esc(V.note) + '</div></div>';
+    var V = x[1], F = CORE.features(HIST), S = HIST.SPX, t = F.length - 1, keys = CORE.FEAT.map(function (f) { return f[0] }), nb = CORE.neighbors(F, t, keys, 15, 20, 60), cur = F[t], h = '';
+    h += '<div class="r"><b>' + (V.promoted ? 'Promoted: the tuned model beat its baselines on untouched data.' : 'Not promoted: no version beat simply calling the market up on untouched data.') + '</b><div class="k">' + esc(V.note) + ' ' + V.gridSize + ' settings were tried, all kept in the research ledger.</div></div>';
+    h += '<div class="r hrow head"><span>Model, same ' + V.testDates + ' test dates</span><b>Right, 95% range</b><b>Long or flat</b></div>';
+    V.test.slice(0, 6).forEach(function (m) { h += '<div class="r hrow"><span>' + esc(m.name) + '<div class="k">error ' + m.mae.toFixed(2) + ' vs ' + m.maeBase.toFixed(2) + ' baseline</div></span><span>' + (m.rate * 100).toFixed(0) + '% <span class="k">(' + (m.ci[0] * 100).toFixed(0) + ' to ' + (m.ci[1] * 100).toFixed(0) + ')</span></span><span>' + sg(m.longFlat) + '</span></div>' });
+    var u = V.test[0]; h += '<div class="r hrow"><span>Baselines</span><span>always up ' + (u.upRate * 100).toFixed(0) + '%</span><span>' + sg(u.buyHold) + ' hold</span></div>';
+    h += '<div class="r k">Today on ' + dlab(cur.d) + ': ' + CORE.FEAT.filter(function (f) { return CORE.isNum(cur[f[0]]) }).map(function (f) { return esc(f[1]) + ' ' + cur[f[0]].toFixed(1) + f[2] }).join(', ') + '. Closest past dates are below as context only.</div>';
     h += '<div class="r hev head"><span>Closest matches</span><b>5 day</b><b>20 day</b><b>60 day</b></div>';
-    nb.forEach(function (m) { var f = F[m[1]], why = CORE.FEAT.filter(function (q) { return CORE.isNum(f[q[0]]) && CORE.isNum(cur[q[0]]) }).sort(function (a, b) { return Math.abs(f['z' + a[0]] - cur['z' + a[0]]) - Math.abs(f['z' + b[0]] - cur['z' + b[0]]) }).slice(0, 3).map(function (q) { return esc(q[1]) + ' ' + f[q[0]].toFixed(1) + q[2] }).join(', ');
-      var r = function (k) { var v = CORE.fwdRet(S, f.i, k); return CORE.isNum(v) ? sg(v) : 'n/a' }; h += '<div class="r hev"><span>' + dlab(f.d) + '<div class="k">closest on ' + why + '</div></span><span class="num">' + r(5) + '</span><span class="num">' + r(20) + '</span><span class="num">' + r(60) + '</span></div>' });
+    nb.forEach(function (m) { var f2 = F[m[1]], why = CORE.FEAT.filter(function (q) { return CORE.isNum(f2[q[0]]) && CORE.isNum(cur[q[0]]) }).sort(function (a, b) { return Math.abs(f2['z' + a[0]] - cur['z' + a[0]]) - Math.abs(f2['z' + b[0]] - cur['z' + b[0]]) }).slice(0, 3).map(function (q) { return esc(q[1]) + ' ' + f2[q[0]].toFixed(1) + q[2] }).join(', ');
+      var r = function (k) { var v = CORE.fwdRet(S, f2.i, k); return CORE.isNum(v) ? sg(v) : 'n/a' }; h += '<div class="r hev"><span>' + dlab(f2.d) + '<div class="k">closest on ' + why + '</div></span><span class="num">' + r(5) + '</span><span class="num">' + r(20) + '</span><span class="num">' + r(60) + '</span></div>' });
     $('rfp').innerHTML = h;
   }).catch(function () { $('rfp').innerHTML = '<div class="r mut">Not available.</div>' });
 }
@@ -1478,6 +1552,93 @@ function vixHist() {
   }).catch(function () { $('vixhist').innerHTML = '<div class="r mut">VIX history unavailable.</div>' });
 }
 
+
+/* ---------- Signal reliability registry ---------- */
+function renderRegistry() {
+  loadRes('registry').then(function (R) {
+    LEDGER_N = R.tests || 0; var order = ['Validated', 'Promising but unconfirmed', 'Insufficient evidence', 'Failed validation', 'Data unavailable'], tone = { 'Validated': 'g', 'Promising but unconfirmed': 'b', 'Insufficient evidence': '', 'Failed validation': 'r', 'Data unavailable': 'a' }, sel = HS.reg || 'Validated', h = '';
+    var cnt = {}; R.signals.forEach(function (s) { cnt[s.cls] = (cnt[s.cls] || 0) + 1 });
+    h += '<div class="chips" style="margin:8px 0 4px">' + order.map(function (c) { return '<button class="chipb' + (c === sel ? ' on' : '') + '" data-reg="' + esc(c) + '">' + esc(c) + ' (' + (cnt[c] || 0) + ')</button>' }).join('') + '</div>';
+    R.signals.filter(function (s) { return s.cls === sel }).forEach(function (s) { var ev = [];
+      if (s.train && s.train.n != null) ev.push('research ' + s.train.n + ' events, 5 day excess ' + (CORE.isNum(s.train.excess) ? sg(s.train.excess) : 'n/a') + ', adjusted p ' + (CORE.isNum(s.train.pAdj) ? s.train.pAdj.toFixed(2) : 'n/a'));
+      if (s.test && s.test.n != null && s.test.excess !== undefined) ev.push('untouched ' + s.test.n + ', excess ' + (CORE.isNum(s.test.excess) ? sg(s.test.excess) : 'n/a'));
+      if (s.wf && s.wf.n) ev.push('walk forward ' + s.wf.hits + ' of ' + s.wf.n + ' (' + (s.wf.lo * 100).toFixed(0) + ' to ' + (s.wf.hi * 100).toFixed(0) + '%)');
+      if (s.test && s.test.skill != null) ev.push('skill vs base rate ' + s.test.skill.toFixed(2) + ' (halves ' + s.test.first.toFixed(2) + ', ' + s.test.second.toFixed(2) + '), ' + s.test.n + ' predictions');
+      if (s.test && s.test.gain !== undefined) ev.push('out of sample gain ' + (CORE.isNum(s.test.gain) ? (s.test.gain * 100).toFixed(1) + '%' : 'n/a') + ', adjusted p ' + (s.train && CORE.isNum(s.train.pAdj) ? s.train.pAdj.toFixed(2) : 'n/a'));
+      if (s.test && s.test.rate != null) ev.push('right ' + (s.test.rate * 100).toFixed(0) + '% vs always up ' + (s.test.upRate * 100).toFixed(0) + '%');
+      if (s.why) ev.push(s.why);
+      h += '<div class="r"><span class="pill ' + tone[s.cls] + '">' + esc(s.cls) + '</span> <b>' + esc(s.name) + '</b><div class="k">' + esc(ev.join('. ')) + '</div></div>' });
+    h += '<div class="r k">Last validated ' + esc(R.asof.slice(0, 10)) + ' over ' + R.tests + ' tests in the permanent ledger. ' + esc(R.rules) + ' Intraday "validated" means the probability estimate beats the base rate, not that it is a trading edge on its own.</div>';
+    $('rreg').innerHTML = h;
+  }).catch(function () { $('rreg').innerHTML = '<div class="r mut">Registry not computed yet.</div>' });
+}
+$('rreg').addEventListener('click', function (e) { var b = e.target.closest('[data-reg]'); if (b) { HS.reg = b.dataset.reg; renderRegistry() } });
+
+/* ---------- Conditional intraday probabilities ---------- */
+var IDAYS = null;
+function loadIntra() {
+  if (IDAYS) return Promise.resolve(IDAYS);
+  return Promise.all([fetch('data/intraday/SPY30.json', { cache: 'default' }).then(function (r) { return r.json() }), fetch('data/intraday/SMH30.json', { cache: 'default' }).then(function (r) { return r.json() })]).then(function (x) {
+    var grp = function (j) { var by = {}; j.rows.forEach(function (r) { (by[r[0]] = by[r[0]] || []).push([r[1], r[2], r[3], r[4], r[5], r[6]]) }); return by }, S = grp(x[0]), M = grp(x[1]), ks = Object.keys(S).map(Number).sort(), out = [], prev = null, rng = [];
+    ks.forEach(function (d) { var b = S[d].sort(function (a, c) { return a[0] - c[0] }); if (b.length !== 13) { prev = b[b.length - 1][4]; return } var m = M[d] && M[d].length === 13 ? M[d].sort(function (a, c) { return a[0] - c[0] }) : null; out.push({ d: d, prev: prev, b: b, semi: m, atr: rng.length >= 10 ? CORE.mean(rng.slice(-20)) : null }); rng.push(Math.max.apply(0, b.map(function (z) { return z[2] })) - Math.min.apply(0, b.map(function (z) { return z[3] }))); prev = b[12][4] });
+    IDAYS = out; return out;
+  });
+}
+function liveDay() {
+  var o = lastOpenMs(Date.now()); if (!o || Date.now() - o > 7 * 36e5) return Promise.resolve(null);
+  return Promise.all(['xyz:SP500', 'xyz:SMH'].map(function (c) { return post({ type: 'candleSnapshot', req: { coin: c, interval: '30m', startTime: o, endTime: Date.now() } }) })).then(function (rs) {
+    var conv = function (k) { return CORE.completed(k || [], Date.now(), 18e5).map(function (c) { return [0, +c.o, +c.h, +c.l, +c.c, +c.v] }) }, b = conv(rs[0]), m = conv(rs[1]);
+    if (!b.length) return null; return { d: 0, prev: (B.base.perp || {})['xyz:SP500'] || B.base.spx, b: b, semi: m.length >= b.length ? m : null, live: true };
+  });
+}
+function renderIntra() {
+  Promise.all([loadIntra(), loadRes('intraday'), liveDay().catch(function () { return null })]).then(function (x) {
+    var days = x[0], V = x[1], L = x[2], D0 = L || days[days.length - 1], maxT = D0.b.length - 1, t = HS.ibar == null || HS.ibar > maxT ? maxT : HS.ibar, h = '';
+    if (!L) { t = HS.ibar == null ? 3 : Math.min(HS.ibar, 11) }
+    var atr = CORE.mean(days.slice(-20).map(function (D2) { return Math.max.apply(0, D2.b.map(function (z) { return z[2] })) - Math.min.apply(0, D2.b.map(function (z) { return z[3] })) })) * (L ? (D0.b[0][1] / days[days.length - 1].b[0][1]) : 1);
+    var s = CORE.dayState(D0, t, L ? atr : D0.atr), hist = days.filter(function (D2) { return D2 !== D0 }).map(function (D2) { var s2 = CORE.dayState(D2, t, D2.atr); return { s: s2, o: CORE.dayOutcome(D2, s2) } }), p = CORE.intradayPredict(hist, s, 30);
+    var slots = ['9:30', '10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '1:00', '1:30', '2:00', '2:30', '3:00', '3:30'];
+    h += '<div class="r k">' + (L ? 'Live: S&amp;P perp 30 minute bars since 9:30am as a proxy for SPY, after the ' + slots[t] + ' bar.' : 'The market is not in session, so this replays the last stored session, ' + dlab(D0.d) + ', after the bar you pick.') + ' State: gap ' + sg(s.gap) + ', since the open ' + sg(s.ret) + ', at ' + (s.pos * 100).toFixed(0) + '% of the range so far' + (CORE.isNum(s.semi) ? ', semis vs S&P ' + sg(s.semi) : '') + '. Uses only bars up to the selected time.</div>';
+    if (!L) h += '<div class="chips" style="margin:6px 0">' + slots.slice(0, 12).map(function (z, i) { return '<button class="chipb' + (i === t ? ' on' : '') + '" data-ibar="' + i + '">' + z + '</button>' }).join('') + '</div>';
+    var N = { highDone: 'High of the day already set', lowDone: 'Low of the day already set', newHigh: 'Makes a new high later', newLow: 'Makes a new low later', openBack: 'Reclaims the open', vwapBack: 'Reclaims VWAP', closeUp: 'Closes above the prior close', rec25: 'Recovers 25% of the decline so far', rec50: 'Recovers 50%', rec75: 'Recovers 75%', rec100: 'Recovers 100%' };
+    h += '<div class="r hrow head"><span>Outcome</span><b>Probability, n</b><b>Validation</b></div>';
+    CORE.OUT.forEach(function (k) { var q = p[k], v = V.skill[k], ok = v && v.skill > 0.05 && v.first > 0.05 && v.second > 0.05; if (!q) return; h += '<div class="r hrow"><span>' + N[k] + '</span><span>' + (q.p * 100).toFixed(0) + '% <span class="k">' + q.n + '</span></span><span class="' + (ok ? 'up' : 'dn') + '">' + (ok ? 'beats base rate' : 'no skill') + '</span></div>' });
+    if (p.up.n) h += '<div class="r hrow"><span>Expected further room, rest of day</span><span>up ' + sg(p.up.mean) + ', down ' + sg(p.down.mean) + '</span><span class="k">median ' + sg(p.up.med) + ' / ' + sg(p.down.med) + '</span></div>';
+    h += '<div class="r k">' + esc(V.note) + ' ' + V.days + ' sessions, ' + dlab(V.from) + ' to ' + dlab(V.to) + '. Probabilities come from the 30 most similar earlier sessions at the same time of day. Average error of the expected room: up ' + V.upMAE.toFixed(2) + '%, down ' + V.downMAE.toFixed(2) + '%. Five years of intraday data is not available on the current feeds; this is about one year.</div>';
+    $('rintra').innerHTML = h;
+  }).catch(function () { $('rintra').innerHTML = '<div class="r mut">Intraday data unavailable.</div>' });
+}
+$('rintra').addEventListener('click', function (e) { var b = e.target.closest('[data-ibar]'); if (b) { HS.ibar = +b.dataset.ibar; renderIntra() } });
+
+/* ---------- Recovery after extreme declines ---------- */
+var RECS = { x: 10, days: 1, syms: ['NVDA10', 'MU10', 'AMD10', 'WDC10', 'SMH10', 'SOXX10'] };
+function renderRecovery() {
+  var all = ['NVDA10', 'MU10', 'AMD10', 'WDC10', 'SMH10', 'SOXX10'];
+  loadHist(all).then(function () {
+    var R = CORE.recovery(RECS.syms.map(function (s) { var o = HIST[s]; o.sym = s.replace(/10$/, ''); return o }), RECS.x, { days: RECS.days }), h = '';
+    h += '<div class="chips" style="margin:8px 0 4px">' + all.map(function (s) { return '<button class="chipb' + (RECS.syms.indexOf(s) >= 0 ? ' on' : '') + '" data-rsym="' + s + '">' + s.replace(/10$/, '') + '</button>' }).join('') + '</div>';
+    h += '<label class="hp"><span>Decline of at least</span><input type="number" inputmode="decimal" id="recx" value="' + RECS.x + '" step="1"><span class="k">%</span></label><label class="hp"><span>Over this many sessions</span><input type="number" inputmode="numeric" id="recd" value="' + RECS.days + '"><span></span></label>';
+    var pr = function (o) { if (o.n < 10) return o.n + ' events, too few'; var w = CORE.wilson(o.k, o.n); return (o.k / o.n * 100).toFixed(0) + '% <span class="k">(' + (w[0] * 100).toFixed(0) + ' to ' + (w[1] * 100).toFixed(0) + ') n ' + o.n + '</span>' };
+    h += '<div class="r hrow"><span>' + R.ev.length + ' declines found</span><span></span><span></span></div>';
+    h += '<div class="r hrow"><span>Back to the pre decline close in 20 sessions</span><span>' + pr(R.r20) + '</span><span></span></div><div class="r hrow"><span>in 60 sessions</span><span>' + pr(R.r60) + '</span><span></span></div><div class="r hrow"><span>in 120 sessions</span><span>' + pr(R.r120) + '</span><span></span></div>';
+    h += '<div class="r hrow"><span>Median sessions to recover <span class="k">when it did</span></span><span>' + (R.tmed == null ? 'n/a' : R.tmed) + '</span><span></span></div><div class="r hrow"><span>Within 60 sessions, median worst and best</span><span>' + (CORE.isNum(R.mae) ? sg(R.mae) + ', ' + sg(R.mfe) : 'n/a') + '</span><span></span></div><div class="r hrow"><span>Fell another ' + (RECS.x / 2) + '% within 20</span><span>' + pr(R.more) + '</span><span></span></div>';
+    h += '<div class="r k">10 years of split adjusted daily closes. One event per stock per 20 sessions. Pooling several stocks adds events, but the same market selloff can hit them together, so pooled events are not fully independent. Corporate actions are excluded.</div>';
+    h += R.ev.slice().sort(function (a, b) { return b.d - a.d }).slice(0, 30).map(function (e) { return '<div class="r hev"><span>' + dlab(e.d) + ' ' + esc(e.sym) + '<div class="k">' + sg(e.drop) + '</div></span><span class="num">' + (e.rec[20] == null ? 'open' : e.rec[20] ? 'back' : 'not back') + '</span><span class="num">' + (e.t == null ? 'n/a' : e.t + 'd') + '</span><span class="num">' + (CORE.isNum(e.mae) ? sg(e.mae) : 'n/a') + '</span></div>' }).join('');
+    $('rrec').innerHTML = h;
+  }).catch(function () { $('rrec').innerHTML = '<div class="r mut">History unavailable.</div>' });
+}
+$('rrec').addEventListener('click', function (e) { var b = e.target.closest('[data-rsym]'); if (!b) return; var s = b.dataset.rsym, i = RECS.syms.indexOf(s); if (i >= 0) { if (RECS.syms.length > 1) RECS.syms.splice(i, 1) } else RECS.syms.push(s); renderRecovery() });
+$('rrec').addEventListener('change', function (e) { if (e.target.id === 'recx') RECS.x = Math.max(1, +e.target.value || 10); if (e.target.id === 'recd') RECS.days = Math.max(1, Math.min(20, +e.target.value || 1)); renderRecovery() });
+
+/* ---------- Options strategy research ---------- */
+function renderOptions() {
+  loadRes('options').then(function (O) {
+    var h = '<div class="r"><b>' + (O.summary.length ? O.trades.length + ' settled trades' : 'No settled trades yet') + '</b><div class="k">' + O.snapshots + ' SPY chain snapshot' + (O.snapshots === 1 ? '' : 's') + ' saved, ' + O.pending + ' waiting for expiry. ' + esc(O.note) + '</div></div>';
+    O.summary.forEach(function (s) { h += '<div class="r hrow"><span>' + esc(s.name) + ' <span class="k">n ' + s.n + '</span></span><span>' + (CORE.isNum(s.avgRet) ? sg(s.avgRet) + ' avg on capital' : 'n/a') + '<div class="k">won ' + s.win + ', worst ' + (CORE.isNum(s.worst) ? sg(s.worst) : 'n/a') + ', drawdown ' + sg(s.maxDD) + ', assigned ' + s.assigned + '</div></span><span class="k">spread ' + (CORE.isNum(s.avgSpread) ? '$' + s.avgSpread.toFixed(2) : 'n/a') + '</span></div>' });
+    if (!O.summary.length) h += '<div class="r k">Strategies tested once data exists: cash secured put and covered call at 0.20 delta, 0.20 / 0.10 put credit spread, 0.50 / 0.30 call debit spread, split by VIX at entry. Results stay labeled "insufficient evidence" until at least 30 settled trades.</div>';
+    $('ropt').innerHTML = h;
+  }).catch(function () { $('ropt').innerHTML = '<div class="r mut">Not computed yet.</div>' });
+}
 
 /* ---------- Personalization, saved on this device only ---------- */
 KEY = LS('mb_pins') || KEY;
@@ -1618,7 +1779,7 @@ function scorecard() {
     h += '<div class="r"><b>Directional calls</b><div class="k">' + (dir.n ? dir.hit + ' of ' + dir.n + ' sessions called right (' + (dir.hit / dir.n * 100).toFixed(0) + '%, range ' + (CORE.wilson(dir.hit, dir.n)[0] * 100).toFixed(0) + ' to ' + (CORE.wilson(dir.hit, dir.n)[1] * 100).toFixed(0) + '%). Calling up every time: ' + (dir.up / dir.n * 100).toFixed(0) + '%. ' : 'No session scored yet. Briefs record one call per session from now on. ') + (dir.revisions ? dir.revisions + ' later briefs revised a call for the same session; only the last call made before that session closed is scored, so revisions do not inflate the count. ' : '') + (dir.pend ? dir.pend + ' sessions pending.' : '') + '</div></div>';
     var byR = {}; dir.rows.forEach(function (r) { if (!r.regime) return; byR[r.regime] = byR[r.regime] || [0, 0]; byR[r.regime][0]++; if (r.hit) byR[r.regime][1]++ });
     if (Object.keys(byR).length) h += '<div class="r k">By regime: ' + Object.keys(byR).map(function (k) { return esc(k) + ' ' + byR[k][1] + ' of ' + byR[k][0] }).join(', ') + '</div>';
-    h += '<div class="r"><b>Implied move coverage</b><div class="k">' + (cov.n ? cov.hit + ' of ' + cov.n + ' expiries closed inside the implied move (' + (cov.hit / cov.n * 100).toFixed(0) + '%); about 68% is what a one standard deviation move implies. ' : 'No expiry has passed yet. ') + (cov.dup ? cov.dup + ' repeat copies of the same option data were collapsed. ' : '') + (cov.pend ? cov.pend + ' expiries pending.' : '') + '</div></div>';
+    h += '<div class="r"><b>Implied move coverage</b><div class="k">' + (cov.n ? cov.hit + ' of ' + cov.n + ' expiries closed inside the implied move (' + (cov.hit / cov.n * 100).toFixed(0) + '%); about 68% is what a one standard deviation move implies. Windows that overlap share the same market moves, so the effective sample is ' + cov.eff + ' (' + cov.effHit + ' inside' + (cov.eff ? ', range ' + (CORE.wilson(cov.effHit, cov.eff)[0] * 100).toFixed(0) + ' to ' + (CORE.wilson(cov.effHit, cov.eff)[1] * 100).toFixed(0) + '%' : '') + '). By horizon: ' + Object.keys(cov.byH).map(function (k) { return esc(k) + ' ' + cov.byH[k][1] + ' of ' + cov.byH[k][0] }).join(', ') + '. ' : 'No expiry has passed yet. ') + (cov.dup ? cov.dup + ' repeat copies from later briefs were collapsed into one outcome per expiry. ' : '') + (cov.pend ? cov.pend + ' expiries pending.' : '') + '</div></div>';
     h += '<div class="r k">Scores read the archive exactly as published and Cboe S&P closes. Fewer than 20 scored sessions says little.</div>';
     $('score').innerHTML = h;
   });
@@ -1759,6 +1920,29 @@ function renderOutlook() {
 }
 var _render2 = render;
 render = function () { _render2(); try { renderOutlook() } catch (e) { } };
+
+/* ---------- Is the brief's analysis still valid? Checked against the S&P perp at publication time ---------- */
+var PUB = null;
+function loadPub() {
+  if (!B.updated) return; var t = new Date(B.updated).getTime(), t5 = t - t % 3e5; if (PUB && PUB.t === t5) return;
+  post({ type: 'candleSnapshot', req: { coin: 'xyz:SP500', interval: '5m', startTime: t5, endTime: t5 + 3e5 } }).then(function (k) { var c = (k || []).filter(function (z) { return +z.t === t5 })[0]; if (c) { PUB = { t: t5, px: +c.o }; renderInval() } }).catch(function () { });
+}
+function renderInval() {
+  var s = px('xyz:SP500'), el = $('inval'), sec = $('secInval'); if (!PUB || !s || !fresh('xyz:SP500')) { sec.style.display = 'none'; return }
+  var z0 = zoneOf(PUB.px), z1 = zoneOf(s), items = [], e0 = B.opt.em && B.opt.em[0], mv = (s / PUB.px - 1) * 100;
+  if (z0 !== z1) items.push('The brief was written in the <b>' + z0 + '</b> zone (S&amp;P perp ' + f(PUB.px, 0) + '); it is now in the <b>' + z1 + '</b> zone (' + f(s, 0) + '). Its scenario no longer applies.');
+  var name = z0 === 'Bull' ? 'Bullish' : z0 === 'Range' ? 'Neutral' : 'Bearish', sc = (B.scenarios || []).filter(function (q) { return q.n === name })[0];
+  if (sc && sc.inval) { var m = String(sc.inval).match(/([\d,]{4,})/); if (m) { var L = +m[1].replace(/,/g, ''); if ((PUB.px - L) * (s - L) < 0) items.push('Crossed the brief\'s invalidation level ' + f(L, 0) + ': "' + esc(sc.inval) + '".') } }
+  if (e0) { var daily = e0[1]; if (Math.abs(mv) >= daily * 0.75) items.push('The S&amp;P perp moved ' + sg(mv) + ' since the brief, ' + (Math.abs(mv) / daily * 100).toFixed(0) + '% of the nearest implied move, so its levels may be stale.') }
+  var gf = gammaFlip(); if (gf && (PUB.px - gf) * (s - gf) < 0) items.push('Crossed the gamma flip ' + f(gf, 0) + ' since the brief (estimate from open interest).');
+  if (REV && REV.label && /sustainable/.test(REV.label)) items.push('A ' + esc(REV.label.toLowerCase()) + ' is forming, see Reversal watch.');
+  if (!items.length) { sec.style.display = 'none'; return }
+  sec.style.display = ''; el.innerHTML = items.map(function (i) { return '<div class="r full">' + i + '</div>' }).join('') + '<div class="r full k">Brief published ' + esc(B.updatedLabel) + '. The next scheduled update is ' + esc(B.next || 'pending') + '.</div>';
+}
+var _applyBrief4 = applyBrief;
+applyBrief = function (nb) { _applyBrief4(nb); PUB = null; try { loadPub() } catch (e) { } };
+var _render3 = render;
+render = function () { _render3(); try { renderInval() } catch (e) { } };
 
 /* ---------- Start ---------- */
 setTheme(THEME); setMode(MODE); sectors(); applyBrief(DEF); BRIEF_V = '';

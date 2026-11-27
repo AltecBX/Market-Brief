@@ -65,20 +65,20 @@ def uwclose(sym, path):
     rows = [[ymd(r["date"]), float(r["c"])] for r in data if r.get("c")]
     save(sym + "10", "Unusual Whales daily closes, split adjusted", ["d", "c"], rows)
 def intraday(path):
-    """SPY 30 minute regular session bars from get_ticker_candles_by_range -> data/intraday/SPY30.json, times in ET"""
+    """30 minute regular session bars from get_ticker_candles_by_range -> data/intraday/SPY30.json, times in ET"""
     from datetime import datetime
     from zoneinfo import ZoneInfo
-    j = json.load(open(path)); d = j.get("data", j); out = {}
+    j = json.load(open(path)); d = j.get("data", j); out = {}; sym = d[0]["ticker"]
     for c in d:
         if c.get("market", "r") != "r": continue
         t = datetime.fromisoformat(c["start"].replace("Z", "+00:00")).astimezone(ZoneInfo("America/New_York"))
         out[(int(t.strftime("%Y%m%d")), int(t.strftime("%H%M")))] = [float(c["o"]), float(c["h"]), float(c["l"]), float(c["c"]), int(c.get("vol") or 0)]
-    p = "data/intraday/SPY30.json"; os.makedirs("data/intraday", exist_ok=True)
+    p = "data/intraday/" + sym + "30.json"; os.makedirs("data/intraday", exist_ok=True)
     if os.path.exists(p):
         for r in json.load(open(p))["rows"]: out.setdefault((r[0], r[1]), r[2:])
     rows = [[k[0], k[1]] + v for k, v in sorted(out.items())]
-    json.dump({"sym": "SPY", "src": "Unusual Whales 30 minute bars, regular session, ET", "fields": ["d", "hm", "o", "h", "l", "c", "v"], "asof": rows[-1][0], "rows": rows}, open(p, "w"), separators=(",", ":"))
-    print("SPY30", len(rows), "bars, last", rows[-1][0])
+    json.dump({"sym": sym, "src": "Unusual Whales 30 minute bars, regular session, ET", "fields": ["d", "hm", "o", "h", "l", "c", "v"], "asof": rows[-1][0], "rows": rows}, open(p, "w"), separators=(",", ":"))
+    print(sym + "30", len(rows), "bars,", len(set(r[0] for r in rows)), "days,", rows[0][0], "to", rows[-1][0])
 if __name__ == "__main__":
     if sys.argv[1] == "cboe": cboe()
     elif sys.argv[1] == "uwclose": uwclose(sys.argv[2], sys.argv[3])

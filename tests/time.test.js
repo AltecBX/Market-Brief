@@ -24,4 +24,15 @@ ok(T.lastOpenMs(Z('2026-11-30T13:00:00Z')) === Z('2026-11-27T14:30:00Z'), 'Last 
 ok(T.last6pmMs(Z('2026-11-28T15:00:00Z')) === Z('2026-11-26T23:00:00Z'), 'Last 6pm futures open before Saturday is Thursday 6pm');
 ok(T.last6pmMs(Z('2026-11-30T03:00:00Z')) === Z('2026-11-29T23:00:00Z'), 'Sunday 10pm: last 6pm open is Sunday 6pm');
 ok(T.etMs(2026, 3, 8, 3, 0) === Z('2026-03-08T07:00:00Z'), 'Mar 8 2026 3am EDT right after the switch');
+/* stale data detection */
+const fsrc = src.slice(src.indexOf('function lastCloseMs('), src.indexOf('function freshTag('));
+eval(fsrc.replace(/function (\w+)\(/g, 'globalThis.$1 = function $1(') + '; function tET(t){return String(t)}');
+const realNow = Date.now;
+Date.now = () => Z('2026-11-30T15:00:00Z');
+ok(globalThis.freshness('2026-11-27T13:15:00-05:00', 'session').ok, 'Friday half day close data is current on Monday morning');
+ok(!globalThis.freshness('2026-11-25T16:15:00-05:00', 'session').ok, 'Wednesday data is stale once Friday has closed');
+Date.now = () => Z('2026-11-27T07:00:00Z');
+ok(globalThis.freshness('2026-11-25T16:15:00-05:00', 'session').ok, 'Wednesday data is current before Friday trades (Thanksgiving)');
+ok(!globalThis.freshness('2026-11-26T01:00:00Z', 24).ok, 'a 30 hour old note fails a 24 hour rule');
+Date.now = realNow;
 console.log(fails ? fails + ' failed' : 'all passed'); process.exit(fails ? 1 : 0);

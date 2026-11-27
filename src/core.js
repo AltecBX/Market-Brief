@@ -462,6 +462,16 @@ var STUDIES = [
       cumv: perp ? null : iCumv((o.prior || []).filter(function (b) { return b.length === full }), full), ref: o.ref && o.ref.length ? o.ref : null, src: o.src || 'cash', ctx: cx };
   }
 
-  return { iSession: iSession, isTradingDay: isTradingDay, isHalfDay: isHalfDay, weekDays: weekDays, weekComplete: weekComplete, ymdAdd: ymdAdd, calendarCovered: calendarCovered, etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+
+  /* ---------- Material developments: a headline matters when the measured reaction is large for that asset ---------- */
+  var MSCALE = { SPY: 0.15, SPX: 0.15, QQQ: 0.18, NDX: 0.18, Brent: 0.35, Gold: 0.2, BTC: 0.6 };
+  /* s: headline score, move: % move in the reaction window (15 minutes preferred), lbl: asset label. */
+  function materiality(s, move, lbl) {
+    if (!isNum(move)) return { z: null, material: false };
+    var z = Math.abs(move) / (MSCALE[lbl] || 0.5);
+    return { z: z, material: (s >= 6 && z >= 2) || z >= 3 };
+  }
+
+  return { materiality: materiality, iSession: iSession, isTradingDay: isTradingDay, isHalfDay: isHalfDay, weekDays: weekDays, weekComplete: weekComplete, ymdAdd: ymdAdd, calendarCovered: calendarCovered, etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;

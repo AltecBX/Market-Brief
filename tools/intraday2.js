@@ -174,5 +174,5 @@ async function run(log) {
   fs.writeFileSync(frozenP, JSON.stringify(frozen));
   return res;
 }
-module.exports = { run, build, context, dayCtx, sessions, WIN, SYMS, REF, PERP, OUTS, ONAME };
+module.exports = { run, build, context, dayCtx, sessions, verdict, WIN, SYMS, REF, PERP, OUTS, ONAME };
 if (require.main === module) run((k, e) => {}).then(r => { for (const s of Object.keys(r.inst)) for (const w of Object.keys(r.inst[s].windows)) { const W = r.inst[s].windows[w]; console.log(s, w, W.sessions, Object.keys(W.outcomes).map(o => o + ':' + W.outcomes[o].display + (W.outcomes[o].promoted ? '*' : '') + ' ' + Object.keys(W.outcomes[o].models).map(f => f + '=' + W.outcomes[o].models[f].bss).join(',')).join(' | ')) } });

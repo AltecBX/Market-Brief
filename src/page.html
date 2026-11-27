@@ -159,6 +159,7 @@ details.d[open]>summary .sh h2::after{content:" \2039"}
 .foot{font-size:11px;color:var(--ink2);margin:22px 2px 0;line-height:1.6}
 .foot a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--ink3)}
 html.m30 .x2,html.m30 .xd,html.m2 .xd{display:none!important}
+#p-hist .sec.fold>.sh{cursor:pointer}#p-hist .sec.fold>.sh h2::after{content:' \25BE';opacity:.5}#p-hist .sec.fold.closed>.sh h2::after{content:' \25B8'}#p-hist .sec.fold.closed>:not(.sh){display:none!important}
 html.m30 .x30h{display:none!important}
 .hist .hrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 70px;gap:8px;font-size:13px;align-items:baseline}
 .hist .hrow span:nth-child(n+2),.hist .hrow b:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
@@ -225,14 +226,14 @@ html.m30 .x30h{display:none!important}
 <div class="pills" id="healthSec" style="display:none;margin-top:6px"><span class="k" style="align-self:center">Data as of</span><span id="health" style="display:contents"></span></div>
 
 
-<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Decision</h2><span>Validated evidence only</span></div><div class="grp ev" id="dec"></div></div>
+<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Briefing</h2><span>Research signals only when validated</span></div><div class="grp ev" id="dec"></div></div>
 <div class="sec since" id="sinceSec" style="display:none">
 <div class="sh"><h2>What changed since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
 <div class="grp" id="since"></div>
 </div>
 
 <div class="sec xd" id="autoSec" style="display:none"><div class="sh"><h2>Comparable history</h2><span>Tap for detail</span></div><div class="grp" id="autohist"></div></div>
-<div class="sec top3" id="secTop3"><div class="sh"><h2>Why it matters</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
+<div class="sec top3 xd" id="secTop3"><div class="sh"><h2>Why it matters</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
 
 <div class="sec x2" id="secRev" style="display:none"><div class="sh"><h2>Reversal watch</h2><span id="revasof"></span></div><div class="grp ev" id="rev"></div></div>
 <div class="sec" id="secRead"><div class="sh"><h2>Readings</h2><span id="stripbasis"></span></div>
@@ -245,13 +246,13 @@ html.m30 .x30h{display:none!important}
 <div class="note xd" id="impnote"></div>
 </div></div>
 
-<div class="sec" id="secOutlook"><div class="sh"><h2>Outlook and what would change it</h2><span id="outasof"></span></div><div class="grp ev" id="outlook"></div></div>
+<div class="sec xd" id="secOutlook"><div class="sh"><h2>Outlook and what would change it</h2><span id="outasof"></span></div><div class="grp ev" id="outlook"></div></div>
 <div class="sec drv xd" id="secDrv"><div class="sh"><h2 id="drvtitle">What is driving it</h2></div><div class="grp" id="drivers"></div></div>
 
 <div class="sec xd" id="secRisk"><div class="sh"><h2>Risks and catalysts</h2><span id="caltitle"></span></div><div class="grp cal" id="risks"></div></div>
 
-<div class="sec cal x2" id="secCal7"><div class="sh"><h2>Next 7 trading days</h2><span>Ranked for chips and the Fed</span></div><div class="grp cal" id="cal7"></div><div class="note" id="cal7note"></div></div>
-<div class="sec cal x2" id="secPriced" style="display:none"><div class="sh"><h2>What is priced in</h2><span id="pricedasof"></span></div><div class="grp cal" id="priced"></div></div>
+<div class="sec cal xd" id="secCal7"><div class="sh"><h2>Next 7 trading days</h2><span>Ranked for chips and the Fed</span></div><div class="grp cal" id="cal7"></div><div class="note" id="cal7note"></div></div>
+<div class="sec cal xd" id="secPriced" style="display:none"><div class="sh"><h2>What is priced in</h2><span id="pricedasof"></span></div><div class="grp cal" id="priced"></div></div>
 <div class="sec scen xd" id="secScen"><div class="sh"><h2>Scenarios</h2><span>No probabilities until validated</span></div><div class="grp" id="scen"></div>
 <div class="note" id="optrisk"></div></div>
 
@@ -314,6 +315,7 @@ html.m30 .x30h{display:none!important}
 
 <!-- HISTORY -->
 <div class="panel" id="p-hist">
+<div class="sec"><div class="grp" id="rhealth"><div class="r mut">Checking data</div></div></div>
 <div class="sec"><div class="sh"><h2>Signal reliability</h2><span>What has an edge, what does not</span></div><div class="grp" id="rreg"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Intraday high and low</h2><span>Per stock, from 9:35am</span></div><div class="grp hist" id="rintra"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>This week</h2><span>Monday open to Friday close</span></div><div class="grp hist" id="rweek"><div class="r mut">Loading</div></div></div>

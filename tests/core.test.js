@@ -200,4 +200,49 @@ const rc = series(cl.map((v, q) => v)); rc.breaks = [rc.d[26]]; rc.sym = 'T'; co
   const KM = C.kaplanMeier([{ t: 5, done: true }, { t: null, done: false, obs: 3 }, { t: 10, done: true }], [6]); near(KM[6], 0.5, 1e-9, 'Kaplan Meier drops only at recoveries and removes censored events from the risk set');
 }
 
+/* ---------- operational phase: parity, calendar, promotion, prospective timing, materiality ---------- */
+{
+  const I2 = require('../tools/intraday2.js'), fs = require('fs'), Cx = I2.context();
+  const rows5 = I2.build('SPY', 'early', Cx), rows30 = I2.build('SPY', 'late', Cx);
+  const S5 = I2.sessions('SPY', 5, 78), R5 = {}; I2.sessions('SMH', 5, 78).forEach(s => { R5[s.d] = s.b });
+  const S30 = I2.sessions('SPY', 30, 13), dly = JSON.parse(fs.readFileSync('data/hist/SPY.json')).rows, earn = Cx.E.SPY || [];
+  const day = S5[S5.length - 3].d, i5 = S5.findIndex(s => s.d === day);
+  /* the page builds a live session the same way: same core function, same inputs */
+  const live = C.iSession({ bars: S5[i5].b.slice(0, 6), ref: R5[day].slice(0, 6), res: 5, d: day, dly, vix: Cx.vix, rsp: Cx.rsp, spy: Cx.spy, earn, prior: S5.slice(0, i5).map(s => s.b), src: 'cash' });
+  [1, 2, 3, 6].forEach(k => { const r = rows5.find(z => z.d === day && z.k === k); ok(r && JSON.stringify(C.ifeat(live, k)) === JSON.stringify(r.x), 'live 5 minute features match training at checkpoint ' + k) });
+  const i30 = S30.findIndex(s => s.d === day), R30 = {}; I2.sessions('SMH', 30, 13).forEach(s => { R30[s.d] = s.b });
+  const live30 = C.iSession({ bars: C.to30(S5[i5].b), ref: C.to30(R5[day]), res: 30, d: day, dly, vix: Cx.vix, rsp: Cx.rsp, spy: Cx.spy, earn, prior: S30.slice(0, i30).map(s => s.b), src: 'cash' });
+  [1, 4, 8, 12].forEach(k => { const r = rows30.find(z => z.d === day && z.k === k), a = C.ifeat(live30, k); ok(r && a.every((v, q) => Math.abs(v - r.x[q]) < 1e-9), 'live 5 to 30 minute bars match the 30 minute training features at bar ' + k) });
+  const pz = C.iSession({ bars: S5[i5].b, ref: null, res: 5, d: day, dly, vix: Cx.vix, rsp: Cx.rsp, spy: Cx.spy, earn, prior: S5.slice(0, i5).map(s => s.b), src: 'perp', perpPrev: 7000 });
+  ok(pz.prev === 7000 && pz.cumv === null, 'perp sessions use the perp 4pm price as previous close and no relative volume');
+  ok(C.iSession({ bars: S5[i5].b, res: 5, d: day, dly, vix: Cx.vix, rsp: Cx.rsp, spy: Cx.spy, src: 'perp' }) === null, 'a perp session without its 4pm reference is refused');
+}
+{
+  ok(!C.isTradingDay(20261126) && C.isTradingDay(20261127) && C.isHalfDay(20261127) && !C.isTradingDay(20250109), 'NYSE calendar knows Thanksgiving, the half day after it and the 2025 day of mourning');
+  ok(JSON.stringify(C.weekDays(20251126)) === JSON.stringify([20251124, 20251125, 20251126, 20251128]), 'a holiday week has four expected trading days');
+  const wk = [[20251124, 1, 1, 1, 1], [20251125, 1, 1, 1, 1], [20251126, 1, 1, 1, 1]];
+  ok(!C.weekComplete(wk, 20251126), 'a week is unfinished until its last trading day has closed');
+  ok(C.weekComplete(wk.concat([[20251128, 1, 1, 1, 1]]), 20251128), 'the holiday week is finished after the Friday half day');
+  ok(!C.weekComplete([[20251124, 1, 1, 1, 1], [20251126, 1, 1, 1, 1], [20251128, 1, 1, 1, 1]], 20251201), 'a week with a missing trading day is not treated as complete');
+}
+{
+  const I2 = require('../tools/intraday2.js'), base = { vsBenchCI: [0.001, 0.01], ece: 0.02, regimes: { vixHigh: 0.1, vixLow: 0.05 }, econ: 0.3, econCI: [0.05, 0.5], flagged: 80, flagSessions: 30 };
+  ok(I2.verdict(base, 'highDone').promoted, 'promoted with better accuracy and meaningful value whose range is above zero');
+  ok(!I2.verdict(Object.assign({}, base, { econCI: [-0.1, 0.6] }), 'highDone').promoted, 'positive value is not enough when its range includes zero');
+  ok(!I2.verdict(Object.assign({}, base, { econ: 0.04, econCI: [0.01, 0.07] }), 'highDone').promoted, 'value too small to matter is not promoted');
+  ok(!I2.verdict(Object.assign({}, base, { vsBenchCI: [-0.002, 0.01] }), 'highDone').promoted, 'value without a statistically supported accuracy gain is not promoted');
+  ok(!I2.verdict(Object.assign({}, base, { flagged: 12 }), 'highDone').promoted, 'too few signals are not promoted');
+}
+{
+  const P = require('../tools/prospective.js');
+  ok(P.eligibleFrom('2026-11-30T12:08:00Z') === 20261130, 'registered before the open: eligible the same session');
+  ok(P.eligibleFrom('2026-11-30T15:00:00Z') === 20261201, 'registered after the open: eligible from the next session');
+  ok(P.eligibleFrom('2026-11-25T22:00:00Z') === 20261127, 'registered on the evening before Thanksgiving: eligible Friday');
+  ok(P.eligibleFrom('2026-11-27T22:00:00Z') === 20261130, 'registered Friday evening: eligible Monday');
+}
+{
+  ok(!C.materiality(5, 0.2, 'SPY').material && C.materiality(6, 0.31, 'SPY').material && C.materiality(2, 0.5, 'SPY').material, 'materiality needs a large move for the asset, or a very large one');
+  ok(!C.materiality(9, null, 'SPY').material, 'no measured reaction, not material');
+}
+
 console.log(fails ? fails + ' of ' + n + ' failed' : 'all ' + n + ' passed'); process.exit(fails ? 1 : 0);

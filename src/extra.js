@@ -237,7 +237,7 @@ function renderRev() {
   if (r.exh && r.exh.length) h += '<div class="r full"><b>Exhaustion signs, ' + r.exh.length + ' of 6</b><div class="k">' + r.exh.map(esc).join('. ') + '. These suggest the ' + (down ? 'selling' : 'buying') + ' is losing force; none of them is a reversal by itself.</div></div>';
   h += r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('');
   if (r.prov) h += '<div class="r xd k">Current candle (' + tET(+r.prov.t) + ') is still forming and is not used above.</div>';
-  h += '<div class="r full k">Rules: retraced under 38% is a bounce, 38 to 62% partial. Above 62%, 4 of 5 confirmations (higher low, structure break, VWAP held, semis half back, perp sample breadth) and 30 minutes held is a potential sustainable reversal. The order of a high and low inside one candle is unknown, so a peak and trough in the same candle are not counted. Nothing here shows who was buying or why.</div>';
+  h += '<div class="r full k xd">Rules: retraced under 38% is a bounce, 38 to 62% partial. Above 62%, 4 of 5 confirmations (higher low, structure break, VWAP held, semis half back, perp sample breadth) and 30 minutes held is a potential sustainable reversal. The order of a high and low inside one candle is unknown, so a peak and trough in the same candle are not counted. Nothing here shows who was buying or why.</div>';
   $('rev').innerHTML = h;
 }
 var _allLevels = allLevels;
@@ -311,24 +311,48 @@ function loadDecision() {
   }).catch(function () { });
   liveSession('SPY').catch(function () { return null }).then(function (live) { var sl = live ? curSlot(live) : null; if (!sl) { DEC.i = null; return } return intraState('SPY', sl, live).then(function (S) { DEC.i = S && !S.wait ? S : null; renderDecision() }) }).catch(function () { });
 }
+/* material developments: brief stories marked material, and live headlines whose measured reaction was large for that asset */
+function materialItems() {
+  var out = [];
+  (B.stories || []).forEach(function (s) { if (s.material) out.push({ ts: 0, t: s.t, h: s.h, txt: s.changes || s.why || '', src: s.src, impl: s.impl, brief: true }) });
+  (WIRE.items || []).forEach(function (n) { var key = n.ts + '|' + n.h.slice(0, 30), im = WIRE.imp[key]; if (!im || !im.w) return; var mv = isNum(im.w[15]) ? im.w[15] : im.w[5], w = isNum(im.w[15]) ? 15 : 5, m = CORE.materiality(n.s, mv, im.lbl); if (!m.material) return;
+    out.push({ ts: n.ts, t: fmtT(n.ts), h: n.h, txt: esc(im.lbl) + ' ' + sg(mv) + ' in ' + w + ' minutes, ' + m.z.toFixed(1) + ' times a typical move', src: n.url, mv: mv, lbl: im.lbl, z: m.z }) });
+  return out.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0) }).slice(0, 3);
+}
 function renderDecision() {
-  var el = $('dec'); if (!el) return; var s = px('xyz:SP500'); if (!s) return;
-  var inv = invalItems(), t3 = B.top3 && B.top3.length ? B.top3 : (B.drivers || []).slice(0, 3).map(function (d) { return [d[1], d[2]] }), h = '', row = function (q, a) { h += '<div class="r full"><span class="k">' + q + '</span><div>' + a + '</div></div>' };
-  var chg = inv.length ? inv[0] : 'S&amp;P perp ' + f(s, 0) + ', ' + sg((s / B.base.spx - 1) * 100) + ' vs the last close' + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since the brief' : '') + '. ' + lite(B.headline || '');
-  row('What changed', chg + (inv.length > 1 ? ' <span class="k">+' + (inv.length - 1) + ' more below</span>' : ''));
-  if (t3[0]) row('Why it matters', '<b>' + lite(t3[0][0]) + '.</b> ' + lite(t3[0][1]));
-  var ev = [], nx = [];
-  (DEC.w || []).forEach(function (W) { if (W.fri) return; var cn = I2PERP[W.sym], pb = B.base && B.base.perp && B.base.perp[cn], lv = cn && px(cn) && fresh(cn) && pb ? W.s.c * px(cn) / pb : null; Object.keys(W.out).forEach(function (o) { var q = W.out[o]; if (!q.validated || Math.abs(q.p - 0.5) < 0.15) return; if (lv && ((o === 'highSet' && lv > W.s.hi) || (o === 'lowSet' && lv < W.s.lo))) { nx.push(W.sym + ' this week: the ' + (o === 'highSet' ? 'perp already implies a new weekly high' : 'perp already implies a new weekly low') + ' <span class="k">(' + f(lv, 2) + '), so the ' + pc(q.p) + ' estimate from the ' + dlab(W.d) + ' close no longer applies</span>'); return } nx.push(W.sym + ' this week: ' + q.name.toLowerCase() + ', ' + pc(q.p) + ' <span class="k">from the ' + dlab(W.d) + ' close</span>'); var g = (DEC.reg && DEC.reg.signals || []).filter(function (x) { return x.name === W.sym + ' weekly: ' + q.name })[0]; if (g) ev.push(W.sym + ', ' + q.name.toLowerCase() + ': model error ' + esc(String(g.oos).replace('error ', '')) + ' vs ' + esc(String(g.bench).replace(/^better of day of week and day with position, error /, '')) + ' for the best benchmark on ' + g.sessions + ' untouched weeks (' + esc(g.ci) + ')') }) });
-  if (DEC.i) CORE.OUT2.forEach(function (o) { var q = DEC.i.out[o]; if (q.promoted) { nx.push('SPY today: ' + DEC.i.W.outcomes[o].name.toLowerCase() + ' ' + pc(q.p)) } });
-  row('Most likely next', nx.length ? nx.slice(0, 3).join('<br>') : 'No validated signal applies right now. Base rates are in History.');
-  row('Evidence', ev.length ? ev.slice(0, 2).join('<br>') : 'Nothing that passed validation. Failed and unconfirmed signals are kept off this screen.');
-  var sc = scenarioNow(s); row('What would invalidate it', lite(sc.inval || 'not set in this brief'));
-  var dn = [], e0 = B.opt.em && B.opt.em[0];
-  if (DEC.i && DEC.i.q) dn.push('Rest of today: 1 in 10 similar sessions fell another ' + Math.abs(DEC.i.q.dn[0]).toFixed(2) + '% or more (S&amp;P ' + f(s * (1 + DEC.i.q.dn[0] / 100), 0) + ')');
+  var el = $('dec'); if (!el) return; var s = px('xyz:SP500') || null;
+  var D = B.daily || null, GP = {}; (B.gaps || []).forEach(function (g) { GP[g[0]] = g[1] });
+  var inv = invalItems(), mats = materialItems(), h = '', missing = [], row = function (q, a, note) { if (a.indexOf('\u0001') === 0) { missing.push(q.toLowerCase() + (a.length > 1 ? ' (' + a.slice(1) + ')' : '')); return } h += '<div class="r full"><span class="k">' + q + (note ? ' <span class="mut">' + note + '</span>' : '') + '</span><div>' + a + '</div></div>' };
+  var miss = function (k) { return '\u0001' + (GP[k] ? esc(GP[k]) : '') }, der = 'derived';
+  /* material moves against the brief's call also invalidate it */
+  var fdir = B.forecast && B.forecast.dir; mats.forEach(function (m) { if (fdir && m.z >= 2 && /SPY|SPX|QQQ|NDX/.test(m.lbl || '') && ((fdir === 'up' && m.mv < 0) || (fdir === 'down' && m.mv > 0))) inv.push('Material headline moved ' + esc(m.lbl) + ' ' + sg(m.mv) + ' against the brief\'s ' + fdir + ' call: "' + esc(m.h) + '".') });
+  row('What happened', D && D.happened ? lite(D.happened) : lite(B.lede || B.headline || ''), D && D.happened ? '' : der);
+  row('What caused it', D && D.cause ? lite(D.cause) + (D.causeSrc ? ' <a href="' + esc(D.causeSrc) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') : (B.top3 && B.top3[0] ? '<b>' + lite(B.top3[0][0]) + '.</b> ' + lite(B.top3[0][1]) : miss('daily')), D && D.cause ? '' : (B.top3 ? der : ''));
+  var chg = s ? 'S&amp;P perp ' + f(s, 0) + ', ' + sg((s / B.base.spx - 1) * 100) + ' vs the last close' + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since this brief' : '') + '.' : 'Live prices unavailable right now.';
+  row('Since the previous briefing', (inv.length ? '<b class="dn">' + inv[0] + '</b> ' : '') + (D && D.since ? lite(D.since) + ' ' : '') + '<span class="k">' + chg + '</span>');
+  if (mats.length) row('Material developments', mats.map(function (m) { return '<b>' + esc(m.t) + '</b> ' + (m.src ? '<a href="' + esc(m.src) + '" target="_blank" rel="noopener noreferrer">' + esc(m.h) + '</a>' : esc(m.h)) + (m.txt ? ' <span class="k">' + (m.brief ? lite(m.txt) : m.txt) + '</span>' : '') }).join('<br>'));
+  var ex = D && D.expected && D.expected.length ? D.expected : ((B.priced && B.priced.data) || []).filter(function (r) { return r[4] }).map(function (r) { return [r[0], r[2], r[4], ''] });
+  row('Expected vs actual', ex.length ? ex.slice(0, 4).map(function (r) { return esc(r[0]) + ': expected ' + esc(r[1]) + ', actual <b>' + esc(r[2]) + '</b>' }).join('<br>') : (D ? 'Nothing released since the previous brief.' : miss('daily')), D && D.expected && D.expected.length ? '' : (ex.length ? der : ''));
+  var af = D && D.affected && D.affected.length ? D.affected.map(function (r) { return '<span class="' + (r[1] === 'up' ? 'up' : r[1] === 'down' ? 'dn' : '') + '">' + esc(r[0]) + '</span> ' + lite(r[2]) }) : (B.stories || []).slice(0, 3).map(function (x) { return esc(x.assets) + ': ' + lite(x.h) });
+  row('Stocks and sectors affected', af.length ? af.join('<br>') : miss('daily'), D && D.affected ? '' : (af.length ? der : ''));
+  var pr = D && D.priced ? lite(D.priced) : '', e0 = B.opt.em && B.opt.em[0]; if (!pr && e0) pr = 'Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]) + '.';
+  row('Already priced in', pr || miss('priced'), D && D.priced ? '' : (pr ? der : ''));
+  var cat = D && D.catalysts && D.catalysts.length ? D.catalysts.map(function (c) { return '<b>' + esc(c[0]) + '</b> ' + lite(c[1]) + (c[2] ? ' <span class="k">' + lite(c[2]) + '</span>' : '') }) : (B.events7 || []).filter(function (e) { return e[3] >= 3 }).slice(0, 3).map(function (e) { return '<b>' + esc(e[0].slice(5) + ' ' + e[1]) + '</b> ' + esc(e[2]) });
+  row('Next catalysts', cat.length ? cat.slice(0, 3).join('<br>') : miss('events7'), D && D.catalysts ? '' : (cat.length ? der : ''));
+  var sc = s ? scenarioNow(s) : {}; row('What would invalidate the outlook', D && D.invalid ? lite(D.invalid) : (sc.inval ? lite(sc.inval) : miss('daily')), D && D.invalid ? '' : (sc.inval ? der : ''));
+  /* research: only promoted signals */
+  var nx = [], ev = [];
+  (DEC.w || []).forEach(function (W) { if (W.fri) return; var cn = I2PERP[W.sym], pb = B.base && B.base.perp && B.base.perp[cn], lv = cn && px(cn) && fresh(cn) && pb ? W.s.c * px(cn) / pb : null; Object.keys(W.out).forEach(function (o) { var q = W.out[o]; if (!q.validated || Math.abs(q.p - 0.5) < 0.15) return; if (lv && ((o === 'highSet' && lv > W.s.hi) || (o === 'lowSet' && lv < W.s.lo))) return; nx.push(W.sym + ' this week: ' + q.name.toLowerCase() + ', ' + pc(q.p)); var g = (DEC.reg && DEC.reg.signals || []).filter(function (x) { return x.name === W.sym + ' weekly: ' + q.name })[0]; if (g) ev.push(esc(g.name) + ': ' + esc(g.oos) + ', ' + esc(g.ci)) }) });
+  if (DEC.i) CORE.OUT2.forEach(function (o) { var q = DEC.i.out[o]; if (q.promoted && !q.blocked) nx.push('SPY today: ' + DEC.i.W.outcomes[o].name.toLowerCase() + ' ' + pc(q.p)) });
+  row('Research signals', nx.length ? nx.slice(0, 3).join('<br>') + (ev.length ? '<div class="k">' + ev.slice(0, 2).join('<br>') + '</div>' : '') : 'None qualifies today. A signal shows here only after it beats its benchmark out of sample and makes money after costs; History has the full record.');
+  var dn = [];
+  if (s && DEC.i && DEC.i.q && DEC.i.src !== 'perp') dn.push('Rest of today: 1 in 10 similar sessions fell another ' + Math.abs(DEC.i.q.dn[0]).toFixed(2) + '% or more (S&amp;P ' + f(s * (1 + DEC.i.q.dn[0] / 100), 0) + ')');
   var ws = (DEC.w || []).filter(function (W) { return W.sym === 'SPY' && !W.fri && W.rng })[0]; if (ws) dn.push('Rest of this week: 1 in 10 similar weeks fell another ' + Math.abs(ws.rng.dn[0]).toFixed(2) + '% or more');
   if (e0) dn.push('Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]));
   row('Realistic downside', dn.length ? dn.join('<br>') : 'n/a');
+  if (missing.length) h += '<div class="r full k">Not in this update: ' + missing.join(', ') + '.</div>';
   if (inv.length > 1) h += inv.slice(1).map(function (x) { return '<div class="r full k">' + x + '</div>' }).join('');
+  if (D && D.asofTs) h += '<div class="r full k">Briefing as of ' + esc(tET(new Date(D.asofTs).getTime(), true)) + '.</div>';
   el.innerHTML = h; $('secDec').style.display = '';
   loadDecision();
 }

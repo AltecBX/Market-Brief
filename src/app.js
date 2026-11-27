@@ -318,7 +318,7 @@ function renderSince() {
   if (nw.length) { h += '<div class="r full">' + nw.length + ' new market moving headline' + (nw.length > 1 ? 's' : '') + '<div class="k">' + nw.slice(0, 3).map(function (n) { return fmtT(n.ts) + ' ' + esc(n.h) }).join('<br>') + '</div></div>'; items++ }
   else if (!getKey()) h += '<div class="r full k">Headlines since then need the live wire. Connect it in News.</div>';
   if (!items) h += '<div class="r full">Nothing material changed.</div>';
-  if (MODE !== 'deep') { var parts = h.split('<div class="r'); if (parts.length > 9) h = parts.slice(0, 9).join('<div class="r') + '<div class="r full k">' + (parts.length - 9) + ' more in Deep.</div>' }
+  if (MODE !== 'deep') { var parts = h.split('<div class="r'); if (parts.length > 4) h = parts.slice(0, 4).join('<div class="r') + '<div class="r full k">' + (parts.length - 4) + ' more in Deep.</div>' }
   $('since').innerHTML = h;
 }
 

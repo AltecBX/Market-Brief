@@ -22,6 +22,32 @@ def iso(s, name):
 need = ["updated","updatedLabel","next","kicker","headline","lede","pills","drivers","picks","planTitle","means",
         "calTitle","calendar","impNote","base","anchor","ladder","chart","opt","recapLabel","sources"]
 err += ["missing key: " + k for k in need if k not in B]
+# From the 9:02am run on Nov 27 2026 every structured block must be present. A block may be empty only when "gaps" says why
+# ([[block, reason]]), so the page can say "not in this update" instead of showing an empty component.
+CUT = "2026-11-27T09:00:00-05:00"
+try:
+    from datetime import datetime as _dt
+    newer = _dt.fromisoformat(str(B.get("updated"))) >= _dt.fromisoformat(CUT)
+except Exception:
+    newer = False
+GAPS = {g[0]: g[1] for g in B.get("gaps", []) if isinstance(g, list) and len(g) == 2 and str(g[1]).strip()}
+if newer:
+    for k in ("daily", "top3", "risks", "scenarios", "events7", "priced", "stories", "semis", "forecast", "qa"):
+        v = B.get(k)
+        if (v is None or v == [] or v == {}) and k not in GAPS: err.append("missing or empty " + k + " (add it, or list it in gaps with the reason)")
+DY = B.get("daily")
+if DY is not None:
+    for k in ("happened", "cause", "since", "priced", "invalid"):
+        if not str(DY.get(k, "")).strip(): err.append("daily." + k + " is required (say \"not established\" when no source explains it)")
+    if DY.get("causeSrc") and not str(DY["causeSrc"]).startswith("https://"): err.append("daily.causeSrc must be an https link or empty")
+    for r in DY.get("expected", []):
+        if len(r) != 4 or not str(r[3]).startswith("https://"): err.append("daily.expected rows need [item, expected, actual, https source]")
+    for r in DY.get("affected", []):
+        if len(r) != 3 or r[1] not in ("up", "down", "mixed"): err.append("daily.affected rows need [name, up|down|mixed, why]")
+    if not 1 <= len(DY.get("catalysts", [])) <= 5: err.append("daily.catalysts needs 1 to 5 [when, what, why]")
+    for r in DY.get("catalysts", []):
+        if len(r) != 3: err.append("daily.catalysts rows need [when, what, why]")
+    if newer and not DY.get("asofTs"): err.append("daily.asofTs is required")
 
 # style rules on visible text
 SKIP = {"updated","start","marker","sources","ts","closesSrc","emSrc"}
@@ -143,11 +169,18 @@ if F is not None:
 for e in o.get("em", []):
     if len(e) >= 5 and not re.match(r"^\d{4}-\d{2}-\d{2}$", str(e[4])): err.append("opt.em expiry date must be YYYY-MM-DD: " + str(e[4]))
 for s in B.get("stories", []):
+    if "material" in s and not isinstance(s["material"], bool): err.append("stories.material must be true or false")
     if not all(k in s for k in ("t","h","what","why","assets","impl","reacted","known","confirm","invalid","src")) or s.get("impl") not in ("bull","bear","mixed") or s.get("known") not in ("new","known") or not str(s.get("src","")).startswith("https://"): err.append("stories need t, h, what, why, assets, impl bull|bear|mixed, reacted, known new|known, confirm, invalid, https src")
 S2 = B.get("semis")
 if S2 is not None:
     for r in S2.get("memory", []) + S2.get("notes", []):
         if len(r) != 3 or not str(r[2]).startswith("https://"): err.append("semis rows need [label, text, https source]")
+    if newer:
+        labs = " ".join(str(r[0]).upper() for r in S2.get("memory", []))
+        for m in ("DRAM", "NAND", "HBM"):
+            if m not in labs: err.append("semis.memory needs a " + m + " row (latest pricing or \"no new pricing since <date>\" with the source)")
+        tops = {str(r[0]).upper() for r in S2.get("notes", [])}
+        if len(tops & {"SUPPLY", "DEMAND", "CAPEX", "EXPORT", "EARNINGS", "GUIDANCE", "KOREA", "TAIWAN", "JAPAN", "HBM", "PRICING"}) < 2: err.append("semis.notes should cover at least 2 of SUPPLY, DEMAND, CAPEX, EXPORT, EARNINGS, GUIDANCE, KOREA, TAIWAN, JAPAN, HBM, PRICING")
 sk = o.get("skew")
 if sk is not None:
     for r in sk.get("rows", []):
@@ -229,6 +262,16 @@ try:
         if line and not line.startswith("A"): err.append("ledger file changed or deleted: " + line)
 except FileNotFoundError: pass
 except Exception as e: err.append("research check failed: " + str(e))
+# prospective record: prediction files are written once; registered versions are never edited or removed
+ch = subprocess.run(["git", "diff", "--name-status", "HEAD", "--", "data/prospective/intraday/", "data/prospective/weekly/"], capture_output=True, text=True).stdout.strip().splitlines()
+for line in ch:
+    if line and not line.startswith("A"): err.append("prospective prediction file changed or deleted: " + line)
+old = subprocess.run(["git", "show", "HEAD:data/prospective/versions.json"], capture_output=True, text=True)
+if old.returncode == 0 and os.path.exists("data/prospective/versions.json"):
+    try:
+        o, n = json.loads(old.stdout)["versions"], json.load(open("data/prospective/versions.json"))["versions"]
+        if n[:len(o)] != o: err.append("prospective versions.json edited or reordered earlier versions")
+    except ValueError: err.append("prospective versions.json is not valid JSON")
 for sym in ("SPY", "QQQ", "SMH", "NVDA", "MU", "AMD", "SNDK"):
     for res, full in (("5", 78), ("30", 13)):
         p = os.path.join("data", "intraday", sym + res + ".json")

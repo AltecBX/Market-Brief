@@ -195,5 +195,18 @@ document.addEventListener('click', function (e) {
 });
 document.addEventListener('change', function (e) { if (e.target.id === 'recx') { RECS.x = Math.max(1, +e.target.value || 10); renderRecovery() } if (e.target.id === 'recd') { RECS.days = Math.max(1, Math.min(20, +e.target.value || 1)); renderRecovery() } });
 function renderIntra() { renderI2() }
-function renderResearch2() { renderI2(); renderWeekly(); renderCC(); renderFpRisk() }
+function renderResearch2() { renderHealth(); renderI2(); renderWeekly(); renderCC(); renderFpRisk() }
 setInterval(function () { if (session(Date.now()).st === 'open' && $('p-hist').classList.contains('on')) renderI2() }, 5 * 60e3);
+
+/* progressive disclosure: research sections start folded except the first two; the choice is remembered on the device */
+(function () {
+  var open = LS('mb_hopen') || { 'Signal reliability': 1, 'Intraday high and low': 1 };
+  [].forEach.call(document.querySelectorAll('#p-hist .sec'), function (s) { var h = s.querySelector('.sh h2'); if (!h) return; var k = h.textContent; s.classList.add('fold'); if (!open[k]) s.classList.add('closed');
+    s.querySelector('.sh').addEventListener('click', function (e) { if (e.target.closest('button,input,a')) return; s.classList.toggle('closed'); if (s.classList.contains('closed')) delete open[k]; else open[k] = 1; LS('mb_hopen', open) }) });
+})();
+function renderHealth() {
+  var el = $('rhealth'); if (!el) return;
+  loadRes('health').then(function (H) { var bad = H.items.filter(function (i) { return !i.ok });
+    el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">Behind:</b> ' + bad.map(function (i) { return esc(i.name) + (i.last ? ' (through ' + dlab(i.last) + ')' : ' (' + esc(i.note || 'missing') + ')') }).join(', ') + '. ' : '') + 'Research data checked ' + esc(H.asof.slice(0, 10)) + ' against the last session ' + dlab(H.lastSession) + '; ' + (H.items.length - bad.length) + ' of ' + H.items.length + ' inputs current.</div>' })
+    .catch(function () { el.innerHTML = '<div class="r full mut">Data health not computed yet.</div>' });
+}

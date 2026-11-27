@@ -159,6 +159,7 @@ details.d[open]>summary .sh h2::after{content:" \2039"}
 .foot{font-size:11px;color:var(--ink2);margin:22px 2px 0;line-height:1.6}
 .foot a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--ink3)}
 html.m30 .x2,html.m30 .xd,html.m2 .xd{display:none!important}
+#p-hist .sec.fold>.sh{cursor:pointer}#p-hist .sec.fold>.sh h2::after{content:' \25BE';opacity:.5}#p-hist .sec.fold.closed>.sh h2::after{content:' \25B8'}#p-hist .sec.fold.closed>:not(.sh){display:none!important}
 html.m30 .x30h{display:none!important}
 .hist .hrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 70px;gap:8px;font-size:13px;align-items:baseline}
 .hist .hrow span:nth-child(n+2),.hist .hrow b:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
@@ -225,14 +226,14 @@ html.m30 .x30h{display:none!important}
 <div class="pills" id="healthSec" style="display:none;margin-top:6px"><span class="k" style="align-self:center">Data as of</span><span id="health" style="display:contents"></span></div>
 
 
-<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Decision</h2><span>Validated evidence only</span></div><div class="grp ev" id="dec"></div></div>
+<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Briefing</h2><span>Research signals only when validated</span></div><div class="grp ev" id="dec"></div></div>
 <div class="sec since" id="sinceSec" style="display:none">
 <div class="sh"><h2>What changed since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
 <div class="grp" id="since"></div>
 </div>
 
 <div class="sec xd" id="autoSec" style="display:none"><div class="sh"><h2>Comparable history</h2><span>Tap for detail</span></div><div class="grp" id="autohist"></div></div>
-<div class="sec top3" id="secTop3"><div class="sh"><h2>Why it matters</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
+<div class="sec top3 xd" id="secTop3"><div class="sh"><h2>Why it matters</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
 
 <div class="sec x2" id="secRev" style="display:none"><div class="sh"><h2>Reversal watch</h2><span id="revasof"></span></div><div class="grp ev" id="rev"></div></div>
 <div class="sec" id="secRead"><div class="sh"><h2>Readings</h2><span id="stripbasis"></span></div>
@@ -245,13 +246,13 @@ html.m30 .x30h{display:none!important}
 <div class="note xd" id="impnote"></div>
 </div></div>
 
-<div class="sec" id="secOutlook"><div class="sh"><h2>Outlook and what would change it</h2><span id="outasof"></span></div><div class="grp ev" id="outlook"></div></div>
+<div class="sec xd" id="secOutlook"><div class="sh"><h2>Outlook and what would change it</h2><span id="outasof"></span></div><div class="grp ev" id="outlook"></div></div>
 <div class="sec drv xd" id="secDrv"><div class="sh"><h2 id="drvtitle">What is driving it</h2></div><div class="grp" id="drivers"></div></div>
 
 <div class="sec xd" id="secRisk"><div class="sh"><h2>Risks and catalysts</h2><span id="caltitle"></span></div><div class="grp cal" id="risks"></div></div>
 
-<div class="sec cal x2" id="secCal7"><div class="sh"><h2>Next 7 trading days</h2><span>Ranked for chips and the Fed</span></div><div class="grp cal" id="cal7"></div><div class="note" id="cal7note"></div></div>
-<div class="sec cal x2" id="secPriced" style="display:none"><div class="sh"><h2>What is priced in</h2><span id="pricedasof"></span></div><div class="grp cal" id="priced"></div></div>
+<div class="sec cal xd" id="secCal7"><div class="sh"><h2>Next 7 trading days</h2><span>Ranked for chips and the Fed</span></div><div class="grp cal" id="cal7"></div><div class="note" id="cal7note"></div></div>
+<div class="sec cal xd" id="secPriced" style="display:none"><div class="sh"><h2>What is priced in</h2><span id="pricedasof"></span></div><div class="grp cal" id="priced"></div></div>
 <div class="sec scen xd" id="secScen"><div class="sh"><h2>Scenarios</h2><span>No probabilities until validated</span></div><div class="grp" id="scen"></div>
 <div class="note" id="optrisk"></div></div>
 
@@ -314,6 +315,7 @@ html.m30 .x30h{display:none!important}
 
 <!-- HISTORY -->
 <div class="panel" id="p-hist">
+<div class="sec"><div class="grp" id="rhealth"><div class="r mut">Checking data</div></div></div>
 <div class="sec"><div class="sh"><h2>Signal reliability</h2><span>What has an edge, what does not</span></div><div class="grp" id="rreg"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Intraday high and low</h2><span>Per stock, from 9:35am</span></div><div class="grp hist" id="rintra"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>This week</h2><span>Monday open to Friday close</span></div><div class="grp hist" id="rweek"><div class="r mut">Loading</div></div></div>
@@ -947,7 +949,50 @@ var STUDIES = [
     out.sort(function (a, b) { return a[0] - b[0] }); var seen = {}; return out.filter(function (b) { if (seen[b[0]]) return false; seen[b[0]] = 1; return true });
   }
 
-  return { etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+
+  /* ---------- NYSE calendar 2015 to 2027: full closures and 1pm closes (used to tell complete weeks and sessions from missing data) ---------- */
+  var NYSE_HOL = ('20150101 20150119 20150216 20150403 20150525 20150703 20150907 20151126 20151225 20160101 20160118 20160215 20160325 20160530 20160704 20160905 20161124 20161226 ' +
+    '20170102 20170116 20170220 20170414 20170529 20170704 20170904 20171123 20171225 20180101 20180115 20180219 20180330 20180528 20180704 20180903 20181122 20181205 20181225 ' +
+    '20190101 20190121 20190218 20190419 20190527 20190704 20190902 20191128 20191225 20200101 20200120 20200217 20200410 20200525 20200703 20200907 20201126 20201225 ' +
+    '20210101 20210118 20210215 20210402 20210531 20210705 20210906 20211125 20211224 20220117 20220221 20220415 20220530 20220620 20220704 20220905 20221124 20221226 ' +
+    '20230102 20230116 20230220 20230407 20230529 20230619 20230704 20230904 20231123 20231225 20240101 20240115 20240219 20240329 20240527 20240619 20240704 20240902 20241128 20241225 ' +
+    '20250101 20250109 20250120 20250217 20250418 20250526 20250619 20250704 20250901 20251127 20251225 20260101 20260119 20260216 20260403 20260525 20260619 20260703 20260907 20261126 20261225 ' +
+    '20270101 20270118 20270215 20270326 20270531 20270618 20270705 20270906 20271125 20271224').split(' ').map(Number);
+  var NYSE_HALF = '20151127 20151224 20161125 20170703 20171124 20180703 20181123 20181224 20190703 20191129 20191224 20201127 20201224 20211126 20221125 20230703 20231124 20240703 20241129 20241224 20250703 20251128 20251224 20261127 20261224 20271126'.split(' ').map(Number);
+  var HSET = {}, HALFSET = {}; NYSE_HOL.forEach(function (d) { HSET[d] = 1 }); NYSE_HALF.forEach(function (d) { HALFSET[d] = 1 });
+  function ymdAdd(d, n) { var t = Date.UTC(Math.floor(d / 1e4), Math.floor(d / 100) % 100 - 1, d % 100) + n * 864e5, x = new Date(t); return x.getUTCFullYear() * 1e4 + (x.getUTCMonth() + 1) * 100 + x.getUTCDate() }
+  function isTradingDay(d) { var w = ymdDow(d); return w >= 0 && w <= 4 && !HSET[d] }
+  function isHalfDay(d) { return !!HALFSET[d] }
+  /* expected trading days of the Monday to Friday week containing d */
+  function weekDays(d) { var m = ymdAdd(d, -ymdDow(d)), out = []; for (var i = 0; i < 5; i++) { var x = ymdAdd(m, i); if (isTradingDay(x)) out.push(x) } return out }
+  /* a week is complete only when every expected trading day is present and the last one has closed (asOf is the last date with data) */
+  function weekComplete(W, asOf) { var exp = weekDays(W[0][0]), have = W.map(function (r) { return r[0] }); return exp.length > 0 && exp.every(function (x) { return have.indexOf(x) >= 0 }) && asOf >= exp[exp.length - 1] }
+  function calendarCovered(d) { return d >= 20150101 && d <= 20271231 }
+
+
+  /* One definition of an intraday session for training, validation, the perp transfer test and the live page.
+     o: {bars, ref, res, d, dly, vix, rsp, spy, earn, prior, src, perpPrev}
+     bars and ref are completed regular session bars [hm,o,h,l,c,v] of the same resolution. For src 'perp' the previous close is the perp
+     price at the prior 4pm cash close (perpPrev) and relative volume is not used, exactly as in the transfer test. */
+  function iSession(o) {
+    var cx = iDayCtx(o.dly, o.vix, o.rsp, o.spy, o.earn || [], o.d); if (!cx) return null;
+    var perp = o.src === 'perp'; if (perp && !(o.perpPrev > 0)) return null;
+    var full = o.res === 5 ? 78 : 13;
+    return { b: o.bars, res: o.res, prev: perp ? o.perpPrev : cx.prev, prevRet: cx.prevRet, atr: cx.atr, vix: cx.vix, brd: cx.brd, earn: cx.earn, dow: cx.dow,
+      cumv: perp ? null : iCumv((o.prior || []).filter(function (b) { return b.length === full }), full), ref: o.ref && o.ref.length ? o.ref : null, src: o.src || 'cash', ctx: cx };
+  }
+
+
+  /* ---------- Material developments: a headline matters when the measured reaction is large for that asset ---------- */
+  var MSCALE = { SPY: 0.15, SPX: 0.15, QQQ: 0.18, NDX: 0.18, Brent: 0.35, Gold: 0.2, BTC: 0.6 };
+  /* s: headline score, move: % move in the reaction window (15 minutes preferred), lbl: asset label. */
+  function materiality(s, move, lbl) {
+    if (!isNum(move)) return { z: null, material: false };
+    var z = Math.abs(move) / (MSCALE[lbl] || 0.5);
+    return { z: z, material: (s >= 6 && z >= 2) || z >= 3 };
+  }
+
+  return { materiality: materiality, iSession: iSession, isTradingDay: isTradingDay, isHalfDay: isHalfDay, weekDays: weekDays, weekComplete: weekComplete, ymdAdd: ymdAdd, calendarCovered: calendarCovered, etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;
 
@@ -1271,7 +1316,7 @@ function renderSince() {
   if (nw.length) { h += '<div class="r full">' + nw.length + ' new market moving headline' + (nw.length > 1 ? 's' : '') + '<div class="k">' + nw.slice(0, 3).map(function (n) { return fmtT(n.ts) + ' ' + esc(n.h) }).join('<br>') + '</div></div>'; items++ }
   else if (!getKey()) h += '<div class="r full k">Headlines since then need the live wire. Connect it in News.</div>';
   if (!items) h += '<div class="r full">Nothing material changed.</div>';
-  if (MODE !== 'deep') { var parts = h.split('<div class="r'); if (parts.length > 9) h = parts.slice(0, 9).join('<div class="r') + '<div class="r full k">' + (parts.length - 9) + ' more in Deep.</div>' }
+  if (MODE !== 'deep') { var parts = h.split('<div class="r'); if (parts.length > 4) h = parts.slice(0, 4).join('<div class="r') + '<div class="r full k">' + (parts.length - 4) + ' more in Deep.</div>' }
   $('since').innerHTML = h;
 }
 
@@ -1743,12 +1788,17 @@ function cashBars(sym) {
 }
 function perpBars(sym) {
   var o = lastOpenMs(Date.now()); if (!o) return Promise.resolve([]);
-  return post({ type: 'candleSnapshot', req: { coin: I2PERP[sym], interval: '5m', startTime: o, endTime: Date.now() } }).then(function (k) { return CORE.completed(k || [], Date.now(), 3e5).map(function (c) { var q = etp(+c.t); return [q.hm, +c.o, +c.h, +c.l, +c.c, 0] }).filter(function (b) { return b[0] >= 930 && b[0] < 1600 }) });
+  return post({ type: 'candleSnapshot', req: { coin: I2PERP[sym], interval: '5m', startTime: o, endTime: Date.now() } }).then(function (k) { return CORE.completed(k || [], Date.now(), 3e5).map(function (c) { var q = etp(+c.t); return [q.hm, +c.o, +c.h, +c.l, +c.c, +c.v] }).filter(function (b) { return b[0] >= 930 && b[0] < 1600 }) });
 }
+/* perp price at the last 4pm cash close: the close of the 3:55pm 5 minute candle, the same reference the transfer test used */
+function perpPrevClose(sym) {
+  var lc = lastCloseMs(Date.now() - 6 * 36e5); return post({ type: 'candleSnapshot', req: { coin: I2PERP[sym], interval: '5m', startTime: lc - 6e5, endTime: lc + 6e4 } }).then(function (k) { var c = (k || []).filter(function (z) { return +z.t === lc - 3e5 })[0]; return c ? +c.c : null });
+}
+function prevTradingDay(d) { var x = CORE.ymdAdd(d, -1); while (!CORE.isTradingDay(x)) x = CORE.ymdAdd(x, -1); return x }
 function liveSession(sym) {
   var st = session(Date.now()).st; if (st !== 'open') return Promise.resolve(null);
   var src = getKey() ? 'cash' : 'perp', get = src === 'cash' ? cashBars : perpBars;
-  return Promise.all([get(sym), get(I2REF[sym])]).then(function (x) { return x[0].length ? { src: src, b: x[0], ref: x[1] } : null }).catch(function () { return src === 'cash' ? Promise.all([perpBars(sym), perpBars(I2REF[sym])]).then(function (x) { return x[0].length ? { src: 'perp', b: x[0], ref: x[1] } : null }) : null });
+  return Promise.all([get(sym), get(I2REF[sym]), src === 'perp' ? perpPrevClose(sym) : null]).then(function (x) { return x[0].length ? { src: src, b: x[0], ref: x[1], perpPrev: x[2] } : null }).catch(function () { return src === 'cash' ? Promise.all([perpBars(sym), perpBars(I2REF[sym]), perpPrevClose(sym)]).then(function (x) { return x[0].length ? { src: 'perp', b: x[0], ref: x[1], perpPrev: x[2], keyFailed: true } : null }) : null });
 }
 
 /* ---- the intraday state and model outputs for one instrument at one checkpoint ---- */
@@ -1759,13 +1809,14 @@ function intraState(sym, slot, live) {
     if (live) { d = etp(Date.now()).d; bars = res === 5 ? live.b : to30(live.b); refb = live.ref && live.ref.length ? (res === 5 ? live.ref : to30(live.ref)) : null; src = live.src }
     else { var ok = days.filter(function (q) { return by[q].length === full }); d = ok[ok.length - 1]; bars = by[d]; refb = rb[d] || null; src = 'replay' }
     var k = slot[2]; if (!bars || bars.length < k) return { wait: true, src: src, d: d, have: bars ? bars.length : 0, need: k };
-    var earn = (x[6].dates[sym] || []).map(function (e) { return [ymdOf(e[0]), e[1]] }), cx = CORE.iDayCtx(x[2], x[3], x[4], x[5], earn, d); if (!cx) return null;
-    var prior = days.filter(function (q) { return q < d && by[q].length === full }).map(function (q) { return by[q] });
-    var S = { b: bars, res: res, prev: cx.prev, prevRet: cx.prevRet, atr: cx.atr, vix: cx.vix, brd: cx.brd, earn: cx.earn, dow: cx.dow, cumv: src === 'perp' ? null : CORE.iCumv(prior, full), ref: refb };
+    var earn = (x[6].dates[sym] || []).map(function (e) { return [ymdOf(e[0]), e[1]] }), lastHist = x[2][x[2].length - 1][0];
+    if (live && lastHist < prevTradingDay(d)) return { stale: true, lastHist: lastHist, src: src, d: d };
+    var prior = days.filter(function (q) { return q < d }).map(function (q) { return by[q] });
+    var S = CORE.iSession({ bars: bars, ref: refb, res: res, d: d, dly: x[2], vix: x[3], rsp: x[4], spy: x[5], earn: earn, prior: prior, src: src === 'perp' ? 'perp' : 'cash', perpPrev: live && live.perpPrev }); if (!S) return { noref: true, src: src, d: d };
+    var cx = S.ctx;
     var xv = CORE.ifeat(S, k), M = x[7].inst[sym][slot[1]], V = x[8].inst[sym], W = V.windows[slot[1]], o = {};
-    CORE.OUT2.forEach(function (n) { var m = M.outcomes[n]; o[n] = { p: CORE.mlPredict(m.model, xv), fam: m.family, promoted: m.promoted } });
-    var lastHist = x[2][x[2].length - 1][0], lc = etp(lastCloseMs(live ? Date.now() - 6e4 * 60 * 7 : Date.now())).d, behind = lastHist < lc ? lastHist : null;
-    return { sym: sym, d: d, k: k, slot: slot, src: src, x: xv, out: o, q: CORE.qLookup(M.q, xv), px: bars[k - 1][4], open: bars[0][1], prev: cx.prev, W: W, transfer: V.transfer, earn: cx.earn, histBehind: behind, ranges: W.ranges };
+    CORE.OUT2.forEach(function (n) { var m = M.outcomes[n], tr = V.transfer && V.transfer[slot[1]] && V.transfer[slot[1]][n] && V.transfer[slot[1]][n][m.family], blocked = src === 'perp' && !(tr && tr.ok); o[n] = { p: blocked ? null : CORE.mlPredict(m.model, xv), fam: m.family, promoted: m.promoted, blocked: blocked, tr: tr } });
+    return { sym: sym, d: d, k: k, slot: slot, src: src, x: xv, out: o, q: CORE.qLookup(M.q, xv), px: bars[k - 1][4], open: bars[0][1], prev: cx.prev, W: W, transfer: V.transfer, earn: cx.earn, ranges: W.ranges, keyFailed: live && live.keyFailed };
   });
 }
 function curSlot(live) {
@@ -1779,14 +1830,15 @@ function renderI2() {
     return intraState(R2.sym, slot, live).then(function (S) {
       var h = chips(I2SYMS, R2.sym, 'i2sym');
       if (!live) h += chips(I2SLOTS.map(function (s, i) { return [i, s[3]] }), R2.bar == null ? 3 : R2.bar, 'i2bar');
-      if (!S) { el.innerHTML = h + '<div class="r mut">Not enough history for this session.</div>'; return }
+      if (!S || S.noref) { el.innerHTML = h + '<div class="r mut">' + (S && S.src === 'perp' ? 'The perp reference price at the last close is unavailable, so no live estimate.' : 'Not enough history for this session.') + '</div>'; return }
+      if (S.stale) { el.innerHTML = h + '<div class="r k">Live estimates paused: daily history ends ' + dlab(S.lastHist) + ', so the previous close and volatility the models need are out of date. The close run refreshes it.</div>'; return }
       if (S.wait) { el.innerHTML = h + '<div class="r k">Waiting for more completed bars.</div>'; return }
-      var srcTxt = S.src === 'cash' ? 'Live cash 5 minute bars (data key on this device).' : S.src === 'perp' ? 'Live perp bars as a proxy for ' + R2.sym + '. ' + (S.slot[1] === 'late' && S.transfer && S.transfer.ok ? 'Validated: on ' + S.transfer.sessions + ' synchronized sessions the perp gave the same answers as cash (mean difference ' + pc(S.transfer.meanAbsProbDiff) + ').' : 'Not validated before 10am: perp history at 5 minute resolution is too short to test. Add the data key for cash bars.') : 'Market closed: replaying ' + dlab(S.d) + '.';
-      h += '<div class="r k">' + srcTxt + ' At ' + S.slot[3] + ': gap ' + sg((S.open / S.prev - 1) * 100) + ', from the open ' + sg((S.px / S.open - 1) * 100) + ', at ' + Math.round(S.x[CORE.IFEAT.indexOf('pos')] * 100) + '% of the range so far' + (S.earn ? ', earnings reaction day' : '') + '. Only bars up to that time are used.' + (S.histBehind ? ' Daily history ends ' + dlab(S.histBehind) + ', so the previous close may be stale.' : '') + '</div>';
+      var srcTxt = S.src === 'cash' ? 'Live cash 5 minute bars (data key on this device).' : S.src === 'perp' ? 'Live perp bars as a stand in for ' + R2.sym + (S.keyFailed ? ' (the saved data key was refused, check it in Customize)' : ' (save a data key for cash bars)') + '. Each estimate below is shown only where the perp passed its own transfer test for this time window, outcome and model.' : 'Market closed: replaying ' + dlab(S.d) + '.';
+      h += '<div class="r k">' + srcTxt + ' At ' + S.slot[3] + ': gap ' + sg((S.open / S.prev - 1) * 100) + ', from the open ' + sg((S.px / S.open - 1) * 100) + ', at ' + Math.round(S.x[CORE.IFEAT.indexOf('pos')] * 100) + '% of the range so far' + (S.earn ? ', earnings reaction day' : '') + '. Only bars up to that time are used.</div>';
       h += '<div class="r hrow head"><span>Outcome</span><b>Chance</b><b>Source</b></div>';
-      CORE.OUT2.forEach(function (n) { var q = S.out[n], E = S.W.outcomes[n]; h += '<div class="r hrow"><span>' + esc(E.name) + '</span><span class="num">' + pc(q.p) + '</span><span class="k">' + (q.promoted ? esc(E.models[q.fam].name) + ', validated' : 'historical frequency; no model beat it') + '</span></div>' });
-      if (S.q) h += '<div class="r hrow"><span>Further room, rest of the session <span class="k">10th, 50th, 90th percentile, ' + S.q.n + ' past cases</span></span><span class="num">up ' + S.q.up.map(nm).join(' / ') + '%</span><span class="num">down ' + S.q.dn.map(nm).join(' / ') + '%</span></div>';
-      if (S.ranges && S.ranges.n) h += '<div class="r k">The 10th to 90th ranges held ' + pc(S.ranges.coverUp) + ' (up) and ' + pc(S.ranges.coverDn) + ' (down) of the time on untouched sessions; 80% is the target.</div>';
+      CORE.OUT2.forEach(function (n) { var q = S.out[n], E = S.W.outcomes[n]; h += '<div class="r hrow"><span>' + esc(E.name) + '</span><span class="num">' + (q.blocked ? 'n/a' : pc(q.p)) + '</span><span class="k">' + (q.blocked ? 'perp not validated here' + (q.tr && q.tr.why ? ': ' + esc(q.tr.why) : '') : q.promoted ? esc(E.models[q.fam].name) + ', validated' : 'historical frequency; no model beat it') + '</span></div>' });
+      if (S.q && S.src !== 'perp') h += '<div class="r hrow"><span>Further room, rest of the session <span class="k">10th, 50th, 90th percentile, ' + S.q.n + ' past cases</span></span><span class="num">up ' + S.q.up.map(nm).join(' / ') + '%</span><span class="num">down ' + S.q.dn.map(nm).join(' / ') + '%</span></div>';
+      if (S.q && S.ranges && S.ranges.n && S.src !== 'perp') h += '<div class="r k">The 10th to 90th ranges held ' + pc(S.ranges.coverUp) + ' (up) and ' + pc(S.ranges.coverDn) + ' (down) of the time on untouched sessions; 80% is the target.</div>';
       h += i2table(S.W);
       el.innerHTML = h;
     });
@@ -1808,9 +1860,9 @@ function weeklyState(sym) {
     var rows = x[0], Wk = CORE.weeksOf(rows), wi = Wk.length - 1, w = Wk[wi], j = w.length - 1, k = rows.length - 1, vm = {}; x[1].forEach(function (r) { vm[r[0]] = r[4] });
     var I = x[2].inst[sym]; if (!I || I.error) return null;
     var cx = CORE.wctx(Wk, wi, rows, k, vm), s = CORE.wstate(w, j, cx), out = {};
-    Object.keys(I.outcomes).forEach(function (o) { var q = I.outcomes[o]; if (o === 'recover' && s.c >= s.o) return; out[o] = { p: CORE.wpred(q.model, s.x), name: q.name, validated: q.beatsBench, fam: q.display } });
+    Object.keys(I.outcomes).forEach(function (o) { var q = I.outcomes[o]; if (o === 'recover' && s.c >= s.o) return; out[o] = { p: CORE.wpred(q.model, s.x), name: q.name, validated: !!q.promoted, beats: q.beatsBench, fam: q.display } });
     var rk = Math.round(s.x[3] * 4) + '|' + Math.min(2, Math.floor(s.x[1] * 3));
-    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.ymdDow(rows[k][0]) === 4 };
+    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.weekComplete(w, rows[k][0]) };
   });
 }
 function renderWeekly() {
@@ -1818,13 +1870,13 @@ function renderWeekly() {
   weeklyState(R2.wsym).then(function (S) {
     var h = chips(I2SYMS, R2.wsym, 'wsym'); if (!S) { el.innerHTML = h + '<div class="r mut">Not available.</div>'; return }
     var I = S.I, days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
-    h += '<div class="r k">As of the ' + dlab(S.d) + ' close' + (S.fri ? ', the last day of the week, so the next row starts a new week' : '') + ': week so far ' + sg((S.s.c / S.s.o - 1) * 100) + ' from the Monday open ' + f(S.s.o, 2) + ', at ' + Math.round(S.s.x[1] * 100) + '% of the week\'s range. ' + I.weeks + ' weeks of history from ' + dlab(I.from) + '.</div>';
+    h += '<div class="r k">As of the ' + dlab(S.d) + ' close' + (S.fri ? ', the last trading day of the week, so this week is finished' : '') + ': week so far ' + sg((S.s.c / S.s.o - 1) * 100) + ' from the Monday open ' + f(S.s.o, 2) + ', at ' + Math.round(S.s.x[1] * 100) + '% of the week\'s range. ' + I.weeks + ' weeks of history from ' + dlab(I.from) + '.</div>';
     if (!S.fri) { h += '<div class="r hrow head"><span>Rest of the week</span><b>Chance</b><b>Source</b></div>';
-      Object.keys(S.out).forEach(function (o) { var q = S.out[o]; h += '<div class="r hrow"><span>' + esc(q.name) + '</span><span class="num">' + pc(q.p) + '</span><span class="k">' + (q.validated ? 'model, beat the benchmarks' : 'day and position frequency') + '</span></div>' });
+      Object.keys(S.out).forEach(function (o) { var q = S.out[o]; h += '<div class="r hrow"><span>' + esc(q.name) + '</span><span class="num">' + pc(q.p) + '</span><span class="k">' + (q.validated ? 'model, validated' : q.beats ? 'frequency; the model was more accurate but not economically useful' : 'day and position frequency') + '</span></div>' });
       if (S.rng) h += '<div class="r hrow"><span>Further room this week <span class="k">10th, 50th, 90th percentile, ' + S.rng.n + ' cases</span></span><span class="num">up ' + S.rng.up.map(nm).join(' / ') + '%</span><span class="num">down ' + S.rng.dn.map(nm).join(' / ') + '%</span></div>' }
     h += '<div class="r hrow head"><span>Day that set the weekly</span><b>High</b><b>Low</b></div>';
     days.forEach(function (dn, i) { h += '<div class="r hrow"><span>' + dn + '</span><span class="num">' + pc(I.highDay[i]) + '</span><span class="num">' + pc(I.lowDay[i]) + '</span></div>' });
-    h += '<div class="r k">' + esc(RES.weekly.note.split('. Covered call')[0]) + '. Full five day weeks only for the day table (' + I.fullWeeks + ').</div>';
+    h += '<div class="r k">' + esc(RES.weekly.note.split('. Covered call')[0]) + '. The day table uses only finished weeks with every trading day present (' + (I.completeWeeks || I.fullWeeks) + ', including ' + (I.shortWeeks || 0) + ' holiday weeks); the current week is never counted as finished.</div>';
     el.innerHTML = h;
   }).catch(function () { el.innerHTML = '<div class="r mut">Weekly research unavailable.</div>' });
 }
@@ -1910,8 +1962,21 @@ document.addEventListener('click', function (e) {
 });
 document.addEventListener('change', function (e) { if (e.target.id === 'recx') { RECS.x = Math.max(1, +e.target.value || 10); renderRecovery() } if (e.target.id === 'recd') { RECS.days = Math.max(1, Math.min(20, +e.target.value || 1)); renderRecovery() } });
 function renderIntra() { renderI2() }
-function renderResearch2() { renderI2(); renderWeekly(); renderCC(); renderFpRisk() }
+function renderResearch2() { renderHealth(); renderI2(); renderWeekly(); renderCC(); renderFpRisk() }
 setInterval(function () { if (session(Date.now()).st === 'open' && $('p-hist').classList.contains('on')) renderI2() }, 5 * 60e3);
+
+/* progressive disclosure: research sections start folded except the first two; the choice is remembered on the device */
+(function () {
+  var open = LS('mb_hopen') || { 'Signal reliability': 1, 'Intraday high and low': 1 };
+  [].forEach.call(document.querySelectorAll('#p-hist .sec'), function (s) { var h = s.querySelector('.sh h2'); if (!h) return; var k = h.textContent; s.classList.add('fold'); if (!open[k]) s.classList.add('closed');
+    s.querySelector('.sh').addEventListener('click', function (e) { if (e.target.closest('button,input,a')) return; s.classList.toggle('closed'); if (s.classList.contains('closed')) delete open[k]; else open[k] = 1; LS('mb_hopen', open) }) });
+})();
+function renderHealth() {
+  var el = $('rhealth'); if (!el) return;
+  loadRes('health').then(function (H) { var bad = H.items.filter(function (i) { return !i.ok });
+    el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">Behind:</b> ' + bad.map(function (i) { return esc(i.name) + (i.last ? ' (through ' + dlab(i.last) + ')' : ' (' + esc(i.note || 'missing') + ')') }).join(', ') + '. ' : '') + 'Research data checked ' + esc(H.asof.slice(0, 10)) + ' against the last session ' + dlab(H.lastSession) + '; ' + (H.items.length - bad.length) + ' of ' + H.items.length + ' inputs current.</div>' })
+    .catch(function () { el.innerHTML = '<div class="r full mut">Data health not computed yet.</div>' });
+}
 
 /* ---------- Personalization, saved on this device only ---------- */
 KEY = LS('mb_pins') || KEY;
@@ -2152,7 +2217,7 @@ function renderRev() {
   if (r.exh && r.exh.length) h += '<div class="r full"><b>Exhaustion signs, ' + r.exh.length + ' of 6</b><div class="k">' + r.exh.map(esc).join('. ') + '. These suggest the ' + (down ? 'selling' : 'buying') + ' is losing force; none of them is a reversal by itself.</div></div>';
   h += r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('');
   if (r.prov) h += '<div class="r xd k">Current candle (' + tET(+r.prov.t) + ') is still forming and is not used above.</div>';
-  h += '<div class="r full k">Rules: retraced under 38% is a bounce, 38 to 62% partial. Above 62%, 4 of 5 confirmations (higher low, structure break, VWAP held, semis half back, perp sample breadth) and 30 minutes held is a potential sustainable reversal. The order of a high and low inside one candle is unknown, so a peak and trough in the same candle are not counted. Nothing here shows who was buying or why.</div>';
+  h += '<div class="r full k xd">Rules: retraced under 38% is a bounce, 38 to 62% partial. Above 62%, 4 of 5 confirmations (higher low, structure break, VWAP held, semis half back, perp sample breadth) and 30 minutes held is a potential sustainable reversal. The order of a high and low inside one candle is unknown, so a peak and trough in the same candle are not counted. Nothing here shows who was buying or why.</div>';
   $('rev').innerHTML = h;
 }
 var _allLevels = allLevels;
@@ -2226,24 +2291,48 @@ function loadDecision() {
   }).catch(function () { });
   liveSession('SPY').catch(function () { return null }).then(function (live) { var sl = live ? curSlot(live) : null; if (!sl) { DEC.i = null; return } return intraState('SPY', sl, live).then(function (S) { DEC.i = S && !S.wait ? S : null; renderDecision() }) }).catch(function () { });
 }
+/* material developments: brief stories marked material, and live headlines whose measured reaction was large for that asset */
+function materialItems() {
+  var out = [];
+  (B.stories || []).forEach(function (s) { if (s.material) out.push({ ts: 0, t: s.t, h: s.h, txt: s.changes || s.why || '', src: s.src, impl: s.impl, brief: true }) });
+  (WIRE.items || []).forEach(function (n) { var key = n.ts + '|' + n.h.slice(0, 30), im = WIRE.imp[key]; if (!im || !im.w) return; var mv = isNum(im.w[15]) ? im.w[15] : im.w[5], w = isNum(im.w[15]) ? 15 : 5, m = CORE.materiality(n.s, mv, im.lbl); if (!m.material) return;
+    out.push({ ts: n.ts, t: fmtT(n.ts), h: n.h, txt: esc(im.lbl) + ' ' + sg(mv) + ' in ' + w + ' minutes, ' + m.z.toFixed(1) + ' times a typical move', src: n.url, mv: mv, lbl: im.lbl, z: m.z }) });
+  return out.sort(function (a, b) { return (b.ts || 0) - (a.ts || 0) }).slice(0, 3);
+}
 function renderDecision() {
-  var el = $('dec'); if (!el) return; var s = px('xyz:SP500'); if (!s) return;
-  var inv = invalItems(), t3 = B.top3 && B.top3.length ? B.top3 : (B.drivers || []).slice(0, 3).map(function (d) { return [d[1], d[2]] }), h = '', row = function (q, a) { h += '<div class="r full"><span class="k">' + q + '</span><div>' + a + '</div></div>' };
-  var chg = inv.length ? inv[0] : 'S&amp;P perp ' + f(s, 0) + ', ' + sg((s / B.base.spx - 1) * 100) + ' vs the last close' + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since the brief' : '') + '. ' + lite(B.headline || '');
-  row('What changed', chg + (inv.length > 1 ? ' <span class="k">+' + (inv.length - 1) + ' more below</span>' : ''));
-  if (t3[0]) row('Why it matters', '<b>' + lite(t3[0][0]) + '.</b> ' + lite(t3[0][1]));
-  var ev = [], nx = [];
-  (DEC.w || []).forEach(function (W) { if (W.fri) return; var cn = I2PERP[W.sym], pb = B.base && B.base.perp && B.base.perp[cn], lv = cn && px(cn) && fresh(cn) && pb ? W.s.c * px(cn) / pb : null; Object.keys(W.out).forEach(function (o) { var q = W.out[o]; if (!q.validated || Math.abs(q.p - 0.5) < 0.15) return; if (lv && ((o === 'highSet' && lv > W.s.hi) || (o === 'lowSet' && lv < W.s.lo))) { nx.push(W.sym + ' this week: the ' + (o === 'highSet' ? 'perp already implies a new weekly high' : 'perp already implies a new weekly low') + ' <span class="k">(' + f(lv, 2) + '), so the ' + pc(q.p) + ' estimate from the ' + dlab(W.d) + ' close no longer applies</span>'); return } nx.push(W.sym + ' this week: ' + q.name.toLowerCase() + ', ' + pc(q.p) + ' <span class="k">from the ' + dlab(W.d) + ' close</span>'); var g = (DEC.reg && DEC.reg.signals || []).filter(function (x) { return x.name === W.sym + ' weekly: ' + q.name })[0]; if (g) ev.push(W.sym + ', ' + q.name.toLowerCase() + ': model error ' + esc(String(g.oos).replace('error ', '')) + ' vs ' + esc(String(g.bench).replace(/^better of day of week and day with position, error /, '')) + ' for the best benchmark on ' + g.sessions + ' untouched weeks (' + esc(g.ci) + ')') }) });
-  if (DEC.i) CORE.OUT2.forEach(function (o) { var q = DEC.i.out[o]; if (q.promoted) { nx.push('SPY today: ' + DEC.i.W.outcomes[o].name.toLowerCase() + ' ' + pc(q.p)) } });
-  row('Most likely next', nx.length ? nx.slice(0, 3).join('<br>') : 'No validated signal applies right now. Base rates are in History.');
-  row('Evidence', ev.length ? ev.slice(0, 2).join('<br>') : 'Nothing that passed validation. Failed and unconfirmed signals are kept off this screen.');
-  var sc = scenarioNow(s); row('What would invalidate it', lite(sc.inval || 'not set in this brief'));
-  var dn = [], e0 = B.opt.em && B.opt.em[0];
-  if (DEC.i && DEC.i.q) dn.push('Rest of today: 1 in 10 similar sessions fell another ' + Math.abs(DEC.i.q.dn[0]).toFixed(2) + '% or more (S&amp;P ' + f(s * (1 + DEC.i.q.dn[0] / 100), 0) + ')');
+  var el = $('dec'); if (!el) return; var s = px('xyz:SP500') || null;
+  var D = B.daily || null, GP = {}; (B.gaps || []).forEach(function (g) { GP[g[0]] = g[1] });
+  var inv = invalItems(), mats = materialItems(), h = '', missing = [], row = function (q, a, note) { if (a.indexOf('\u0001') === 0) { missing.push(q.toLowerCase() + (a.length > 1 ? ' (' + a.slice(1) + ')' : '')); return } h += '<div class="r full"><span class="k">' + q + (note ? ' <span class="mut">' + note + '</span>' : '') + '</span><div>' + a + '</div></div>' };
+  var miss = function (k) { return '\u0001' + (GP[k] ? esc(GP[k]) : '') }, der = 'derived';
+  /* material moves against the brief's call also invalidate it */
+  var fdir = B.forecast && B.forecast.dir; mats.forEach(function (m) { if (fdir && m.z >= 2 && /SPY|SPX|QQQ|NDX/.test(m.lbl || '') && ((fdir === 'up' && m.mv < 0) || (fdir === 'down' && m.mv > 0))) inv.push('Material headline moved ' + esc(m.lbl) + ' ' + sg(m.mv) + ' against the brief\'s ' + fdir + ' call: "' + esc(m.h) + '".') });
+  row('What happened', D && D.happened ? lite(D.happened) : lite(B.lede || B.headline || ''), D && D.happened ? '' : der);
+  row('What caused it', D && D.cause ? lite(D.cause) + (D.causeSrc ? ' <a href="' + esc(D.causeSrc) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') : (B.top3 && B.top3[0] ? '<b>' + lite(B.top3[0][0]) + '.</b> ' + lite(B.top3[0][1]) : miss('daily')), D && D.cause ? '' : (B.top3 ? der : ''));
+  var chg = s ? 'S&amp;P perp ' + f(s, 0) + ', ' + sg((s / B.base.spx - 1) * 100) + ' vs the last close' + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since this brief' : '') + '.' : 'Live prices unavailable right now.';
+  row('Since the previous briefing', (inv.length ? '<b class="dn">' + inv[0] + '</b> ' : '') + (D && D.since ? lite(D.since) + ' ' : '') + '<span class="k">' + chg + '</span>');
+  if (mats.length) row('Material developments', mats.map(function (m) { return '<b>' + esc(m.t) + '</b> ' + (m.src ? '<a href="' + esc(m.src) + '" target="_blank" rel="noopener noreferrer">' + esc(m.h) + '</a>' : esc(m.h)) + (m.txt ? ' <span class="k">' + (m.brief ? lite(m.txt) : m.txt) + '</span>' : '') }).join('<br>'));
+  var ex = D && D.expected && D.expected.length ? D.expected : ((B.priced && B.priced.data) || []).filter(function (r) { return r[4] }).map(function (r) { return [r[0], r[2], r[4], ''] });
+  row('Expected vs actual', ex.length ? ex.slice(0, 4).map(function (r) { return esc(r[0]) + ': expected ' + esc(r[1]) + ', actual <b>' + esc(r[2]) + '</b>' }).join('<br>') : (D ? 'Nothing released since the previous brief.' : miss('daily')), D && D.expected && D.expected.length ? '' : (ex.length ? der : ''));
+  var af = D && D.affected && D.affected.length ? D.affected.map(function (r) { return '<span class="' + (r[1] === 'up' ? 'up' : r[1] === 'down' ? 'dn' : '') + '">' + esc(r[0]) + '</span> ' + lite(r[2]) }) : (B.stories || []).slice(0, 3).map(function (x) { return esc(x.assets) + ': ' + lite(x.h) });
+  row('Stocks and sectors affected', af.length ? af.join('<br>') : miss('daily'), D && D.affected ? '' : (af.length ? der : ''));
+  var pr = D && D.priced ? lite(D.priced) : '', e0 = B.opt.em && B.opt.em[0]; if (!pr && e0) pr = 'Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]) + '.';
+  row('Already priced in', pr || miss('priced'), D && D.priced ? '' : (pr ? der : ''));
+  var cat = D && D.catalysts && D.catalysts.length ? D.catalysts.map(function (c) { return '<b>' + esc(c[0]) + '</b> ' + lite(c[1]) + (c[2] ? ' <span class="k">' + lite(c[2]) + '</span>' : '') }) : (B.events7 || []).filter(function (e) { return e[3] >= 3 }).slice(0, 3).map(function (e) { return '<b>' + esc(e[0].slice(5) + ' ' + e[1]) + '</b> ' + esc(e[2]) });
+  row('Next catalysts', cat.length ? cat.slice(0, 3).join('<br>') : miss('events7'), D && D.catalysts ? '' : (cat.length ? der : ''));
+  var sc = s ? scenarioNow(s) : {}; row('What would invalidate the outlook', D && D.invalid ? lite(D.invalid) : (sc.inval ? lite(sc.inval) : miss('daily')), D && D.invalid ? '' : (sc.inval ? der : ''));
+  /* research: only promoted signals */
+  var nx = [], ev = [];
+  (DEC.w || []).forEach(function (W) { if (W.fri) return; var cn = I2PERP[W.sym], pb = B.base && B.base.perp && B.base.perp[cn], lv = cn && px(cn) && fresh(cn) && pb ? W.s.c * px(cn) / pb : null; Object.keys(W.out).forEach(function (o) { var q = W.out[o]; if (!q.validated || Math.abs(q.p - 0.5) < 0.15) return; if (lv && ((o === 'highSet' && lv > W.s.hi) || (o === 'lowSet' && lv < W.s.lo))) return; nx.push(W.sym + ' this week: ' + q.name.toLowerCase() + ', ' + pc(q.p)); var g = (DEC.reg && DEC.reg.signals || []).filter(function (x) { return x.name === W.sym + ' weekly: ' + q.name })[0]; if (g) ev.push(esc(g.name) + ': ' + esc(g.oos) + ', ' + esc(g.ci)) }) });
+  if (DEC.i) CORE.OUT2.forEach(function (o) { var q = DEC.i.out[o]; if (q.promoted && !q.blocked) nx.push('SPY today: ' + DEC.i.W.outcomes[o].name.toLowerCase() + ' ' + pc(q.p)) });
+  row('Research signals', nx.length ? nx.slice(0, 3).join('<br>') + (ev.length ? '<div class="k">' + ev.slice(0, 2).join('<br>') + '</div>' : '') : 'None qualifies today. A signal shows here only after it beats its benchmark out of sample and makes money after costs; History has the full record.');
+  var dn = [];
+  if (s && DEC.i && DEC.i.q && DEC.i.src !== 'perp') dn.push('Rest of today: 1 in 10 similar sessions fell another ' + Math.abs(DEC.i.q.dn[0]).toFixed(2) + '% or more (S&amp;P ' + f(s * (1 + DEC.i.q.dn[0] / 100), 0) + ')');
   var ws = (DEC.w || []).filter(function (W) { return W.sym === 'SPY' && !W.fri && W.rng })[0]; if (ws) dn.push('Rest of this week: 1 in 10 similar weeks fell another ' + Math.abs(ws.rng.dn[0]).toFixed(2) + '% or more');
   if (e0) dn.push('Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]));
   row('Realistic downside', dn.length ? dn.join('<br>') : 'n/a');
+  if (missing.length) h += '<div class="r full k">Not in this update: ' + missing.join(', ') + '.</div>';
   if (inv.length > 1) h += inv.slice(1).map(function (x) { return '<div class="r full k">' + x + '</div>' }).join('');
+  if (D && D.asofTs) h += '<div class="r full k">Briefing as of ' + esc(tET(new Date(D.asofTs).getTime(), true)) + '.</div>';
   el.innerHTML = h; $('secDec').style.display = '';
   loadDecision();
 }

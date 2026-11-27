@@ -169,6 +169,9 @@ html.m30 .x30h{display:none!important}
 .hp{display:grid;grid-template-columns:minmax(0,1fr) 92px 22px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
 .hp input,.hp select{font-size:16px;padding:5px 8px;border-radius:8px;border:0;background:var(--fill);width:100%;text-align:right}
 .hauto{cursor:pointer;font-size:13px}
+.uhide{display:none!important}
+#askout .r{font-size:14px}
+#cross .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
 /* recap legacy */
 .recap .hero h1{font-size:22px}.recap .kicker{font-size:12px;font-weight:600;color:var(--orange);margin-top:12px}
 .recap .three,.recap .qa{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px}
@@ -215,6 +218,9 @@ html.m30 .x30h{display:none!important}
 <p class="lede x2" id="lede"></p>
 <div class="k xd" id="kick2" style="margin-top:4px"></div>
 <div class="regime" id="regime"></div>
+<div class="sec x30h" id="secAsk"><input class="search" id="askin" placeholder="Ask: why is Nvidia down, what is happening in Korea" autocomplete="off" enterkeyhint="search">
+<div class="chips" id="askchips" style="margin-top:2px"><button class="chipb" data-q="why did the market move">Why the move</button><button class="chipb" data-q="what changed since yesterday">What changed</button><button class="chipb" data-q="Fed rates yields">Fed and yields</button><button class="chipb" data-q="memory chips Korea">Memory and Korea</button><button class="chipb" data-q="biggest risks this week">Risks this week</button><button class="chipb" data-q="what do options imply">Options</button></div>
+<div class="grp" id="askout"></div></div>
 
 <div class="sec since" id="sinceSec" style="display:none">
 <div class="sh"><h2>Since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
@@ -222,9 +228,9 @@ html.m30 .x30h{display:none!important}
 </div>
 
 <div class="sec x2" id="autoSec" style="display:none"><div class="sh"><h2>Comparable history</h2><span>Tap for detail</span></div><div class="grp" id="autohist"></div></div>
-<div class="sec top3"><div class="sh"><h2>What matters most</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
+<div class="sec top3" id="secTop3"><div class="sh"><h2>What matters most</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
 
-<div class="sec"><div class="sh"><h2>Readings</h2><span id="stripbasis"></span></div>
+<div class="sec" id="secRead"><div class="sh"><h2>Readings</h2><span id="stripbasis"></span></div>
 <div class="strip" id="strip"></div>
 <div class="grp pad" style="margin-top:8px">
 <div class="k" id="impsub">S&amp;P 500 PERP VS LAST CASH CLOSE</div>
@@ -234,31 +240,36 @@ html.m30 .x30h{display:none!important}
 <div class="note xd" id="impnote"></div>
 </div></div>
 
-<div class="sec drv x2"><div class="sh"><h2 id="drvtitle">What is driving it</h2></div><div class="grp" id="drivers"></div></div>
+<div class="sec drv x2" id="secDrv"><div class="sh"><h2 id="drvtitle">What is driving it</h2></div><div class="grp" id="drivers"></div></div>
 
-<div class="sec x2"><div class="sh"><h2>Risks and catalysts</h2><span id="caltitle"></span></div><div class="grp cal" id="risks"></div></div>
+<div class="sec x2" id="secRisk"><div class="sh"><h2>Risks and catalysts</h2><span id="caltitle"></span></div><div class="grp cal" id="risks"></div></div>
 
-<div class="sec scen x2"><div class="sh"><h2>Scenarios</h2><span>No probabilities until validated</span></div><div class="grp" id="scen"></div>
+<div class="sec cal x2" id="secCal7"><div class="sh"><h2>Next 7 trading days</h2><span>Ranked for chips and the Fed</span></div><div class="grp cal" id="cal7"></div><div class="note" id="cal7note"></div></div>
+<div class="sec cal x2" id="secPriced" style="display:none"><div class="sh"><h2>What is priced in</h2><span id="pricedasof"></span></div><div class="grp cal" id="priced"></div></div>
+<div class="sec scen x2" id="secScen"><div class="sh"><h2>Scenarios</h2><span>No probabilities until validated</span></div><div class="grp" id="scen"></div>
 <div class="note" id="optrisk"></div></div>
 
-<div class="sec lvl x2"><div class="sh"><h2>Levels from the live S&amp;P perp</h2><span id="lvlasof"></span></div><div class="grp" id="levels"></div>
+<div class="sec lvl x2" id="secLvl"><div class="sh"><h2>Levels from the live S&amp;P perp</h2><span id="lvlasof"></span></div><div class="grp" id="levels"></div>
 <div class="note"><span id="lvlnote"></span> Distance is from the live S&amp;P perp. Options levels are estimates from open interest, not verified dealer positions.</div></div>
 
 <div class="sec ev xd"><div class="sh"><h2>Regime evidence</h2><span id="regasof"></span></div><div class="grp" id="regev"></div>
 <div class="note" id="regnot"></div></div>
 
 <div class="sec xd"><div class="sh"><h2 id="plantitle">Game plan</h2></div><div class="grp"><div class="r" id="means"></div></div></div>
-</div>
 
+<details class="d sec" id="secCustom" style="margin-top:22px"><summary><div class="sh"><h2>Customize</h2><span>Saved on this device</span></div></summary><div class="grp pad" id="custom"></div></details>
+</div>
 <!-- BOARD -->
 <div class="panel" id="p-board">
 <div class="sec"><div class="sh"><h2 id="chtitle">Overnight path</h2><span class="seg" id="chsw" style="width:170px"><button class="on" data-c="xyz:SP500">S&amp;P</button><button data-c="xyz:XYZ100">NDX</button><button data-c="xyz:SMH">SMH</button></span></div>
 <div class="grp pad"><div class="fig"><svg id="ovn"></svg></div><div class="note" style="margin:4px 0 0">Hourly perp closes. Dashed line is the perp at the last cash close.</div></div></div>
 <div class="sec"><div class="sh"><h2>Compare against</h2><span id="breadth"></span></div>
 <div class="chips" id="basis"></div>
-<div class="chips" id="filt"><button class="chipb on" data-g="key">Key 10</button><button class="chipb" data-g="semi">Semis</button><button class="chipb" data-g="idx">Indexes</button><button class="chipb" data-g="mega">Megacap</button><button class="chipb" data-g="macro">Commodities and FX</button><button class="chipb" data-g="cry">Crypto</button><button class="chipb" data-g="all">All</button></div>
+<div class="chips" id="filt"><button class="chipb on" data-g="key">Pinned</button><button class="chipb" data-g="semi">Semis</button><button class="chipb" data-g="idx">Indexes</button><button class="chipb" data-g="mega">Megacap</button><button class="chipb" data-g="macro">Commodities and FX</button><button class="chipb" data-g="cry">Crypto</button><button class="chipb" data-g="all">All</button></div>
 <div class="grp board" id="tb"></div>
 <div class="note" id="boardnote"></div></div>
+<div class="sec ev"><div class="sh"><h2>Under the surface</h2><span>Breadth and internals</span></div><div class="grp" id="internals"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>Cross asset</h2><span>Confirmations and divergences</span></div><div class="grp" id="cross"></div></div>
 </div>
 
 <!-- OPTIONS -->
@@ -304,6 +315,7 @@ html.m30 .x30h{display:none!important}
 
 <!-- MEMORY -->
 <div class="panel" id="p-mem">
+<div class="sec"><div class="sh"><h2>Forecast scorecard</h2><span>From the archive</span></div><div class="grp" id="score"><div class="r mut">Loading</div></div></div>
 <div class="sec"><input class="search" id="memq" placeholder="Search past briefs" autocomplete="off"></div>
 <div class="sec mem"><div class="sh"><h2>Archive</h2><span>Saved as published, never edited</span></div><div class="grp" id="memlist"><div class="r mut">Loading</div></div></div>
 <div class="sec" id="memview"></div>

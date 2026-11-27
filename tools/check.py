@@ -117,6 +117,22 @@ if "top3" in B and len(B["top3"]) != 3: err.append("top3 must have 3 rows")
 for s in B.get("scenarios", []):
     if not all(k in s for k in ("n","cond","confirm","risk","inval")): err.append("scenario rows need n, cond, confirm, risk, inval")
 if "scenarios" in B and [s.get("n") for s in B["scenarios"]] != ["Bullish","Neutral","Bearish"]: err.append("scenarios must be Bullish, Neutral, Bearish")
+for e in B.get("events7", []):
+    if len(e) < 4 or not re.match(r"^\d{4}-\d{2}-\d{2}$", str(e[0])) or e[3] not in (1, 2, 3): err.append("events7 rows need [ISO date, time, text, importance 1 to 3, ...]: " + str(e)[:60])
+P = B.get("priced")
+if P is not None:
+    for k in ("fed", "other"):
+        for r in P.get(k, []):
+            if len(r) != 3 or r[2] not in ("exp", "conf", "spec"): err.append("priced." + k + " rows need [label, text, exp|conf|spec]")
+    for r in P.get("earn", []):
+        if len(r) < 3 or not num(r[2]) or not 0 < r[2] < 60: err.append("priced.earn rows need [ticker, when, implied move %]")
+for q in B.get("qa", []):
+    if len(q) != 3 or not str(q[2]).startswith("https://"): err.append("qa rows need [question, answer, https source]")
+F = B.get("forecast")
+if F is not None:
+    if F.get("dir") not in ("up", "down") or not re.match(r"^\d{4}-\d{2}-\d{2}$", str(F.get("date", ""))) or not num(F.get("ref")): err.append("forecast needs dir up|down, ISO date and a numeric ref")
+for e in o.get("em", []):
+    if len(e) >= 5 and not re.match(r"^\d{4}-\d{2}-\d{2}$", str(e[4])): err.append("opt.em expiry date must be YYYY-MM-DD: " + str(e[4]))
 for s in B.get("sources", []):
     if len(s) != 2 or not str(s[1]).startswith("https://"): err.append("sources need https links: " + str(s)[:60])
 

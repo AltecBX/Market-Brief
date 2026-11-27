@@ -1,5 +1,5 @@
 """Daily history files for the probability engine, in data/hist/.
-  python3 tools/history.py cboe            refresh SPX, VIX, VIX9D, VIX3M, VVIX (Cboe) and NDX, Nikkei 225, 10 year yield (FRED)
+  python3 tools/history.py cboe            refresh SPX, VIX, VIX9D, VIX3M, VVIX (Cboe) and NDX, Nikkei 225, 10 year yield, USD/JPY (FRED)
   python3 tools/history.py uw rows.json    merge Unusual Whales daily rows (get_ticker_ohlc_latest_or_date output) for one ticker
 Existing rows are kept; a newer source row for the same date replaces it only if it differs by under 0.5% (else it is reported and skipped).
 Each file: {"sym","src","fields","asof","rows"} with rows sorted by date, date as YYYYMMDD integer."""
@@ -38,7 +38,7 @@ def cboe():
         rd = list(csv.reader(io.StringIO(t)))[1:]
         if len(rd[0]) >= 5: save(n, "Cboe daily history", ["d", "o", "h", "l", "c"], [[ymd(r[0])] + [round(float(x), 4) for x in r[1:5]] for r in rd if len(r) >= 5 and r[4]])
         else: save(n, "Cboe daily history", ["d", "c"], [[ymd(r[0]), round(float(r[1]), 4)] for r in rd if len(r) > 1 and r[1]])
-    for sid, sym in (("NASDAQ100", "NDX"), ("NIKKEI225", "N225"), ("DGS10", "US10Y")):
+    for sid, sym in (("NASDAQ100", "NDX"), ("NIKKEI225", "N225"), ("DGS10", "US10Y"), ("DEXJPUS", "USDJPY")):
         t = get("https://fred.stlouisfed.org/graph/fredgraph.csv?id=" + sid)
         rd = list(csv.reader(io.StringIO(t)))[1:]
         save(sym, "FRED " + sid, ["d", "c"], [[ymd(r[0]), float(r[1])] for r in rd if len(r) > 1 and r[1] not in ("", ".")])

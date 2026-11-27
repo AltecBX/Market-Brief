@@ -8,13 +8,13 @@ On iPhone: open the link in Safari, tap Share, then Add to Home Screen. It opens
 ## Tabs
 | Tab | What it shows |
 |---|---|
-| Brief | Market session, regime with its evidence, what changed since your last visit, the 3 things that matter most, key readings, drivers, risks and catalysts, scenarios, and the distance to every key level. Reading modes: 30 seconds, 2 minutes (default) and Deep |
-| Board | Overnight chart, breadth across 59 stock perps, and the live board (semis, indexes, megacaps, commodities and FX, crypto). Pick one comparison basis at a time. Tap a row for mark, oracle, funding, open interest, volume and spread |
+| Brief | Market session, regime with its evidence, an Ask box that searches the brief and live wire, what changed since your last visit, comparable history, the 3 things that matter most, key readings, drivers, risks, the next 7 trading days ranked for chips and the Fed, what is priced in, scenarios, and the distance to every key level. Reading modes: 30 seconds, 2 minutes (default) and Deep. Customize pins instruments, news topics and which sections show, saved on the device |
+| Board | Overnight chart, breadth across about 60 stock perps, internals (equal weight, small caps, semis vs Nasdaq), cross asset confirmations and divergences, and the live board (semis, indexes, megacaps, commodities and FX, crypto). Pick one comparison basis at a time. Tap a row for mark, oracle, funding, open interest, volume and spread |
 | Options | SPX expected moves from SPX and SPXW options (SPY shown separately), how much of each move is used, a price scenario simulator, big option positions, and the VIX index and futures curves |
-| History | Probability engine: pick a market condition (big S&P drop, losing streak, VIX level, VIX spike and reversal, intraday recovery, gaps, big chip stock drops, breadth divergence), set thresholds and years, and see how markets did next, with sample size, 95% ranges, a baseline of all days, a stability check and every comparable date. The Brief shows matches for today's conditions automatically |
+| History | Probability engine: pick a market condition (big S&P drop, losing streak, VIX level, VIX spike and reversal, intraday recovery, gaps, big chip stock drops, breadth divergence, Nikkei moves and the next US session or semis), set thresholds and years, and see how markets did next, with sample size, 95% ranges, a baseline of all days, a stability check and every comparable date. The Brief shows matches for today's conditions automatically |
 | News | Live wire filtered to market moving headlines, with the perp reaction 5, 15, 30 and 60 minutes after each one, the move before it, and the move vs the S&P. Plus Claude's picks |
 | Recap | The day's close recap |
-| Memory | Every scheduled brief and recap as published. Never edited afterward |
+| Memory | Forecast scorecard (implied move coverage, directional calls vs an always up baseline), and every scheduled brief and recap as published. Never edited afterward |
 
 ## Where the data comes from
 | Part | Source | How often |
@@ -51,14 +51,14 @@ The token is stored only in that browser on that device. It is never saved in th
 | File | What it is | Who changes it |
 |---|---|---|
 | `index.html` | The page, built from `src/` | `python3 tools/build.py`, only when the design changes |
-| `src/page.html`, `src/app.js`, `src/recap_fallback.html` | Page layout, page code, built in recap | Design changes |
+| `src/page.html`, `src/*.js`, `src/recap_fallback.html` | Page layout, page code (app, history engine, extras, start), built in recap | Design changes |
 | `brief.json` | All scheduled content | The scheduled task, each run |
 | `recap.html` | The day's recap tab | The scheduled task, after the close |
 | `archive/` | Every brief and recap as published, plus `index.json` | The scheduled task adds files; nothing is ever edited |
 | `UPDATE.md` | Step by step instructions every scheduled run follows | When the update rules change |
 | `tools/check.py` | Validates brief.json, recap.html and the archive before any push | When the schema changes |
 | `tools/prices.py` | Perp prices now, at an exact time, and instrument checks | Rarely |
-| `data/hist/` | Daily history: S&P since 1975, VIX family since 1990, Nasdaq 100, Nikkei, 10 year yield, and about 2 years of SPY, QQQ, NVDA, MU, SNDK, RSP, SMH, IWM bars | The close run adds new days |
+| `data/hist/` | Daily history: S&P since 1975, VIX family since 1990, Nasdaq 100, Nikkei, 10 year yield, USD/JPY, and about 2 years of SPY, QQQ, NVDA, MU, SNDK, RSP, SMH, IWM bars | The close run adds new days |
 | `tools/history.py` | Refreshes `data/hist/` | Rarely |
 | `tools/archive.py` | Copies the brief into the archive | Rarely |
 | `manifest.json`, `icon-*.png` | Home Screen app name and icon | Rarely |

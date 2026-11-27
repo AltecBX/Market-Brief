@@ -37,6 +37,12 @@ var STUDIES = [
     ev: function (S, i, P, T) { var c = T.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
   { id: 'gap', name: 'SPY opening gap', data: ['SPY'], tgt: 'SPY', entry: 'open', p: [['x', 'Gap size at least', 1, '%', 0.25], ['dir', 'Direction (1 = up, 0 = down)', 0, '', 1]], desc: 'SPY open vs prior close, about 2 years. Returns are measured from the open, the moment the gap is known.',
     ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var g = (T.o[i] / T.c[i - 1] - 1) * 100; return (P.dir ? g >= P.x : g <= -P.x) ? { v: g, ref: T.c[i - 1], gap: 1 } : null } },
+  { id: 'asia', name: 'Nikkei move, then US', data: ['N225', 'NDX', 'USDJPY'], tgt: 'NDX', entry: 'prev', corr: 1, p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1], ['ctrl', 'Prior US session move no bigger than (0 = off)', 0.5, '%', 0.25], ['fx', 'Measure Nikkei in dollars (1 = yes)', 0, '', 1]],
+    desc: 'Tokyo closes at 1:00am ET, before the US session of the same date. The 1 session result is that US session, measured from the prior US close, so part of it happened before Tokyo closed. Nikkei from FRED since 1986, Nasdaq 100 from FRED. Dollar conversion uses the FRED noon New York yen rate, an approximation. A correlation is not a prediction.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i], X = S.NDX, j = X.ix[d]; if (i < 1 || j == null || j < 2) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; if (P.fx) { var F = S.USDJPY, a = F.ix[d], b = F.ix[N.d[i - 1]]; if (a == null || b == null) return null; r = ((1 + r / 100) * F.c[b] / F.c[a] - 1) * 100 } var u = (X.c[j - 1] / X.c[j - 2] - 1) * 100; if (P.ctrl > 0 && Math.abs(u) > P.ctrl) return null; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) + (P.fx ? ' in dollars' : '') + ', prior US day ' + sg(u) } : null } },
+  { id: 'asiasmh', name: 'Nikkei move, then US semis', data: ['N225', 'SMH', 'QQQ'], tgt: 'SMH', entry: 'open', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1]],
+    desc: 'Same date: Tokyo closes before the US open, so the SMH open to close result is information that was available. About 2 years of SMH bars. A correlation is not a prediction.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i]; if (i < 1 || S.SMH.ix[d] == null) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) } : null } },
   { id: 'breadth', name: 'Breadth up, index down', data: ['SPY', 'RSP'], tgt: 'SPY', p: [['x', 'SPY closes down at least', 0.5, '%', 0.25], ['y', 'Equal weight RSP beats SPY by at least', 0.3, '%', 0.1]], desc: 'Equal weight vs cap weight, about 2 years. A breadth proxy, not exchange breadth.',
     ev: function (S, i, P) { var A = S.SPY, R = S.RSP, d = A.d[i], j = R.ix[d]; if (i < 1 || j == null || j < 1) return null; var a = (A.c[i] / A.c[i - 1] - 1) * 100, r = (R.c[j] / R.c[j - 1] - 1) * 100; return a <= -P.x && r - a >= P.y ? { v: a, lab: 'SPY ' + sg(a) + ', RSP ' + sg(r) } : null } }
 ];
@@ -56,11 +62,11 @@ function runStudy(st, P, opt) {
     var raw = { d: d, ti: ti, e: e };
     if (ti - last < opt.gap) { ev.push(raw); raw.skip = true; continue } last = ti; ev.push(raw);
   }
-  var hasHL = !!T.h, entry = function (ti) { return st.entry === 'open' ? T.o[ti] : T.c[ti] };
+  var hasHL = !!T.h, entry = function (ti) { return st.entry === 'open' ? T.o[ti] : st.entry === 'prev' ? T.c[ti - 1] : T.c[ti] };
   ev.forEach(function (x) {
-    var ti = x.ti, e0 = entry(ti), out = { r: {} };
+    var ti0 = x.ti, e0 = entry(ti0), ti = st.entry === 'prev' ? ti0 - 1 : ti0, out = { r: {} };
     HZ.forEach(function (k) { var j = ti + k; if (j < T.c.length) out.r[k] = (T.c[j] / e0 - 1) * 100 });
-    if (st.entry === 'open') out.r[0] = (T.c[ti] / e0 - 1) * 100;
+    if (st.entry === 'open') out.r[0] = (T.c[ti0] / e0 - 1) * 100;
     var j0 = ti + 1, j1 = Math.min(T.c.length - 1, ti + 20);
     if (j1 >= ti + 20) {
       var hi = -1e18, lo = 1e18; for (var j = j0; j <= j1; j++) { hi = Math.max(hi, hasHL ? T.h[j] : T.c[j]); lo = Math.min(lo, hasHL ? T.l[j] : T.c[j]) }
@@ -84,9 +90,9 @@ function renderStudy(R) {
   if (n >= 10) {
     var r1 = u.map(function (x) { return x.out.r[1] }).filter(isNum), up1 = r1.filter(function (x) { return x > 0 }).length;
     h += '<div class="r hrow head"><span></span><b>Events</b><b>All days</b></div>';
-    h += '<div class="r hrow"><span>Next session up</span><span>' + pctTxt(up1, r1.length) + '</span><span>' + (R.base.r[1].up * 100).toFixed(0) + '%</span></div>';
-    if (st.entry === 'open') { var r0 = u.map(function (x) { return x.out.r[0] }).filter(isNum); h += '<div class="r hrow"><span>Gap day, open to close</span><span>' + mTxt(stats(r0)) + '</span><span></span></div>' }
-    HZ.forEach(function (k) { var a = u.map(function (x) { return x.out.r[k] }).filter(isNum), s = stats(a); h += '<div class="r hrow"><span>' + k + ' session' + (k > 1 ? 's' : '') + ' mean <span class="k">median, n</span></span><span>' + mTxt(s) + '<div class="k">' + (s.n ? sg(s.med) + ', ' + s.n : '') + '</div></span><span>' + sg(R.base.r[k].mean) + '<div class="k">' + sg(R.base.r[k].med) + '</div></span></div>' });
+    h += '<div class="r hrow"><span>' + (st.entry === 'prev' ? 'Same date US session up' : st.entry === 'open' ? 'Up by the next close, from the open' : 'Next session up') + '</span><span>' + pctTxt(up1, r1.length) + '</span><span>' + (R.base.r[1].up * 100).toFixed(0) + '%</span></div>';
+    if (st.entry === 'open') { var r0 = u.map(function (x) { return x.out.r[0] }).filter(isNum); h += '<div class="r hrow"><span>Same day, open to close</span><span>' + mTxt(stats(r0)) + '</span><span></span></div>' }
+    HZ.forEach(function (k) { var a = u.map(function (x) { return x.out.r[k] }).filter(isNum), s = stats(a); h += '<div class="r hrow"><span>' + k + ' session' + (k > 1 ? 's' : '') + (st.entry === 'prev' ? ' from the prior US close' : st.entry === 'open' ? ' from the open' : '') + ' mean <span class="k">median, n</span></span><span>' + mTxt(s) + '<div class="k">' + (s.n ? sg(s.med) + ', ' + s.n : '') + '</div></span><span>' + sg(R.base.r[k].mean) + '<div class="k">' + sg(R.base.r[k].med) + '</div></span></div>' });
     var w = u.filter(function (x) { return isNum(x.out.mfe) });
     if (w.length >= 10) {
       h += '<div class="r hrow"><span>Best gain within 20 <span class="k">median</span></span><span>' + sg(median(w.map(function (x) { return x.out.mfe }))) + '</span><span></span></div>';
@@ -102,10 +108,19 @@ function renderStudy(R) {
     var cut = Math.floor(n * 0.7), A = u.slice(0, cut), Bo = u.slice(cut), part = function (a) { var r = a.map(function (x) { return x.out.r[1] }).filter(isNum), f = a.map(function (x) { return x.out.r[5] }).filter(isNum), t = a.map(function (x) { return x.out.r[20] }).filter(isNum); return 'n ' + a.length + ', up next ' + (r.length ? (r.filter(function (x) { return x > 0 }).length / r.length * 100).toFixed(0) + '%' : 'n/a') + ', 5 day mean ' + (f.length ? sg(stats(f).mean) : 'n/a') + ', 20 day mean ' + (t.length ? sg(stats(t).mean) : 'n/a') };
     if (A.length && Bo.length) h += '<div class="r"><b>Stability check</b><div class="k">Earlier 70% of events (' + dlab(A[0].d) + ' to ' + dlab(A[A.length - 1].d) + '): ' + part(A) + '<br>Later 30% (' + dlab(Bo[0].d) + ' to ' + dlab(Bo[Bo.length - 1].d) + '): ' + part(Bo) + '<br>Thresholds are set by you, not fitted to results. If the two halves disagree, the pattern is not stable.</div></div>';
   }
+  if (st.corr) h += corrBlock(R);
   $('hres').innerHTML = h;
   var L = '';
   R.all.slice().reverse().slice(0, 120).forEach(function (x) { var o = x.out, open = HS.open === x.d; L += '<div class="r hev' + (x.skip ? ' mut' : '') + '" data-d="' + x.d + '"><span>' + dlab(x.d) + (x.skip ? ' <span class="k">overlaps</span>' : '') + '<div class="k">' + esc(x.e.lab || sg(x.e.v)) + '</div></span><span class="num">' + (isNum(o.r[1]) ? sg(o.r[1]) : 'n/a') + '</span><span class="num">' + (isNum(o.r[5]) ? sg(o.r[5]) : 'n/a') + '</span><span class="num">' + (isNum(o.r[20]) ? sg(o.r[20]) : 'n/a') + '</span>' + (open ? '<div class="hdet">' + evDetail(R, x) + '</div>' : '') + '</div>' });
   $('hlist').innerHTML = '<div class="r hev head"><span>Date, newest first</span><b>1 day</b><b>5 day</b><b>20 day</b></div>' + (L || '<div class="r mut">No events with these settings.</div>');
+}
+function pearson(a, b) { var n = a.length; if (n < 30) return null; var ma = 0, mb = 0; for (var i = 0; i < n; i++) { ma += a[i]; mb += b[i] } ma /= n; mb /= n; var sab = 0, sa = 0, sb = 0; for (i = 0; i < n; i++) { sab += (a[i] - ma) * (b[i] - mb); sa += (a[i] - ma) * (a[i] - ma); sb += (b[i] - mb) * (b[i] - mb) } return sab / Math.sqrt(sa * sb) }
+function corrBlock(R) {
+  var N = HIST.N225, X = HIST.NDX, from = (+HS.from || 0) * 10000, to = (+HS.to || 9999) * 10000 + 9999, a = [], same = [], prev = [], ah = [], bh = [];
+  for (var i = 1; i < N.d.length; i++) { var d = N.d[i]; if (d < from || d > to) continue; var j = X.ix[d]; if (j == null || j < 2) continue; var r = N.c[i] / N.c[i - 1] - 1; a.push(r); same.push(X.c[j] / X.c[j - 1] - 1); prev.push(X.c[j - 1] / X.c[j - 2] - 1) }
+  var n = a.length, cut = Math.floor(n * 0.7), c1 = pearson(a, same), c2 = pearson(a, prev), c3 = pearson(a.slice(0, cut), same.slice(0, cut)), c4 = pearson(a.slice(cut), same.slice(cut));
+  var fx = function (v) { return v == null ? 'n/a' : v.toFixed(2) };
+  return '<div class="r"><b>Correlation on ' + n + ' shared days</b><div class="k">Nikkei session vs the prior US session: ' + fx(c2) + ' (Asia often follows the US). Nikkei session vs the same date US session: ' + fx(c1) + ', earlier 70% ' + fx(c3) + ', later 30% ' + fx(c4) + '. Close to 0 means little relationship. Even a stable correlation does not prove the next move.</div></div>';
 }
 function evDetail(R, x) {
   var T = HIST[R.T], ti = x.ti, a = [], e0 = R.st.entry === 'open' ? T.o[ti] : T.c[ti]; for (var j = Math.max(0, ti - 5); j <= Math.min(T.c.length - 1, ti + 20); j++) a.push(T.c[j]);
@@ -170,10 +185,3 @@ function vixHist() {
   }).catch(function () { $('vixhist').innerHTML = '<div class="r mut">VIX history unavailable.</div>' });
 }
 
-/* ---------- Start ---------- */
-setTheme(THEME); setMode(MODE); sectors(); applyBrief(DEF); BRIEF_V = '';
-pullRest(); wsOpen(); pullBrief(); pullWire(); setTimeout(autoHist, 2500);
-setInterval(pullRest, 15e3); setInterval(function () { pullWire() }, 60e3); setInterval(pullBrief, 5 * 60e3); setInterval(function () { if (!document.hidden) loadChart() }, 5 * 60e3);
-setInterval(function () { if (!document.hidden) { renderStatus(); if (!WSOK && !WS) wsOpen() } }, 1e3);
-setInterval(function () { if (!document.hidden) render() }, 5e3);
-setInterval(function () { if (!document.hidden) saveVisit() }, 60e3);

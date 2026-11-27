@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-27T15:16:00-05:00",
- "updatedLabel": "Fri 3:16pm ET",
- "next": "4:12pm",
+ "updated": "2026-11-27T16:15:00-05:00",
+ "updatedLabel": "Fri 4:15pm ET",
+ "next": "8:12pm",
  "kicker": "BLACK FRIDAY HALF DAY · CLOSED 1:00PM ET · EVENING BRIEF",
  "headline": "Best week since April 2025: S&P +5.6% as the VIX closes at 23.81.",
  "lede": "The S&P 500 ended Friday at 7,298.34, +1.61%, and +5.6% on the week, its strongest since April 2025 (AP). The VIX closed at 23.81, −11%, and the 10 year ended near 4.94%; futures reopen Sunday 6:00pm after OPEC+ meets.",
@@ -55,10 +55,10 @@
  ],
  "picks": [
   [
-   "Fri 3:15pm",
+   "Fri 4:14pm",
    "FUT",
    "",
-   "Perps since the 1pm close: S&P perp 7,299.75 vs 7,305.5, Nvidia perp −0.6%, Micron perp −1.5%. Futures reopen Sunday 6:00pm."
+   "Perps since the 1pm close: S&P perp 7,308.25 vs 7,305.5, Nvidia perp −0.6%, Micron perp −1.3%. Futures reopen Sunday 6:00pm."
   ],
   [
    "Fri 2:00pm",
@@ -1111,7 +1111,7 @@
    "assets": "SPX, NDX, VIX",
    "impl": "bull",
    "read": "Fear has eased fast, but yields kept rising.",
-   "reacted": "After the close the S&P perp is little changed, 7,299.75 vs 7,305.5 at 1pm.",
+   "reacted": "After the close the S&P perp is little changed, 7,308.25 at 4:14pm vs 7,305.5 at 1pm.",
    "known": "new",
    "material": false,
    "confirm": "VIX stays under 25 and S&P holds 7,290 Monday.",
@@ -1240,17 +1240,17 @@
   "basis": "Close above the final 7,294 gamma flip with chips leading and the VIX down to 23.81; Morgan Stanley IM's Slimmon told Reuters fast money had delevered out of tech, so the bounce could persist."
  },
  "daily": {
-  "asofTs": "2026-11-27T15:15:00-05:00",
-  "happened": "Since the 1:00pm close, perps barely moved: the S&P perp is 7,299.75 vs 7,305.5 at 1pm, Nvidia −0.6% and Micron −1.5%. Bonds closed at 2:00pm with the 10 year near 4.94% (AP). Cash ended at 7,298.34, +1.61%, and +5.6% on the week.",
+  "asofTs": "2026-11-27T16:14:00-05:00",
+  "happened": "Since the 1:00pm close, perps are flat: the S&P perp is 7,308.25 vs 7,305.5 at 1pm, Nvidia −0.6%, Micron −1.3% and AMD −0.8%. Bonds closed at 2:00pm with the 10 year near 4.94% (AP). Cash ended at 7,298.34, +1.61%, and +5.6% on the week.",
   "cause": "Not established for the small after close drift. For the day, Reuters says investors flocked back to hard hit AI shares, and Trading Economics says haven demand for Treasuries eased as tech rebounded.",
   "causeSrc": "",
-  "since": "Since the 1:42pm brief: the VIX settled at 23.81 (−11.2%), lower than Reuters' 24.2 late quote. AP puts the 10 year at 4.94% from 4.85% and calls the week the best since April 2025. Unusual Whales' final OI gamma flip is 7,294, not 7,304, so the close sits just above it. No data was released since; the outlook is confirmed, not changed.",
+  "since": "Since the 3:16pm brief: no data was released and no new market moving story was verified. Perps are little changed, Unusual Whales' OI gamma flip is still 7,294 and the VIX close of 23.81 stands. The outlook is confirmed, not changed.",
   "expected": [],
   "affected": [
    [
     "Memory (MU, SNDK)",
     "down",
-    "After the close the Micron perp is −1.5% and Sandisk −0.2% vs 1pm, after Friday's +7.60% and +15.96% cash gains."
+    "After the close the Micron perp is −1.3% and Sandisk −0.3% vs 1pm, after Friday's +7.60% and +15.96% cash gains."
    ],
    [
     "Nvidia",

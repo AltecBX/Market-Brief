@@ -88,10 +88,20 @@ with sync_playwright() as pw:
     ctx.close()
 
     # 8. refused data key
-    ctx, pg, errs = page(b, init="localStorage.setItem('uw_key','00000000-0000-0000-0000-000000000000')", route=[("**/api.unusualwhales.com/**", lambda r: r.fulfill(status=401, body="{}"))])
+    ctx, pg, errs = page(b, init="try{localStorage.setItem('uw_key','00000000-0000-0000-0000-000000000000')}catch(e){}", route=[("**/api.unusualwhales.com/**", lambda r: r.fulfill(status=401, body="{}"))])
     pg.goto(URL); pg.wait_for_timeout(8000)
     ok(not errs, "refused key: no page errors " + str(errs[:2]))
     ok("not accepted" in pg.inner_text("#wtxt").lower(), "refused key: the wire says the token was not accepted")
+    ctx.close()
+
+    # recap tab and archive calendar
+    ctx, pg, errs = page(b); pg.goto(URL); pg.wait_for_timeout(6000)
+    ok(pg.inner_text("#recaptab") in ("Mon Recap", "Tue Recap", "Wed Recap", "Thu Recap", "Fri Recap"), "the Recap tab is named for the latest session: " + pg.inner_text("#recaptab"))
+    pg.click("#tabs [data-p=mem]"); pg.wait_for_timeout(3000)
+    pg.click('#rcal [data-rd="2026-11-25"]'); pg.wait_for_timeout(3000)
+    fr = pg.frame_locator("#rframe")
+    ok("Morning flush" in fr.locator("h1").inner_text() and fr.locator("#sectors .hb").count() == 11 and fr.locator("svg").count() >= 1, "the original Wednesday recap opens from the calendar with its chart and sector bars")
+    ok(not errs, "recap archive: no page errors " + str(errs[:2]))
     ctx.close()
 
     # desktop

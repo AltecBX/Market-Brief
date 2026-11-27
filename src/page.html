@@ -159,6 +159,7 @@ details.d[open]>summary .sh h2::after{content:" \2039"}
 .foot{font-size:11px;color:var(--ink2);margin:22px 2px 0;line-height:1.6}
 .foot a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--ink3)}
 html.m30 .x2,html.m30 .xd,html.m2 .xd{display:none!important}
+#rcal .cal{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:8px 0}#rcal .cal span{font-size:11px;color:var(--ink2);text-align:center}#rcal .cal button{border:0;border-radius:9px;padding:8px 0 6px;background:var(--fill);color:var(--ink3);font:inherit;font-size:14px;font-variant-numeric:tabular-nums}#rcal .cal button.has{background:var(--card2);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--blue,#0a84ff)}#rcal .cal button.off{opacity:.35}#rcal .cal button i{display:block;height:4px;margin:3px auto 0;width:4px;border-radius:2px;background:var(--orange,#ff9f0a)}#rcal .cal button:not(.has) i{visibility:hidden}#rcal .rl{padding:8px 2px;border-top:.5px solid var(--sep);cursor:pointer}#rcal .rl .tg{font-size:11px;color:var(--ink2)}
 #p-hist .sec.fold>.sh{cursor:pointer}#p-hist .sec.fold>.sh h2::after{content:' \25BE';opacity:.5}#p-hist .sec.fold.closed>.sh h2::after{content:' \25B8'}#p-hist .sec.fold.closed>:not(.sh){display:none!important}
 html.m30 .x30h{display:none!important}
 .hist .hrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 70px;gap:8px;font-size:13px;align-items:baseline}
@@ -339,8 +340,10 @@ html.m30 .x30h{display:none!important}
 <!-- MEMORY -->
 <div class="panel" id="p-mem">
 <div class="sec"><div class="sh"><h2>Forecast scorecard</h2><span>From the archive</span></div><div class="grp" id="score"><div class="r mut">Loading</div></div></div>
-<div class="sec"><input class="search" id="memq" placeholder="Search past briefs" autocomplete="off"></div>
-<div class="sec mem"><div class="sh"><h2>Archive</h2><span>Saved as published, never edited</span></div><div class="grp" id="memlist"><div class="r mut">Loading</div></div></div>
+<div class="sec"><input class="search" id="memq" placeholder="Search recaps and briefs: Fed, tariffs, NVDA, a date" autocomplete="off"></div>
+<div class="sec"><div class="sh"><h2>Daily recaps</h2><span>Every session, as published, never edited</span></div><div class="grp pad" id="rcal"><div class="r mut">Loading</div></div></div>
+<div class="sec" id="rview" style="display:none"><div class="sh"><h2 id="rvtitle">Recap</h2><span><button class="chipb" id="rvclose">Close</button></span></div><iframe id="rframe" title="Archived recap" sandbox="allow-scripts" loading="lazy" style="width:100%;height:900px;border:0;border-radius:12px;background:var(--bg);display:block"></iframe></div>
+<div class="sec mem"><div class="sh"><h2>Briefs</h2><span>Saved as published, never edited</span></div><div class="grp" id="memlist"><div class="r mut">Loading</div></div></div>
 <div class="sec" id="memcmp"></div>
 <div class="sec" id="memview"></div>
 </div>

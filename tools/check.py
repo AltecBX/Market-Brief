@@ -207,6 +207,16 @@ if os.path.exists("recap.html"):
     if re.search(r"\son[a-z]+\s*=", r, re.I): err.append("recap.html has an inline event handler")
     if re.search(r"javascript:", r, re.I): err.append("recap.html has a javascript: link")
 
+# recap: recap.json names a completed, archived session and never moves backwards
+if os.path.exists("recap.json"):
+    try:
+        RJ = json.load(open("recap.json"))
+        if not re.match(r"^\d{4}-\d{2}-\d{2}$", str(RJ.get("session", ""))): err.append("recap.json session must be YYYY-MM-DD")
+        if not os.path.exists(os.path.join("archive", RJ.get("file", ""))): err.append("recap.json points to a recap that is not archived: " + str(RJ.get("file")))
+        if not re.match(r"^(Mon|Tue|Wed|Thu|Fri) Recap$", str(RJ.get("label", ""))): err.append("recap.json label must be like Fri Recap")
+        old = subprocess.run(["git", "show", "HEAD:recap.json"], capture_output=True, text=True)
+        if old.returncode == 0 and json.loads(old.stdout).get("session", "") > RJ.get("session", ""): err.append("recap.json moved back to an older session")
+    except ValueError: err.append("recap.json is not valid JSON")
 # archive: files listed must exist, and published files are never changed
 if os.path.exists("archive/index.json"):
     idx = json.load(open("archive/index.json"))

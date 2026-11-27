@@ -1,5 +1,5 @@
-"""Copy the current brief.json (and recap.html on close runs) into archive/ and update archive/index.json.
-Run after check.py passes: python3 tools/archive.py [--recap]
+"""Copy the current brief.json into archive/ and update archive/index.json. Recaps are archived by tools/recap.py.
+Run after check.py passes: python3 tools/archive.py
 Published archive files are never edited or deleted. check.py enforces this."""
 import json, os, shutil, sys
 from datetime import datetime
@@ -23,7 +23,7 @@ def add(src, name, kind):
     print("archived " + rel)
 
 add("brief.json", hm + ".json", "brief")
-if "--recap" in sys.argv and os.path.exists("recap.html"):
-    add("recap.html", "recap.html", "recap")
+if "--recap" in sys.argv:
+    print("recaps are archived by tools/recap.py install; --recap does nothing here")
 idx.sort(key=lambda e: (e["date"], e["time"], e["kind"]))
 json.dump(idx, open(idxp, "w"), indent=1, ensure_ascii=False)

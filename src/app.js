@@ -348,7 +348,7 @@ function applyBrief(nb) {
   $('impsub').textContent = 'S&P 500 PERP VS ' + String(B.base.label).toUpperCase();
   $('chtitle').textContent = (B.chart && B.chart.title) || 'Overnight path';
   $('optasof').innerHTML = 'From ' + freshTag(B.opt.asofTs, 'session', B.opt.asof || '');
-  $('recaptab').textContent = B.recapLabel || 'Recap';
+  $('recaptab').textContent = RECAPMETA ? RECAPMETA.label : (B.recapLabel || 'Recap');
   $('picksasof').textContent = B.updatedLabel || '';
   $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (B.next ? ', next ' + esc(B.next) : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
   var hl = [['Brief', B.updated, 6], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
@@ -362,8 +362,13 @@ function applyBrief(nb) {
 function pullBrief() {
   if (document.hidden) return;
   fetch('brief.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (nb) { if (nb.updated !== BRIEF_V) applyBrief(nb) }).catch(function () { });
+  loadRecapMeta();
   fetch('recap.html?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.text() }).then(function (h) { if (h && h.length > 200) { $('recapbox').innerHTML = ''; $('recapbox').appendChild(clean(h)); sectors() } }).catch(function () { });
 }
+/* The Recap tab is named after the latest completed session that has a published recap (recap.json), e.g. "Fri Recap".
+   On weekends and holidays it keeps the last one, because a new recap is only installed after a completed session. */
+var RECAPMETA = null;
+function loadRecapMeta() { fetch('recap.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { if (j && j.label && /^\d{4}-\d{2}-\d{2}$/.test(j.session)) { RECAPMETA = j; $('recaptab').textContent = j.label } }).catch(function () { }) }
 /* recap.html and archived HTML are inert: no scripts, no handlers, only https links */
 function clean(html) {
   var d = new DOMParser().parseFromString('<div>' + html + '</div>', 'text/html'), root = d.body.firstChild;
@@ -371,7 +376,7 @@ function clean(html) {
   root.querySelectorAll('*').forEach(function (n) { [].slice.call(n.attributes).forEach(function (a) { var nm = a.name.toLowerCase(), v = a.value; if (nm.indexOf('on') === 0 || ((nm === 'href' || nm === 'src' || nm === 'xlink:href') && !/^https:\/\//i.test(v) && v.charAt(0) !== '#') || (nm === 'style' && /url\(|expression/i.test(v))) n.removeAttribute(a.name) }); if (n.tagName === 'A') { n.setAttribute('rel', 'noopener noreferrer'); n.setAttribute('target', '_blank') } });
   var frag = document.createDocumentFragment(); while (root.firstChild) frag.appendChild(root.firstChild); return frag;
 }
-function sectors() { var el = $('sectors'); if (!el) return; var a = null, raw = el.getAttribute('data-sectors'); if (raw) { try { a = JSON.parse(raw) } catch (e) { } } if (!a) a = [["Materials", 2.07], ["Real Estate", 0.92], ["Comm Services", 0.89], ["Industrials", 0.83], ["Energy", 0.74], ["Financials", 0.71], ["Utilities", 0.48], ["Staples", 0.46], ["Discretionary", -0.20], ["Health Care", -0.56], ["Technology", -0.83]]; var m = Math.max.apply(0, a.map(function (r) { return Math.abs(r[1]) })) * 1.05 || 1; el.innerHTML = a.map(function (r) { var v = +r[1], w = Math.abs(v) / m * 50, p = v >= 0; return '<div class="hb"><span>' + esc(r[0]) + '</span><span class="t"><i style="' + (p ? 'left:50%;width:' + w + '%;background:var(--gfill)' : 'right:50%;width:' + w + '%;background:var(--rfill)') + '"></i></span><span class="p ' + (p ? 'up' : 'dn') + '">' + sg(v) + '</span></div>' }).join('') }
+function sectors() { var el = $('sectors'); if (!el) return; var a = null, raw = el.getAttribute('data-sectors'); if (raw) { try { a = JSON.parse(raw) } catch (e) { } } if (!a || !a.length) { el.innerHTML = '<div class="k">Sector data is not in this recap.</div>'; return } var m = Math.max.apply(0, a.map(function (r) { return Math.abs(r[1]) })) * 1.05 || 1; el.innerHTML = a.map(function (r) { var v = +r[1], w = Math.abs(v) / m * 50, p = v >= 0; return '<div class="hb"><span>' + esc(r[0]) + '</span><span class="t"><i style="' + (p ? 'left:50%;width:' + w + '%;background:var(--gfill)' : 'right:50%;width:' + w + '%;background:var(--rfill)') + '"></i></span><span class="p ' + (p ? 'up' : 'dn') + '">' + sg(v) + '</span></div>' }).join('') }
 
 /* ---------- Options ---------- */
 function renderOpt(spx) {
@@ -544,14 +549,49 @@ function impacts() {
 function feed(n) { var h = '', seen = VPREV && VPREV.picks || []; NEWS.forEach(function (x) { if (n !== 'all' && x[1] !== n) return; var isNew = VPREV && seen.indexOf(String(x[3]).slice(0, 80)) < 0 && VPREV.brief !== B.updated; h += '<div class="r"><span class="tm">' + esc(x[0]) + '</span><span>' + (isNew ? '<span class="cat new">NEW</span>' : '') + '<span class="cat">' + esc(x[1]) + '</span><span class="' + (x[2] === 'up' ? 'up' : x[2] === 'dn' ? 'dn' : '') + '">' + (x[2] === 'up' ? '▲ ' : x[2] === 'dn' ? '▼ ' : '') + '</span>' + lite(x[3]) + '</span></div>' }); $('feed').innerHTML = h || '<div class="r"><span></span><span class="mut">Nothing in this filter.</span></div>' }
 
 /* ---------- Memory ---------- */
-var MEM = null;
+var MEM = null, RC = { y: null, m: null, tag: '' };
 function loadMem() {
   if (MEM) return drawMem();
-  fetch('archive/index.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (a) { MEM = Array.isArray(a) ? a.slice().reverse() : []; drawMem() }).catch(function () { $('memlist').innerHTML = '<div class="r mut">Archive not available yet.</div>' });
+  fetch('archive/index.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (a) { MEM = Array.isArray(a) ? a.slice().reverse() : []; drawMem() }).catch(function () { $('memlist').innerHTML = '<div class="r mut">Archive not available yet.</div>'; $('rcal').innerHTML = '<div class="r mut">Archive not available yet.</div>' });
 }
+function memMatch(e, q) { return !q || (e.headline + ' ' + e.label + ' ' + e.date + ' ' + (e.tags || []).join(' ')).toLowerCase().indexOf(q) >= 0 }
+function drawRecapCal() {
+  var q = ($('memq').value || '').toLowerCase(), R = (MEM || []).filter(function (e) { return e.kind === 'recap' }), el = $('rcal');
+  if (!R.length) { el.innerHTML = '<div class="r mut">No recaps archived yet.</div>'; return }
+  var byDate = {}; R.forEach(function (e) { (byDate[e.date] = byDate[e.date] || []).push(e) });
+  var years = Object.keys(R.reduce(function (o, e) { o[e.date.slice(0, 4)] = 1; return o }, {})).sort().reverse(); if (!RC.y || years.indexOf(RC.y) < 0) RC.y = years[0];
+  var months = Object.keys(R.filter(function (e) { return e.date.slice(0, 4) === RC.y }).reduce(function (o, e) { o[e.date.slice(5, 7)] = 1; return o }, {})).sort(); if (!RC.m || months.indexOf(RC.m) < 0) RC.m = months[months.length - 1];
+  var tags = {}; R.forEach(function (e) { (e.tags || []).forEach(function (g) { tags[g] = (tags[g] || 0) + 1 }) });
+  var MN = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], h = '';
+  h += '<div class="chips">' + years.map(function (y) { return '<button class="chipb' + (y === RC.y ? ' on' : '') + '" data-ry="' + y + '">' + y + '</button>' }).join('') + '</div>';
+  h += '<div class="chips" style="margin-top:4px">' + months.map(function (m) { return '<button class="chipb' + (m === RC.m ? ' on' : '') + '" data-rm="' + m + '">' + MN[+m] + '</button>' }).join('') + '</div>';
+  if (Object.keys(tags).length) h += '<div class="chips" style="margin-top:4px"><button class="chipb' + (!RC.tag ? ' on' : '') + '" data-rt="">All events</button>' + Object.keys(tags).sort(function (a, b) { return tags[b] - tags[a] }).map(function (g) { return '<button class="chipb' + (g === RC.tag ? ' on' : '') + '" data-rt="' + esc(g) + '">' + esc(g) + ' ' + tags[g] + '</button>' }).join('') + '</div>';
+  /* month grid, Monday to Friday; holidays come from the NYSE calendar */
+  var y = +RC.y, m = +RC.m, first = new Date(Date.UTC(y, m - 1, 1)), days = new Date(Date.UTC(y, m, 0)).getUTCDate(), cells = [], lead = (first.getUTCDay() + 6) % 7;
+  for (var d = 1; d <= days; d++) { var dw = (new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 6) % 7; if (dw > 4) continue; if (!cells.length) for (var k = 0; k < Math.min(lead, 5); k++) cells.push('<button class="off" disabled></button>');
+    var key = RC.y + '-' + RC.m + '-' + (d < 10 ? '0' : '') + d, ymd = +key.replace(/-/g, ''), es = byDate[key], ok = es && es.some(function (e) { return (!RC.tag || (e.tags || []).indexOf(RC.tag) >= 0) && memMatch(e, q) }), tr = CORE.isTradingDay(ymd);
+    cells.push('<button' + (es ? ' class="has' + (ok ? '' : ' off') + '" data-rd="' + key + '"' : ' disabled' + (tr ? '' : ' class="off" title="Market closed"')) + '>' + d + '<i></i></button>') }
+  h += '<div class="cal"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>' + cells.join('') + '</div>';
+  var list = R.filter(function (e) { return (!RC.tag || (e.tags || []).indexOf(RC.tag) >= 0) && memMatch(e, q) && (RC.tag || q || e.date.slice(0, 7) === RC.y + '-' + RC.m) });
+  h += list.slice(0, 60).map(function (e) { return '<div class="rl" data-rf="' + esc(e.file) + '" data-rl="' + esc(e.label + ', ' + dlab(+e.date.replace(/-/g, ''))) + '"><b>' + esc(e.label) + '</b> <span class="mut">' + dlab(+e.date.replace(/-/g, '')) + '</span><div>' + esc(e.headline || '') + '</div>' + (e.tags && e.tags.length ? '<div class="tg">' + esc(e.tags.join(' · ')) + '</div>' : '') + '</div>' }).join('') || '<div class="r mut">No recap matches.</div>';
+  el.innerHTML = h;
+}
+function openRecapArchive(file, label) {
+  if (!/^recaps\/\d{4}\/\d{2}\/\d{4}-\d{2}-\d{2}(-v\d+)?\.html$/.test(file)) return;
+  var th = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  $('rvtitle').textContent = label; $('rframe').src = 'archive/' + file + '#' + th; $('rview').style.display = ''; $('rview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.addEventListener('message', function (e) { if (e.data && typeof e.data.recapHeight === 'number' && e.source === $('rframe').contentWindow) $('rframe').style.height = Math.min(20000, Math.max(400, e.data.recapHeight + 20)) + 'px' });
+$('rcal').addEventListener('click', function (e) { var b = e.target.closest('[data-ry],[data-rm],[data-rt],[data-rd],[data-rf]'); if (!b) return;
+  if (b.dataset.ry) { RC.y = b.dataset.ry; RC.m = null } else if (b.dataset.rm) RC.m = b.dataset.rm; else if (b.dataset.rt != null && b.hasAttribute('data-rt')) RC.tag = b.dataset.rt;
+  else if (b.dataset.rd) { var es = (MEM || []).filter(function (x) { return x.kind === 'recap' && x.date === b.dataset.rd }); if (es.length) openRecapArchive(es[0].file, es[0].label + ', ' + dlab(+es[0].date.replace(/-/g, ''))); return }
+  else if (b.dataset.rf) { openRecapArchive(b.dataset.rf, b.dataset.rl); return }
+  drawRecapCal() });
+$('rvclose').onclick = function () { $('rview').style.display = 'none'; $('rframe').src = 'about:blank' };
 function drawMem() {
   var q = ($('memq').value || '').toLowerCase(), h = '';
-  (MEM || []).filter(function (e) { return !q || (e.headline + ' ' + e.label + ' ' + e.date).toLowerCase().indexOf(q) >= 0 }).slice(0, 80).forEach(function (e) { h += '<div class="r" data-f="' + esc(e.file) + '" data-k="' + esc(e.kind) + '"><b>' + esc(e.label || e.date) + '</b> <span class="mut">' + esc(e.kind === 'recap' ? 'recap' : 'brief') + '</span><span class="k">' + esc(e.headline) + '</span></div>' });
+  drawRecapCal();
+  (MEM || []).filter(function (e) { return e.kind !== 'recap' && memMatch(e, q) }).slice(0, 80).forEach(function (e) { h += '<div class="r" data-f="' + esc(e.file) + '" data-k="' + esc(e.kind) + '"><b>' + esc(e.label || e.date) + '</b> <span class="mut">' + esc(e.headline || '') + '</span></div>' });
   $('memlist').innerHTML = h || '<div class="r mut">No match.</div>';
 }
 function openMem(file, kind) {

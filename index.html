@@ -159,6 +159,7 @@ details.d[open]>summary .sh h2::after{content:" \2039"}
 .foot{font-size:11px;color:var(--ink2);margin:22px 2px 0;line-height:1.6}
 .foot a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--ink3)}
 html.m30 .x2,html.m30 .xd,html.m2 .xd{display:none!important}
+#rcal .cal{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:8px 0}#rcal .cal span{font-size:11px;color:var(--ink2);text-align:center}#rcal .cal button{border:0;border-radius:9px;padding:8px 0 6px;background:var(--fill);color:var(--ink3);font:inherit;font-size:14px;font-variant-numeric:tabular-nums}#rcal .cal button.has{background:var(--card2);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--blue,#0a84ff)}#rcal .cal button.off{opacity:.35}#rcal .cal button i{display:block;height:4px;margin:3px auto 0;width:4px;border-radius:2px;background:var(--orange,#ff9f0a)}#rcal .cal button:not(.has) i{visibility:hidden}#rcal .rl{padding:8px 2px;border-top:.5px solid var(--sep);cursor:pointer}#rcal .rl .tg{font-size:11px;color:var(--ink2)}
 #p-hist .sec.fold>.sh{cursor:pointer}#p-hist .sec.fold>.sh h2::after{content:' \25BE';opacity:.5}#p-hist .sec.fold.closed>.sh h2::after{content:' \25B8'}#p-hist .sec.fold.closed>:not(.sh){display:none!important}
 html.m30 .x30h{display:none!important}
 .hist .hrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 70px;gap:8px;font-size:13px;align-items:baseline}
@@ -333,7 +334,7 @@ html.m30 .x30h{display:none!important}
 
 <!-- RECAP -->
 <div class="panel recap" id="p-recap"><div id="recapbox">
-<section class="hero">
+<section class="hero" data-session="2026-11-25">
 <div class="kicker">PRE THANKSGIVING SESSION · MARKETS CLOSED THU · HALF DAY FRI</div>
 <h1>Morning flush, noon reversal. Chips still lost.</h1>
 <p class="lede">The S&amp;P won back 92% of a 3.2% drop. The bounce was a rotation into cyclicals and small caps, not a return to AI leaders.</p>
@@ -433,7 +434,7 @@ html.m30 .x30h{display:none!important}
 <div class="two">
 <div class="card">
 <div class="sub">11 S&amp;P SECTORS</div>
-<div id="sectors"></div>
+<div id="sectors" data-sectors='[["Materials",2.07],["Real Estate",0.92],["Comm Services",0.89],["Industrials",0.83],["Energy",0.74],["Financials",0.71],["Utilities",0.48],["Staples",0.46],["Discretionary",-0.2],["Health Care",-0.56],["Technology",-0.83]]'></div>
 <div class="chartnote">8 of 11 up. Breadth 370 up / 128 down.</div>
 </div>
 <div class="card">
@@ -507,8 +508,10 @@ html.m30 .x30h{display:none!important}
 <!-- MEMORY -->
 <div class="panel" id="p-mem">
 <div class="sec"><div class="sh"><h2>Forecast scorecard</h2><span>From the archive</span></div><div class="grp" id="score"><div class="r mut">Loading</div></div></div>
-<div class="sec"><input class="search" id="memq" placeholder="Search past briefs" autocomplete="off"></div>
-<div class="sec mem"><div class="sh"><h2>Archive</h2><span>Saved as published, never edited</span></div><div class="grp" id="memlist"><div class="r mut">Loading</div></div></div>
+<div class="sec"><input class="search" id="memq" placeholder="Search recaps and briefs: Fed, tariffs, NVDA, a date" autocomplete="off"></div>
+<div class="sec"><div class="sh"><h2>Daily recaps</h2><span>Every session, as published, never edited</span></div><div class="grp pad" id="rcal"><div class="r mut">Loading</div></div></div>
+<div class="sec" id="rview" style="display:none"><div class="sh"><h2 id="rvtitle">Recap</h2><span><button class="chipb" id="rvclose">Close</button></span></div><iframe id="rframe" title="Archived recap" sandbox="allow-scripts" loading="lazy" style="width:100%;height:900px;border:0;border-radius:12px;background:var(--bg);display:block"></iframe></div>
+<div class="sec mem"><div class="sh"><h2>Briefs</h2><span>Saved as published, never edited</span></div><div class="grp" id="memlist"><div class="r mut">Loading</div></div></div>
 <div class="sec" id="memcmp"></div>
 <div class="sec" id="memview"></div>
 </div>
@@ -1346,7 +1349,7 @@ function applyBrief(nb) {
   $('impsub').textContent = 'S&P 500 PERP VS ' + String(B.base.label).toUpperCase();
   $('chtitle').textContent = (B.chart && B.chart.title) || 'Overnight path';
   $('optasof').innerHTML = 'From ' + freshTag(B.opt.asofTs, 'session', B.opt.asof || '');
-  $('recaptab').textContent = B.recapLabel || 'Recap';
+  $('recaptab').textContent = RECAPMETA ? RECAPMETA.label : (B.recapLabel || 'Recap');
   $('picksasof').textContent = B.updatedLabel || '';
   $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (B.next ? ', next ' + esc(B.next) : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
   var hl = [['Brief', B.updated, 6], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
@@ -1360,8 +1363,13 @@ function applyBrief(nb) {
 function pullBrief() {
   if (document.hidden) return;
   fetch('brief.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (nb) { if (nb.updated !== BRIEF_V) applyBrief(nb) }).catch(function () { });
+  loadRecapMeta();
   fetch('recap.html?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.text() }).then(function (h) { if (h && h.length > 200) { $('recapbox').innerHTML = ''; $('recapbox').appendChild(clean(h)); sectors() } }).catch(function () { });
 }
+/* The Recap tab is named after the latest completed session that has a published recap (recap.json), e.g. "Fri Recap".
+   On weekends and holidays it keeps the last one, because a new recap is only installed after a completed session. */
+var RECAPMETA = null;
+function loadRecapMeta() { fetch('recap.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { if (j && j.label && /^\d{4}-\d{2}-\d{2}$/.test(j.session)) { RECAPMETA = j; $('recaptab').textContent = j.label } }).catch(function () { }) }
 /* recap.html and archived HTML are inert: no scripts, no handlers, only https links */
 function clean(html) {
   var d = new DOMParser().parseFromString('<div>' + html + '</div>', 'text/html'), root = d.body.firstChild;
@@ -1369,7 +1377,7 @@ function clean(html) {
   root.querySelectorAll('*').forEach(function (n) { [].slice.call(n.attributes).forEach(function (a) { var nm = a.name.toLowerCase(), v = a.value; if (nm.indexOf('on') === 0 || ((nm === 'href' || nm === 'src' || nm === 'xlink:href') && !/^https:\/\//i.test(v) && v.charAt(0) !== '#') || (nm === 'style' && /url\(|expression/i.test(v))) n.removeAttribute(a.name) }); if (n.tagName === 'A') { n.setAttribute('rel', 'noopener noreferrer'); n.setAttribute('target', '_blank') } });
   var frag = document.createDocumentFragment(); while (root.firstChild) frag.appendChild(root.firstChild); return frag;
 }
-function sectors() { var el = $('sectors'); if (!el) return; var a = null, raw = el.getAttribute('data-sectors'); if (raw) { try { a = JSON.parse(raw) } catch (e) { } } if (!a) a = [["Materials", 2.07], ["Real Estate", 0.92], ["Comm Services", 0.89], ["Industrials", 0.83], ["Energy", 0.74], ["Financials", 0.71], ["Utilities", 0.48], ["Staples", 0.46], ["Discretionary", -0.20], ["Health Care", -0.56], ["Technology", -0.83]]; var m = Math.max.apply(0, a.map(function (r) { return Math.abs(r[1]) })) * 1.05 || 1; el.innerHTML = a.map(function (r) { var v = +r[1], w = Math.abs(v) / m * 50, p = v >= 0; return '<div class="hb"><span>' + esc(r[0]) + '</span><span class="t"><i style="' + (p ? 'left:50%;width:' + w + '%;background:var(--gfill)' : 'right:50%;width:' + w + '%;background:var(--rfill)') + '"></i></span><span class="p ' + (p ? 'up' : 'dn') + '">' + sg(v) + '</span></div>' }).join('') }
+function sectors() { var el = $('sectors'); if (!el) return; var a = null, raw = el.getAttribute('data-sectors'); if (raw) { try { a = JSON.parse(raw) } catch (e) { } } if (!a || !a.length) { el.innerHTML = '<div class="k">Sector data is not in this recap.</div>'; return } var m = Math.max.apply(0, a.map(function (r) { return Math.abs(r[1]) })) * 1.05 || 1; el.innerHTML = a.map(function (r) { var v = +r[1], w = Math.abs(v) / m * 50, p = v >= 0; return '<div class="hb"><span>' + esc(r[0]) + '</span><span class="t"><i style="' + (p ? 'left:50%;width:' + w + '%;background:var(--gfill)' : 'right:50%;width:' + w + '%;background:var(--rfill)') + '"></i></span><span class="p ' + (p ? 'up' : 'dn') + '">' + sg(v) + '</span></div>' }).join('') }
 
 /* ---------- Options ---------- */
 function renderOpt(spx) {
@@ -1542,14 +1550,49 @@ function impacts() {
 function feed(n) { var h = '', seen = VPREV && VPREV.picks || []; NEWS.forEach(function (x) { if (n !== 'all' && x[1] !== n) return; var isNew = VPREV && seen.indexOf(String(x[3]).slice(0, 80)) < 0 && VPREV.brief !== B.updated; h += '<div class="r"><span class="tm">' + esc(x[0]) + '</span><span>' + (isNew ? '<span class="cat new">NEW</span>' : '') + '<span class="cat">' + esc(x[1]) + '</span><span class="' + (x[2] === 'up' ? 'up' : x[2] === 'dn' ? 'dn' : '') + '">' + (x[2] === 'up' ? '▲ ' : x[2] === 'dn' ? '▼ ' : '') + '</span>' + lite(x[3]) + '</span></div>' }); $('feed').innerHTML = h || '<div class="r"><span></span><span class="mut">Nothing in this filter.</span></div>' }
 
 /* ---------- Memory ---------- */
-var MEM = null;
+var MEM = null, RC = { y: null, m: null, tag: '' };
 function loadMem() {
   if (MEM) return drawMem();
-  fetch('archive/index.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (a) { MEM = Array.isArray(a) ? a.slice().reverse() : []; drawMem() }).catch(function () { $('memlist').innerHTML = '<div class="r mut">Archive not available yet.</div>' });
+  fetch('archive/index.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (a) { MEM = Array.isArray(a) ? a.slice().reverse() : []; drawMem() }).catch(function () { $('memlist').innerHTML = '<div class="r mut">Archive not available yet.</div>'; $('rcal').innerHTML = '<div class="r mut">Archive not available yet.</div>' });
 }
+function memMatch(e, q) { return !q || (e.headline + ' ' + e.label + ' ' + e.date + ' ' + (e.tags || []).join(' ')).toLowerCase().indexOf(q) >= 0 }
+function drawRecapCal() {
+  var q = ($('memq').value || '').toLowerCase(), R = (MEM || []).filter(function (e) { return e.kind === 'recap' }), el = $('rcal');
+  if (!R.length) { el.innerHTML = '<div class="r mut">No recaps archived yet.</div>'; return }
+  var byDate = {}; R.forEach(function (e) { (byDate[e.date] = byDate[e.date] || []).push(e) });
+  var years = Object.keys(R.reduce(function (o, e) { o[e.date.slice(0, 4)] = 1; return o }, {})).sort().reverse(); if (!RC.y || years.indexOf(RC.y) < 0) RC.y = years[0];
+  var months = Object.keys(R.filter(function (e) { return e.date.slice(0, 4) === RC.y }).reduce(function (o, e) { o[e.date.slice(5, 7)] = 1; return o }, {})).sort(); if (!RC.m || months.indexOf(RC.m) < 0) RC.m = months[months.length - 1];
+  var tags = {}; R.forEach(function (e) { (e.tags || []).forEach(function (g) { tags[g] = (tags[g] || 0) + 1 }) });
+  var MN = ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'], h = '';
+  h += '<div class="chips">' + years.map(function (y) { return '<button class="chipb' + (y === RC.y ? ' on' : '') + '" data-ry="' + y + '">' + y + '</button>' }).join('') + '</div>';
+  h += '<div class="chips" style="margin-top:4px">' + months.map(function (m) { return '<button class="chipb' + (m === RC.m ? ' on' : '') + '" data-rm="' + m + '">' + MN[+m] + '</button>' }).join('') + '</div>';
+  if (Object.keys(tags).length) h += '<div class="chips" style="margin-top:4px"><button class="chipb' + (!RC.tag ? ' on' : '') + '" data-rt="">All events</button>' + Object.keys(tags).sort(function (a, b) { return tags[b] - tags[a] }).map(function (g) { return '<button class="chipb' + (g === RC.tag ? ' on' : '') + '" data-rt="' + esc(g) + '">' + esc(g) + ' ' + tags[g] + '</button>' }).join('') + '</div>';
+  /* month grid, Monday to Friday; holidays come from the NYSE calendar */
+  var y = +RC.y, m = +RC.m, first = new Date(Date.UTC(y, m - 1, 1)), days = new Date(Date.UTC(y, m, 0)).getUTCDate(), cells = [], lead = (first.getUTCDay() + 6) % 7;
+  for (var d = 1; d <= days; d++) { var dw = (new Date(Date.UTC(y, m - 1, d)).getUTCDay() + 6) % 7; if (dw > 4) continue; if (!cells.length) for (var k = 0; k < Math.min(lead, 5); k++) cells.push('<button class="off" disabled></button>');
+    var key = RC.y + '-' + RC.m + '-' + (d < 10 ? '0' : '') + d, ymd = +key.replace(/-/g, ''), es = byDate[key], ok = es && es.some(function (e) { return (!RC.tag || (e.tags || []).indexOf(RC.tag) >= 0) && memMatch(e, q) }), tr = CORE.isTradingDay(ymd);
+    cells.push('<button' + (es ? ' class="has' + (ok ? '' : ' off') + '" data-rd="' + key + '"' : ' disabled' + (tr ? '' : ' class="off" title="Market closed"')) + '>' + d + '<i></i></button>') }
+  h += '<div class="cal"><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span>' + cells.join('') + '</div>';
+  var list = R.filter(function (e) { return (!RC.tag || (e.tags || []).indexOf(RC.tag) >= 0) && memMatch(e, q) && (RC.tag || q || e.date.slice(0, 7) === RC.y + '-' + RC.m) });
+  h += list.slice(0, 60).map(function (e) { return '<div class="rl" data-rf="' + esc(e.file) + '" data-rl="' + esc(e.label + ', ' + dlab(+e.date.replace(/-/g, ''))) + '"><b>' + esc(e.label) + '</b> <span class="mut">' + dlab(+e.date.replace(/-/g, '')) + '</span><div>' + esc(e.headline || '') + '</div>' + (e.tags && e.tags.length ? '<div class="tg">' + esc(e.tags.join(' · ')) + '</div>' : '') + '</div>' }).join('') || '<div class="r mut">No recap matches.</div>';
+  el.innerHTML = h;
+}
+function openRecapArchive(file, label) {
+  if (!/^recaps\/\d{4}\/\d{2}\/\d{4}-\d{2}-\d{2}(-v\d+)?\.html$/.test(file)) return;
+  var th = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  $('rvtitle').textContent = label; $('rframe').src = 'archive/' + file + '#' + th; $('rview').style.display = ''; $('rview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+window.addEventListener('message', function (e) { if (e.data && typeof e.data.recapHeight === 'number' && e.source === $('rframe').contentWindow) $('rframe').style.height = Math.min(20000, Math.max(400, e.data.recapHeight + 20)) + 'px' });
+$('rcal').addEventListener('click', function (e) { var b = e.target.closest('[data-ry],[data-rm],[data-rt],[data-rd],[data-rf]'); if (!b) return;
+  if (b.dataset.ry) { RC.y = b.dataset.ry; RC.m = null } else if (b.dataset.rm) RC.m = b.dataset.rm; else if (b.dataset.rt != null && b.hasAttribute('data-rt')) RC.tag = b.dataset.rt;
+  else if (b.dataset.rd) { var es = (MEM || []).filter(function (x) { return x.kind === 'recap' && x.date === b.dataset.rd }); if (es.length) openRecapArchive(es[0].file, es[0].label + ', ' + dlab(+es[0].date.replace(/-/g, ''))); return }
+  else if (b.dataset.rf) { openRecapArchive(b.dataset.rf, b.dataset.rl); return }
+  drawRecapCal() });
+$('rvclose').onclick = function () { $('rview').style.display = 'none'; $('rframe').src = 'about:blank' };
 function drawMem() {
   var q = ($('memq').value || '').toLowerCase(), h = '';
-  (MEM || []).filter(function (e) { return !q || (e.headline + ' ' + e.label + ' ' + e.date).toLowerCase().indexOf(q) >= 0 }).slice(0, 80).forEach(function (e) { h += '<div class="r" data-f="' + esc(e.file) + '" data-k="' + esc(e.kind) + '"><b>' + esc(e.label || e.date) + '</b> <span class="mut">' + esc(e.kind === 'recap' ? 'recap' : 'brief') + '</span><span class="k">' + esc(e.headline) + '</span></div>' });
+  drawRecapCal();
+  (MEM || []).filter(function (e) { return e.kind !== 'recap' && memMatch(e, q) }).slice(0, 80).forEach(function (e) { h += '<div class="r" data-f="' + esc(e.file) + '" data-k="' + esc(e.kind) + '"><b>' + esc(e.label || e.date) + '</b> <span class="mut">' + esc(e.headline || '') + '</span></div>' });
   $('memlist').innerHTML = h || '<div class="r mut">No match.</div>';
 }
 function openMem(file, kind) {

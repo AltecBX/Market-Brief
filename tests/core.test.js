@@ -129,4 +129,75 @@ near(csp.pnl, 1.0 - 3, 1e-9, 'cash secured put fills at the bid and pays the int
 /* 10. recovery engine respects corporate action breaks */
 const rc = series(cl.map((v, q) => v)); rc.breaks = [rc.d[26]]; rc.sym = 'T'; const RR = C.recovery([rc], 2.5, { days: 1 }); ok(RR.ev.every(e => e.d !== rc.d[26]), 'no decline is counted on a corporate action date');
 
+/* ---------- v2 engines: intraday, weekly, recovery, models, live data ---------- */
+{
+  const mk = (n, f) => { const b = []; let p = 100; for (let q = 0; q < n; q++) { const o = p; p = f(q, p); const mm = 570 + q * 5; b.push([Math.floor(mm / 60) * 100 + mm % 60, o, Math.max(o, p) + 0.1, Math.min(o, p) - 0.1, p, 1000 + q]) } return b };
+  const B5 = mk(78, (q, p) => p * (1 + (q < 20 ? 0.001 : -0.0005)));
+  const S = { b: B5, res: 5, prev: 99, prevRet: 0.5, atr: 1.2, vix: 20, brd: 0.1, earn: 0, dow: 1, cumv: B5.map((_, k) => (k + 1) * 900), ref: B5 };
+  const x6 = C.ifeat(S, 6), B5b = B5.map((b, q) => q >= 6 ? [b[0], 1, 1e6, 0.001, 5, 1e9] : b), x6b = C.ifeat(Object.assign({}, S, { b: B5b, ref: B5b }), 6);
+  ok(JSON.stringify(x6) === JSON.stringify(x6b), 'intraday features at 10am ignore every later bar');
+  ok(x6.length === C.IFEAT.length && x6.every(Number.isFinite), 'every intraday feature is a finite number');
+  ok(C.iout(S, 78) === null, 'no outcome when the session has no bars left (incomplete or finished)');
+  const o6 = C.iout(S, 6); ok(o6.highDone === 0 && o6.remUp > 0, 'a rising session after 10am has not set its high');
+  /* 5 minute bars aggregated to 30 minutes give the same late session features as native 30 minute bars */
+  const B30 = C.to30(B5); ok(B30.length === 13 && B30[0][0] === 930 && B30[1][0] === 1000, 'six 5 minute bars make each 30 minute bar, stamped at its start');
+  near(B30[1][2], Math.max(...B5.slice(6, 12).map(b => b[2])), 1e-12, '30 minute high is the max of its 5 minute highs');
+  ok(C.to30(B5.slice(0, 11)).length === 1, 'an unfinished 30 minute bucket is not used');
+  const S30 = Object.assign({}, S, { b: B30, res: 30, ref: B30, cumv: null }), S30b = Object.assign({}, S30, { b: C.to30(B5b), ref: C.to30(B5b) });
+  ok(JSON.stringify(C.ifeat(S30, 1)) === JSON.stringify(C.ifeat(S30b, 1)), 'the 10am feature from aggregated bars ignores every 5 minute bar after 10am');
+  /* live cash bars: ET alignment, forming candle excluded, premarket and other days excluded, across a DST change */
+  const now = Date.parse('2026-11-30T15:07:00Z'); /* 10:07am ET, standard time */
+  const J = { data: [
+    { start_time: '2026-11-30T15:05:00Z', end_time: '2026-11-30T15:10:00Z', open: '1', high: '1', low: '1', close: '1', volume: 1, market_time: 'r' },
+    { start_time: '2026-11-30T15:00:00Z', end_time: '2026-11-30T15:05:00Z', open: '2', high: '3', low: '1', close: '2.5', volume: 9, market_time: 'r' },
+    { start_time: '2026-11-30T14:30:00Z', end_time: '2026-11-30T14:35:00Z', open: '2', high: '2', low: '2', close: '2', volume: 5, market_time: 'r' },
+    { start_time: '2026-11-30T14:25:00Z', end_time: '2026-11-30T14:30:00Z', open: '9', high: '9', low: '9', close: '9', volume: 5, market_time: 'pr' },
+    { start_time: '2026-11-27T17:55:00Z', end_time: '2026-11-27T18:00:00Z', open: '9', high: '9', low: '9', close: '9', volume: 5, market_time: 'r' } ] };
+  const U = C.uwBars(J, now); ok(U.length === 2 && U[0][0] === 930 && U[1][0] === 1000 && U[1][4] === 2.5, 'cash bars align to ET, drop the forming candle, premarket and other days');
+  ok(C.etParts(Date.parse('2026-07-01T13:30:00Z')).hm === 930 && C.etParts(Date.parse('2026-12-01T14:30:00Z')).hm === 930, 'the 9:30 open maps correctly in summer and winter time');
+  /* pre open context never reads the session itself or later rows; earnings reaction days */
+  const dly = []; for (let q = 0; q < 40; q++) { const d = 20261001 + q; dly.push([d, 100, 101, 99, 100 + q * 0.1]) }
+  const vixR = dly.map(r => [r[0], 20, 20, 20, 20]), d0 = dly[30][0];
+  const c1 = C.iDayCtx(dly, vixR, dly, dly, [], d0), dly2 = dly.map((r, q) => q >= 30 ? [r[0], 1, 999, 0.1, 500] : r), c2 = C.iDayCtx(dly2, vixR, dly2, dly2, [], d0);
+  ok(JSON.stringify(c1) === JSON.stringify(c2), 'pre open context ignores the session and later days');
+  near(c1.prev, dly[29][4], 1e-12, 'previous close is the last row before the session');
+  ok(C.iDayCtx(dly, vixR, dly, dly, [[dly[29][0], 'post']], d0).earn === 1 && C.iDayCtx(dly, vixR, dly, dly, [[dly[29][0], 'post']], dly[31][0]).earn === 1 && C.iDayCtx(dly, vixR, dly, dly, [[dly[29][0], 'post']], dly[32][0]).earn === 0, 'after close earnings mark the next two sessions only');
+  ok(C.iDayCtx(dly, vixR, dly, dly, [[dly[30][0], 'pre']], d0).earn === 1, 'before open earnings mark the same session');
+  ok(C.iCumv([[[930, 1, 1, 1, 1, 10], [935, 1, 1, 1, 1, 20]]], 2) === null, 'relative volume needs at least 5 earlier sessions');
+}
+{
+  /* models: each family recovers a simple signal and predicts through the shared code path */
+  const ML = require('../tools/ml.js'); let s = 5; const r = () => { s = (s * 16807) % 2147483647; return s / 2147483647 };
+  const X = [], y = []; for (let q = 0; q < 1500; q++) { const x = C.IFEAT.map(() => r() * 2 - 1); x[C.IFEAT.indexOf('tod')] = [0.077, 0.154][q % 2]; x[C.IFEAT.indexOf('pos')] = r(); X.push(x); y.push(r() < 1 / (1 + Math.exp(-3 * x[0])) ? 1 : 0) }
+  const tr = [X.slice(0, 1000), y.slice(0, 1000)], te = [X.slice(1000), y.slice(1000)], br = M => { let b = 0; te[0].forEach((x, i) => { b += (C.mlPredict(M, x) - te[1][i]) ** 2 }); return b / te[0].length };
+  const base = br(ML.fit({ m: 'tod' }, tr[0], tr[1]));
+  [{ m: 'logit', lambda: 1 }, { m: 'gbt', depth: 2, n: 40, lr: 0.1 }, { m: 'rf', depth: 4, n: 30, mtry: 6 }, { m: 'knn', k: 40 }].forEach(sp => { const M = ML.fit(sp, tr[0], tr[1]), b = br(M); ok(b < base - 0.02, sp.m + ' beats the time of day base rate on a real signal (' + b.toFixed(3) + ' vs ' + base.toFixed(3) + ')'); ok(te[0].every(x => { const p = C.mlPredict(M, x); return p >= 0 && p <= 1 }), sp.m + ' outputs probabilities') });
+  const L = ML.fitLogit(tr[0], tr[1], 1); ok(L.w[0] > 1 && Math.abs(L.w[5]) < 0.5, 'logistic regression finds the true coefficient and not a noise one');
+  /* block bootstrap resamples whole groups: one huge group cannot be split */
+  const G = { a: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9], b: [10], c: [11] }, vals = Array.from({ length: 12 }, (_, i) => i < 10 ? 1 : 0), ci = C.blockBoot(G, idx => C.mean(idx.map(i => vals[i])), 300);
+  ok(ci[0] <= 0.5 && ci[1] === 1, 'session bootstrap keeps correlated observations together (wide range)');
+}
+{
+  /* weekly: state uses only the days so far; context uses only earlier weeks */
+  const rows = []; let p = 100, d = new Date(Date.UTC(2026, 0, 5)); for (let q = 0; q < 150; q++) { while (d.getUTCDay() === 0 || d.getUTCDay() === 6) d = new Date(d.getTime() + 864e5); const o = p; p = p * (1 + (q % 7 - 3) * 0.004); rows.push([+(d.toISOString().slice(0, 10).replace(/-/g, '')), o, Math.max(o, p) * 1.003, Math.min(o, p) * 0.997, p]); d = new Date(d.getTime() + 864e5) }
+  const Wk = C.weeksOf(rows), wi = 25, w = Wk[wi], k = rows.findIndex(r => r[0] === w[1][0]);
+  ok(Wk.every(W => W.every(r => C.wkey(r[0]) === C.wkey(W[0][0]))) && Wk[1][0][0] > Wk[0][Wk[0].length - 1][0], 'weeks group Monday to Friday in order');
+  const cx = C.wctx(Wk, wi, rows, k, null), s1 = C.wstate(w, 1, cx), w2 = w.map((r, j) => j > 1 ? [r[0], 1, 999, 0.1, 500] : r), s2 = C.wstate(w2, 1, cx);
+  ok(JSON.stringify(s1.x) === JSON.stringify(s2.x), 'weekly state on Tuesday ignores Wednesday to Friday');
+  const Wk2 = Wk.map((W, q) => q >= wi ? W.map(r => [r[0], 1, 999, 0.1, 500]) : W); ok(C.wctx(Wk2, wi, rows, k, null).watr === cx.watr, 'weekly context uses earlier weeks only');
+}
+{
+  /* recovery v2: thinning per horizon, censoring, clustering, corporate actions, decline before measurement */
+  const mkS = (sym, c, br) => ({ sym, d: c.map((_, i) => 20200101 + i), c, breaks: br || [] });
+  const c = []; for (let i = 0; i < 400; i++) c.push(100); [50, 80, 300].forEach(i => { c[i] = 85; for (let j = i + 1; j < i + 30 && j < 400; j++) c[j] = 85 + (j - i) * 0.6 });
+  const R = C.recovery2([mkS('A', c)], 10, { days: 1 });
+  ok(R.ev.length === 3, 'three separate declines found');
+  ok(R.rec[60].n === 2 && R.rec[20].n === 3, 'events closer than the horizon in one stock count once at that horizon');
+  ok(R.ev.every(e => e.t == null || e.t > 0), 'recovery is measured only after the decline day');
+  const c2 = c.slice(0, 310); const R2 = C.recovery2([mkS('A', c2)], 10, { days: 1 }); ok(R2.rec[20].censored === 1, 'a decline without enough later data is censored, not a failure');
+  const RB = C.recovery2([mkS('A', c, [20200101 + 50])], 10, { days: 1 }); ok(RB.ev.every(e => e.d !== 20200101 + 50), 'no decline is counted across a corporate action');
+  const RC = C.recovery2([mkS('A', c), mkS('B', c)], 10, { days: 1 }); ok(RC.ev.length === 6 && RC.clusters === 3, 'the same selloff in two stocks is one market episode');
+  const KM = C.kaplanMeier([{ t: 5, done: true }, { t: null, done: false, obs: 3 }, { t: 10, done: true }], [6]); near(KM[6], 0.5, 1e-9, 'Kaplan Meier drops only at recoveries and removes censored events from the risk set');
+}
+
 console.log(fails ? fails + ' of ' + n + ' failed' : 'all ' + n + ' passed'); process.exit(fails ? 1 : 0);

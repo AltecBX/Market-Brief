@@ -7,10 +7,33 @@ function load(sym) { const j = JSON.parse(fs.readFileSync(path.join(D, 'hist', s
 function save(name, obj) { fs.mkdirSync(path.join(D, 'research'), { recursive: true }); fs.writeFileSync(path.join(D, 'research', name), JSON.stringify(obj)); console.log('wrote', name) }
 const now = new Date().toISOString();
 
-/* Permanent experiment ledger: every configuration ever tested, including failures. Multiple testing uses its full size. */
-const LEDGER = path.join(D, 'research', 'ledger.json');
-const ledger = fs.existsSync(LEDGER) ? JSON.parse(fs.readFileSync(LEDGER)) : { note: 'Every research configuration tested, kept permanently, including failed ones. The count sets the multiple testing adjustment.', entries: [] };
-function logExp(kind, config, result) { const id = kind + ':' + JSON.stringify(config); const e = ledger.entries.find(x => x.id === id); const row = { id, kind, config, first: e ? e.first : now.slice(0, 10), last: now.slice(0, 10), runs: e ? e.runs + 1 : 1, result }; if (e) Object.assign(e, row); else ledger.entries.push(row) }
+/* Append only experiment ledger. Each run writes one new immutable file under data/research/ledger/ that records the code and data
+   versions; ledger.json is only an index. Earlier files are never rewritten. An identical experiment (same kind, configuration, stage,
+   data and code) is not written twice. Multiple testing uses the number of distinct configurations ever tested. */
+const crypto = require('crypto');
+const LDIR = path.join(D, 'research', 'ledger'), LEDGER = path.join(D, 'research', 'ledger.json');
+function walkFiles(dir) { if (!fs.existsSync(dir)) return []; return fs.readdirSync(dir).sort().flatMap(f => { const p = path.join(dir, f); return fs.statSync(p).isDirectory() ? walkFiles(p) : [p] }) }
+function hashFiles(list) { const h = crypto.createHash('sha1'); list.forEach(f => { h.update(path.basename(f)); h.update(fs.readFileSync(f)) }); return h.digest('hex').slice(0, 12) }
+const sha = s => crypto.createHash('sha1').update(s).digest('hex').slice(0, 12);
+const CODEV = hashFiles(['src/core.js', 'tools/ml.js', 'tools/research.js', 'tools/intraday2.js', 'tools/weekly.js'].map(f => path.join(__dirname, '..', f)));
+const DATAV = hashFiles(walkFiles(path.join(D, 'hist')).concat(walkFiles(path.join(D, 'intraday')), walkFiles(path.join(D, 'chains'))));
+let LIDX = fs.existsSync(LEDGER) ? JSON.parse(fs.readFileSync(LEDGER)) : null;
+if (!LIDX || !LIDX.runs) {
+  const old = LIDX; LIDX = { note: 'Index of the append only research ledger. Every run adds one file under data/research/ledger/ and never edits an earlier one. Each entry keeps its configuration, the stage (training, validation or test), the dates used and the result as first recorded, with the code and data versions of that run.', runs: [], seen: [], unique: [] };
+  if (old && old.entries && old.entries.length) { fs.mkdirSync(LDIR, { recursive: true }); const f = '20261127T000000Z-legacy.json'; fs.writeFileSync(path.join(LDIR, f), JSON.stringify({ run: 'legacy', note: 'Entries recorded before the ledger became append only, kept exactly as they were.', entries: old.entries }));
+    LIDX.runs.push({ file: f, ts: '2026-11-27T00:00:00Z', code: 'legacy', data: 'legacy', n: old.entries.length }); old.entries.forEach(e => LIDX.unique.push(sha(e.kind + ':' + JSON.stringify(e.config)))) }
+}
+const SEEN = new Set(LIDX.seen), UNIQ = new Set(LIDX.unique), RUN = [];
+function logExp(kind, config, result, stage, dates) {
+  const id = kind + ':' + JSON.stringify(config); UNIQ.add(sha(id)); const h = sha(id + '|' + (stage || '') + '|' + DATAV + '|' + CODEV); if (SEEN.has(h)) return; SEEN.add(h);
+  RUN.push({ kind, config, stage: stage || null, dates: dates || null, result: result == null ? null : result });
+}
+function saveLedger() {
+  if (RUN.length) { const ts = now.replace(/[-:]/g, '').replace(/\.\d+/, '').slice(0, 16); const f = ts + '.json', p = path.join(LDIR, f); fs.mkdirSync(LDIR, { recursive: true }); if (fs.existsSync(p)) throw new Error('ledger file already exists: ' + f);
+    fs.writeFileSync(p, JSON.stringify({ run: ts, ts: now, code: CODEV, data: DATAV, entries: RUN })); LIDX.runs.push({ file: f, ts: now, code: CODEV, data: DATAV, n: RUN.length }) }
+  LIDX.seen = [...SEEN]; LIDX.unique = [...UNIQ]; LIDX.total = LIDX.runs.reduce((a, r) => a + r.n, 0); LIDX.distinct = UNIQ.size; LIDX.code = CODEV; LIDX.data = DATAV;
+  fs.writeFileSync(LEDGER, JSON.stringify(LIDX));
+}
 
 /* 1. Fingerprint: tune on 2005 to 2015 only, then test the chosen setting once on 2016 onward. Every model is scored on the same test dates. */
 function fingerprint() {
@@ -43,6 +66,46 @@ function fingerprint() {
   save('fingerprint.json', { asof: now, dataAsof: S.asof, horizon: HOR, gridSize: grid.length, trainDates: trainD.length, testDates: testD.length, best: best.cfg, bestTrain: best.sc, test, promoted,
     note: 'Settings were tuned only on 2005 to 2015 and tested once on 2016 onward, with a 2 month gap. Every model is scored on the same ' + testD.length + ' test dates, 20 sessions apart, so outcomes never overlap. Matched baselines: calling up every time, and the average 20 day return known at each date. A model is promoted only if its hit rate range clears calling up, its error beats the baseline and long or flat beats buy and hold.' });
   return { promoted, T0 };
+}
+
+/* 1b. Fingerprint for options: does the same similarity search forecast volatility, range, drawdown and expected move breaches
+   better than simple benchmarks? Tuned on 2005 to 2015, scored once on 2016 onward (that period was already looked at for direction,
+   not for these targets). Benchmarks: the expanding average, and a VIX based forecast fit on earlier dates only. */
+function fingerprintRisk() {
+  const H = { SPX: load('SPX'), VIX: load('VIX'), NDX: load('NDX'), US10Y: load('US10Y'), RSP10: load('RSP10'), SPY10: load('SPY10'), SMH10: load('SMH10'), QQQ10: load('QQQ10') };
+  const F = C.features(H), S = H.SPX, HOR = 20, all = C.FEAT.map(x => x[0]), V = H.VIX;
+  const SETS = { all, price: ['dd', 'r5', 'r20', 'rv', 'ma'], macro: ['vix', 'dvix', 'y20', 'tech'], core: ['dd', 'r20', 'vix', 'rv'] };
+  const T = F.map(f => { const i = f.i, c = S.c; if (i + HOR >= c.length) return null; const w = c.slice(i, i + HOR + 1), lr = []; for (let j = 1; j < w.length; j++) lr.push(Math.log(w[j] / w[j - 1]));
+    const mx = Math.max(...w.slice(1)), mn = Math.min(...w.slice(1)), end = (w[HOR] / w[0] - 1) * 100, up = (mx / w[0] - 1) * 100, dn = (mn / w[0] - 1) * 100, vi = V.ix[S.d[i]], em = vi != null ? V.c[vi] / Math.sqrt(252 / HOR) : null;
+    return { rv: C.sd(lr) * Math.sqrt(252) * 100, up, dn, range: (Math.max(mx, w[0]) - Math.min(mn, w[0])) / w[0] * 100, dd5: dn <= -5 ? 1 : 0, breach: em != null ? (Math.abs(end) > em ? 1 : 0) : null, rev: (up >= 3 && end < 0) || (dn <= -3 && end > 0) ? 1 : 0, vix: vi != null ? V.c[vi] : null } });
+  const TG = { rv: ['Realized volatility, next 20 sessions', 'num'], dn: ['Maximum downside', 'num'], up: ['Maximum upside', 'num'], range: ['Trading range', 'num'], dd5: ['Chance of a 5% drawdown', 'bin'], breach: ['Expected move breach (VIX implied)', 'bin'], rev: ['Large reversal (3% one way, finishes the other side)', 'bin'] };
+  const dates = (lo, hi) => { const out = []; let last = -1e9; for (let t = 0; t < F.length; t++) { if (F[t].d < lo || F[t].d >= hi || F[t].i - last < HOR || !T[t]) continue; last = F[t].i; out.push(t) } return out };
+  const trainD = dates(20050101, 20151201), testD = dates(20160201, 99999999), cache = {};
+  function nbr(ti, cfg) { const k = ti + '|' + cfg.set + '|' + cfg.k; if (cache[k]) return cache[k]; const t = F[ti], keys = SETS[cfg.set], c = [];
+    for (let i = 0; i < ti - HOR; i++) { const f = F[i]; let s = 0, m = 0; for (const q of keys) { const a = t['z' + q], b = f['z' + q]; if (!C.isNum(a) || !C.isNum(b)) continue; s += (a - b) ** 2; m++ } if (m >= Math.max(1, keys.length - 2)) c.push([Math.sqrt(s / m), i]) }
+    c.sort((a, b) => a[0] - b[0]); const pick = []; for (const x of c) { if (pick.length >= cfg.k) break; if (pick.every(p => Math.abs(F[p[1]].i - F[x[1]].i) >= HOR)) pick.push(x) } return (cache[k] = pick) }
+  const bench = (ti, key, kind) => { const past = []; for (let j = 0; j < ti - HOR; j += 3) if (T[j] && C.isNum(T[j][key]) && C.isNum(T[j].vix)) past.push([T[j].vix, T[j][key]]); const v = T[ti].vix, mean = C.mean(past.map(p => p[1]));
+    if (kind === 'bin') { const vb = x => x < 15 ? 0 : x < 20 ? 1 : x < 30 ? 2 : 3, s = past.filter(p => vb(p[0]) === vb(v)); return [mean, s.length >= 20 ? (C.mean(s.map(p => p[1])) * s.length + mean * 5) / (s.length + 5) : mean] }
+    const mx = C.mean(past.map(p => p[0])), my = mean; let sxy = 0, sxx = 0; past.forEach(p => { sxy += (p[0] - mx) * (p[1] - my); sxx += (p[0] - mx) ** 2 }); return [mean, my + (sxx ? sxy / sxx : 0) * (v - mx)] };
+  const grid = []; Object.keys(SETS).forEach(set => [20, 40].forEach(k => grid.push({ set, k })));
+  const out = {};
+  for (const key of Object.keys(TG)) {
+    const kind = TG[key][1], loss = (p, y) => kind === 'bin' ? (p - y) ** 2 : Math.abs(p - y);
+    const evalD = (cfg, D) => D.filter(t => T[t][key] != null).map(t => { const nb = nbr(t, cfg).filter(x => T[x[1]] && T[x[1]][key] != null); const p = nb.length ? C.mean(nb.map(x => T[x[1]][key])) : null; const b = bench(t, key, kind); return { t, y: T[t][key], p, b0: b[0], b1: b[1] } }).filter(r => r.p != null);
+    const tr = grid.map(cfg => { const r = evalD(cfg, trainD), l = C.mean(r.map(z => loss(z.p, z.y))); logExp('fingerprint-risk', { target: key, cfg }, { trainLoss: l, n: r.length }, 'train', [20050101, 20151201]); return { cfg, l } }).sort((a, b) => a.l - b.l);
+    const best = tr[0].cfg, R = evalD(best, testD), g = {}; R.forEach((r, i) => { g[i] = [i] });
+    const L = f => C.mean(R.map(f)), lm = L(z => loss(z.p, z.y)), l0 = L(z => loss(z.b0, z.y)), l1 = L(z => loss(z.b1, z.y)), bb = l1 <= l0 ? 'b1' : 'b0';
+    const gain = idx => C.mean(idx.map(i => loss(R[i][bb], R[i].y) - loss(R[i].p, R[i].y))), ci = C.blockBoot(g, gain, 600, 21);
+    const res = { name: TG[key][0], kind, cfg: best, n: R.length, model: +lm.toFixed(4), meanBench: +l0.toFixed(4), vixBench: +l1.toFixed(4), gain: +gain(R.map((_, i) => i)).toFixed(4), ci: ci.map(v => v == null ? null : +v.toFixed(4)),
+      skill: +(1 - lm / Math.min(l0, l1)).toFixed(3), ok: ci[0] != null && ci[0] > 0, ic: kind === 'num' ? +C.pearson(R.map(z => z.p), R.map(z => z.y)).toFixed(3) : null };
+    if (kind === 'bin') res.rate = +C.mean(R.map(z => z.y)).toFixed(3);
+    logExp('fingerprint-risk-test', { target: key, cfg: best }, res, 'test', [20160201, S.asof]);
+    out[key] = res;
+  }
+  /* today's risk forecast from the frozen settings */
+  const last = F.length - 1, today = {}; Object.keys(out).forEach(key => { const nb = nbr(last, out[key].cfg).filter(x => T[x[1]] && T[x[1]][key] != null); today[key] = nb.length ? +C.mean(nb.map(x => T[x[1]][key])).toFixed(3) : null });
+  return { horizon: HOR, trainDates: trainD.length, testDates: testD.length, targets: out, today, asofDate: F[last].d,
+    note: 'Each target was tuned on 2005 to 2015 (4 condition sets by 20 or 40 matches) and scored once on non overlapping 20 session windows from 2016. The 2016 onward period had already been inspected for the direction forecast, so it is not pristine for these targets; a prospective record starts now. Loss is absolute error for amounts and squared error for chances. A target counts as useful only if the error improvement over the better benchmark has a 95% range above zero.' };
 }
 
 /* 2. Intraday timing from SPY 30 minute bars */
@@ -101,53 +164,68 @@ async function semis() {
 
 /* 4. Conditional intraday engine, walk forward: each day is predicted from earlier days only */
 function loadDays(sym) { const p = path.join(D, 'intraday', sym + '30.json'); if (!fs.existsSync(p)) return null; const j = JSON.parse(fs.readFileSync(p)), by = {}; j.rows.forEach(r => (by[r[0]] = by[r[0]] || []).push([r[1], r[2], r[3], r[4], r[5], r[6]])); return by }
-function intraday() {
-  const S = loadDays('SPY'), M = loadDays('SMH'), keys = Object.keys(S).map(Number).sort(), days = [];
-  let prev = null; const rngs = [];
-  for (const d of keys) { const b = S[d].sort((a, c) => a[0] - c[0]); if (b.length !== 13) { prev = b[b.length - 1][4]; continue } const m = M && M[d] && M[d].length === 13 ? M[d].sort((a, c) => a[0] - c[0]) : null;
-    const atr = rngs.length >= 10 ? C.mean(rngs.slice(-20)) : null; days.push({ d, prev, b, semi: m, atr }); rngs.push(Math.max(...b.map(x => x[2])) - Math.min(...b.map(x => x[3]))); prev = b[12][4] }
-  const out = {}; C.OUT.forEach(k => out[k] = []); const upE = [], dnE = [];
-  for (let i = 60; i < days.length; i++) for (const t of [0, 1, 3, 5, 7, 9]) {
-    const hist = days.slice(0, i).map(D2 => { const s = C.dayState(D2, t, D2.atr); return { s, o: C.dayOutcome(D2, s) } });
-    const s = C.dayState(days[i], t, days[i].atr), o = C.dayOutcome(days[i], s), p = C.intradayPredict(hist, s, 30);
-    C.OUT.forEach(k => { if (!p[k] || o[k] == null) return; const v = hist.map(h => h.o[k]).filter(x => x === true || x === false); const base = v.length ? v.filter(Boolean).length / v.length : 0.5; out[k].push([p[k].p, o[k], base]) });
-    if (p.up.n) { upE.push(Math.abs(p.up.mean - o.up)); dnE.push(Math.abs(p.down.mean - o.down)) }
-  }
-  const skill = {}; C.OUT.forEach(k => { const h = Math.floor(out[k].length / 2); skill[k] = { n: out[k].length, skill: C.brierSkill(out[k]), first: C.brierSkill(out[k].slice(0, h)), second: C.brierSkill(out[k].slice(h)) }; logExp('intraday', { outcome: k, k: 30, bars: [0, 1, 3, 5, 7, 9] }, skill[k]) });
-  save('intraday.json', { asof: now, days: days.length, from: days[0].d, to: days[days.length - 1].d, tested: days.length - 60, skill, upMAE: C.mean(upE), downMAE: C.mean(dnE),
-    note: 'SPY 30 minute bars, regular session, about one year. Each test day is predicted from earlier days only, using the state at the end of a bar: opening gap, move since the open, position in the day\'s range, range so far vs the average daily range, and semis vs SPY. Breadth has no intraday history here, so it is not used. Skill compares the Brier score with the base rate known at the time: above 0 is better than the base rate, 0 or below is no better.' });
-  return skill;
-}
 
 /* 5. Options strategies from saved chain snapshots whose expiry has passed */
 function options() {
-  const dir = path.join(D, 'chains', 'SPY'); const snaps = fs.existsSync(dir) ? fs.readdirSync(dir).map(f => JSON.parse(fs.readFileSync(path.join(dir, f)))) : []; const S = load('SPY10'), V = load('VIX'), res = [];
-  snaps.forEach(sn => { const j = S.ix[+sn.expiry.replace(/-/g, '')]; if (j == null) return; const vi = V.ix[+sn.session.replace(/-/g, '')]; C.optionStrategies(sn, S.c[j], 0.0065).forEach(o => res.push(Object.assign({ session: sn.session, expiry: sn.expiry, vix: vi != null ? V.c[vi] : null }, o))) });
-  const by = {}; res.forEach(r => (by[r.name] = by[r.name] || []).push(r));
-  const summary = Object.keys(by).map(n => { const a = by[n], rets = a.map(x => x.ret).filter(C.isNum); let eq = 0, peak = 0, dd = 0; rets.forEach(r => { eq += r; peak = Math.max(peak, eq); dd = Math.min(dd, eq - peak) }); return { name: n, n: a.length, win: a.filter(x => x.pnl > 0).length, avgRet: C.mean(rets), worst: Math.min(...rets), maxDD: dd, assigned: a.filter(x => x.assigned).length, avgSpread: C.mean(a.map(x => x.spread)) } });
-  save('options.json', { asof: now, snapshots: snaps.length, pending: snaps.filter(s => S.ix[+s.expiry.replace(/-/g, '')] == null).length, trades: res, summary,
-    note: 'Built only from real end of session SPY chains saved by the close run (bid, ask, delta). Sells fill at the bid and buys at the ask, plus $0.65 a contract. Held to expiry and settled on the SPY close, so early assignment and intraday management are not modeled. Bulk historical chains are not available on the current subscriptions, so this sample grows one snapshot per session from Nov 25 2026.' });
+  /* Real end of session chains only. Each strategy is run as a portfolio: one position at a time per underlying (a new one opens only
+     after the previous expired), sells fill at the bid, buys at the ask, $0.65 a contract. Capital in use, equity drawdown and
+     early assignment risk around SPY's quarterly ex dividend dates are tracked. */
+  const cd = path.join(D, 'chains'), V = load('VIX'), res = [], pend = [], tick = fs.existsSync(cd) ? fs.readdirSync(cd) : [];
+  let snaps = 0;
+  tick.forEach(tk => { const dir = path.join(cd, tk), S = (() => { try { return load(tk + '10') } catch (e) { try { return load(tk) } catch (e2) { return null } } })(); fs.readdirSync(dir).sort().forEach(f => { snaps++; const sn = JSON.parse(fs.readFileSync(path.join(dir, f))); const j = S ? S.ix[+sn.expiry.replace(/-/g, '')] : null; if (j == null) { pend.push(sn.ticker + ' ' + sn.expiry); return } const vi = V.ix[+sn.session.replace(/-/g, '')];
+    const exd = []; if (tk === 'SPY') { /* SPY goes ex dividend on the third Friday of March, June, September and December */ const y0 = +sn.session.slice(0, 4); [y0, y0 + 1].forEach(y => [3, 6, 9, 12].forEach(m => { const d1 = new Date(Date.UTC(y, m - 1, 1)), fr = (5 - d1.getUTCDay() + 7) % 7 + 1 + 14; exd.push(+(y + String(m).padStart(2, '0') + String(fr).padStart(2, '0'))) })) }
+    C.optionStrategies(sn, S.c[j], 0.0065).forEach(o => { const s0 = +sn.session.replace(/-/g, ''), e0 = +sn.expiry.replace(/-/g, ''), x = exd.find(d => d > s0 && d <= e0); let early = false; if (x && /Covered call/.test(o.name)) { const pi = S.d.findIndex(d => d >= x) - 1; const k = (C.pickDelta(sn.rows, 'C', 0.20) || [])[1]; if (pi >= 0 && k && S.c[pi] > k) early = true }
+      res.push(Object.assign({ ticker: tk, session: sn.session, expiry: sn.expiry, vix: vi != null ? V.c[vi] : null, exDiv: x || null, earlyRisk: early }, o)) }) }) });
+  const by = {}; res.forEach(r => (by[r.ticker + '|' + r.name] = by[r.ticker + '|' + r.name] || []).push(r));
+  const summary = Object.keys(by).map(k => { const a = by[k].sort((p, q) => p.session < q.session ? -1 : 1), port = []; let busy = ''; a.forEach(t => { if (t.session >= busy) { port.push(t); busy = t.expiry } });
+    let eq = 0, peak = 0, dd = 0, cap = 0, days = 0; port.forEach(t => { eq += t.pnl * 100; peak = Math.max(peak, eq); dd = Math.min(dd, eq - peak); const dte = (Date.parse(t.expiry) - Date.parse(t.session)) / 864e5; cap += t.capital * 100 * dte; days += dte });
+    const rets = port.map(x => x.ret).filter(C.isNum);
+    return { ticker: k.split('|')[0], name: k.split('|')[1], n: a.length, portfolio: port.length, win: port.filter(x => x.pnl > 0).length, avgRet: rets.length ? C.mean(rets) : null, worst: rets.length ? Math.min(...rets) : null, totalPnl: eq, maxDD: dd, avgCapital: days ? cap / days : null, assigned: port.filter(x => x.assigned).length, earlyRisk: port.filter(x => x.earlyRisk).length, avgSpread: C.mean(a.map(x => x.spread)) } });
+  save('options.json', { asof: now, snapshots: snaps, tickers: tick, pending: pend.length, trades: res, summary, minTrades: 30,
+    note: 'Built only from real end of session chains saved by the close run (bid, ask, delta, implied volatility, open interest). Each strategy runs as a portfolio with one position at a time per stock, so trades never overlap; profit, drawdown and average capital in use are in dollars per contract. Sells fill at the bid, buys at the ask, plus $0.65 a contract. Held to expiry and settled on the closing price; early assignment is flagged when a short call is in the money the day before a SPY ex dividend date. Nothing is called validated before 30 settled trades.' });
 }
 
-/* 6. Signal reliability registry */
-function registry(fpRes, intra) {
+/* 6. Signal reliability registry. Every signal lists its instrument, horizon, independent sample, benchmark, out of sample result,
+   range, calibration, regime sensitivity, economic usefulness, validation date and data freshness. Statistical class and economic
+   class are separate: a statistically reliable estimate is not a profitable strategy by itself. */
+function registry(fpRes, risk, I2, WK, REC) {
   const H = {}; ['SPX', 'VIX', 'NDX', 'SPY', 'QQQ', 'N225', 'SMH', 'SPY10', 'RSP10', 'NVDA10'].forEach(s => { try { H[s] = load(s) } catch (e) { } });
-  const total = ledger.entries.length + C.STUDIES.length, out = [];
+  const total = UNIQ.size + C.STUDIES.length, out = [], fresh = sym => { try { return load(sym).asof } catch (e) { return null } }, day = now.slice(0, 10);
+  const add = o => out.push(Object.assign({ validated: day, econ: 'Not tested' }, o));
   C.STUDIES.forEach(st => {
-    const need = st.tgt === 'pick' ? ['NVDA10'] : st.data; if (need.some(s => !H[s])) { out.push({ name: st.name, cls: 'Data unavailable' }); return }
+    const need = st.tgt === 'pick' ? ['NVDA10'] : st.data; if (need.some(s => !H[s])) { add({ name: st.name, cls: 'Data unavailable' }); return }
     const P = {}; st.p.forEach(p => P[p[0]] = p[2]); const R = C.runStudy(st, P, { gap: 5, pick: 'NVDA10' }, H);
     const tr = C.summarize(R, 5, 'train'), te = C.summarize(R, 5, 'test'), wf = C.walkForward(R, 5, 10), pAdj = tr.pMean == null ? 1 : Math.min(1, tr.pMean * total);
     let cls; if (tr.n + te.n < 30 || te.n < 10) cls = 'Insufficient evidence'; else if (pAdj < 0.05 && te.excess != null && (te.excess > 0) === (tr.excess > 0) && te.pMean != null && te.pMean < 0.1 && wf.n >= 20 && wf.ci[0] > 0.5) cls = 'Validated'; else if (tr.pMean != null && tr.pMean < 0.05 && (te.excess > 0) === (tr.excess > 0)) cls = 'Promising but unconfirmed'; else cls = 'Failed validation';
-    logExp('study', { id: st.id, P, horizon: 5 }, { cls, trainN: tr.n, testN: te.n });
-    out.push({ name: st.name, id: st.id, cls, horizon: 5, train: { n: tr.n, excess: tr.excess, p: tr.pMean, pAdj }, test: { n: te.n, excess: te.excess, p: te.pMean }, wf: { n: wf.n, hits: wf.hits, lo: wf.ci[0], hi: wf.ci[1], avg: wf.avg }, data: R.src + ', ' + R.start + ' to ' + R.asof });
+    logExp('study', { id: st.id, P, horizon: 5 }, { cls, trainN: tr.n, testN: te.n }, 'registry');
+    add({ name: st.name, id: st.id, cls, instrument: st.tgt === 'pick' ? 'NVDA, MU, AMD, WDC, SMH, SOXX (chosen in History)' : st.data.join(', '), horizon: '5 sessions', sessions: tr.n + te.n, n: tr.n + te.n, bench: 'Same entry on every day of the same period', oos: te.excess == null ? null : 'excess ' + C.sg(te.excess) + ' over ' + te.n + ' untouched events', ci: wf.n ? 'walk forward right ' + Math.round(wf.ci[0] * 100) + ' to ' + Math.round(wf.ci[1] * 100) + '%' : null, calib: 'not a probability', regime: null, econ: 'Not tested as a strategy', fresh: R.asof, train: { n: tr.n, excess: tr.excess, pAdj }, test: { n: te.n, excess: te.excess } });
   });
-  out.push({ name: 'Market fingerprint', cls: fpRes.promoted ? 'Validated' : 'Failed validation', test: { n: fpRes.T0.n, rate: fpRes.T0.rate, upRate: fpRes.T0.upRate } });
-  const sm = JSON.parse(fs.readFileSync(path.join(D, 'research', 'semis.json'))); sm.tests.forEach(t => { const cls = t.n < 60 ? 'Insufficient evidence' : t.pAdj < 0.05 && t.oosGain > 0 ? 'Validated' : t.pAdj < 0.05 ? 'Failed validation' : t.oosGain > 0 ? 'Promising but unconfirmed' : 'Failed validation'; out.push({ name: t.asia + ' perp then ' + t.target, cls, test: { n: t.oosN, gain: t.oosGain }, train: { pAdj: t.pAdj } }) });
-  out.push({ name: 'Asian chip stocks, local cash markets (KRX, TSE, TWSE)', cls: 'Data unavailable', why: 'No official local cash data feed is reachable from this project; only Hyperliquid perps (24 hour proxies) and the TSM ADR are available.' });
-  const INAME = { highDone: 'Daily high already set', lowDone: 'Daily low already set', newHigh: 'New high later', newLow: 'New low later', openBack: 'Reclaims the open', vwapBack: 'Reclaims VWAP', closeUp: 'Closes above the prior close', rec25: 'Recovers 25% of the decline', rec50: 'Recovers 50%', rec75: 'Recovers 75%', rec100: 'Recovers 100%' };
-  Object.keys(intra).forEach(k => { const s = intra[k]; out.push({ name: 'Intraday: ' + INAME[k], key: k, cls: s.n < 200 ? 'Insufficient evidence' : s.skill > 0.05 && s.first > 0.05 && s.second > 0.05 ? 'Validated' : s.skill > 0.05 ? 'Promising but unconfirmed' : 'Failed validation', test: { n: s.n, skill: s.skill, first: s.first, second: s.second } }) });
-  const op = JSON.parse(fs.readFileSync(path.join(D, 'research', 'options.json'))); out.push({ name: 'Option strategies (CSP, covered call, spreads)', cls: op.trades.length < 30 ? 'Insufficient evidence' : 'Promising but unconfirmed', why: op.trades.length + ' settled trades from ' + op.snapshots + ' saved chains' });
-  save('registry.json', { asof: now, tests: total, rules: 'Intraday outcomes are validated when walk forward skill beats the base rate by more than 0.05 in both halves of the test period. Validated: research period significant after adjusting for every test in the ledger, the untouched period agrees (p under 0.10), and walk forward is right more than half the time with its 95% range above 50%. Promising: significant before adjustment and the test period agrees in direction. Insufficient: under 30 events or under 10 in the test period. Failed: anything else.', signals: out });
+  const T0 = fpRes.T0; add({ name: 'Market fingerprint, 20 day direction', cls: fpRes.promoted ? 'Validated' : 'Failed validation', instrument: 'S&P 500', horizon: '20 sessions', sessions: T0.n, n: T0.n, bench: 'Calling up every time ' + Math.round(T0.upRate * 100) + '%', oos: 'right ' + Math.round(T0.rate * 100) + '%', ci: Math.round(T0.ci[0] * 100) + ' to ' + Math.round(T0.ci[1] * 100) + '%', calib: 'not a probability', econ: T0.longFlat > T0.buyHold ? 'Long or flat beat holding' : 'Long or flat did not beat holding', fresh: fresh('SPX') });
+  Object.keys(risk.targets).forEach(k => { const r = risk.targets[k]; add({ name: 'Fingerprint: ' + r.name, cls: r.ok ? 'Promising but unconfirmed' : 'Failed validation', why: r.ok ? 'Beat both benchmarks on 2016 onward, a period already inspected for direction, so it needs the prospective record to be validated.' : null, instrument: 'S&P 500', horizon: '20 sessions', sessions: r.n, n: r.n, bench: 'better of expanding average and VIX based, error ' + Math.min(r.meanBench, r.vixBench), oos: 'error ' + r.model + ', skill ' + r.skill, ci: 'improvement ' + r.ci.join(' to '), calib: r.kind === 'bin' ? 'squared error scored' : 'n/a', econ: 'Not tested as a strategy', fresh: fresh('SPX') }) });
+  const sm = JSON.parse(fs.readFileSync(path.join(D, 'research', 'semis.json')));
+  sm.tests.forEach(t => { const cls = t.n < 60 ? 'Insufficient evidence' : t.pAdj < 0.05 && t.oosGain > 0 ? 'Validated' : t.pAdj < 0.05 ? 'Failed validation' : t.oosGain > 0 ? 'Promising but unconfirmed' : 'Failed validation'; add({ name: t.asia + ' perp to ' + t.target + ', next US session', cls, instrument: t.target, horizon: 'next US session', sessions: t.n, n: t.n, bench: 'no Asia information', oos: 'out of sample gain ' + (C.isNum(t.oosGain) ? (t.oosGain * 100).toFixed(1) + '%' : 'n/a'), ci: 'adjusted p ' + (C.isNum(t.pAdj) ? t.pAdj.toFixed(2) : 'n/a'), calib: 'n/a', econ: 'Not tested as a strategy', fresh: sm.asof ? sm.asof.slice(0, 10) : null }) });
+  add({ name: 'Asian chip stocks, local cash markets (KRX, TSE, TWSE)', cls: 'Data unavailable', why: 'No official local cash data feed is reachable from this project; only Hyperliquid perps (24 hour proxies) and the TSM ADR are available.' });
+  Object.keys(I2.inst).forEach(sym => { const I = I2.inst[sym]; Object.keys(I.windows).forEach(w => { const W = I.windows[w]; Object.keys(W.outcomes).forEach(o => { const q = W.outcomes[o], ms = q.models, best = Object.keys(ms).filter(f => f !== 'tod' && f !== 'pos').sort((a, b) => ms[a].brier - ms[b].brier)[0], m = ms[best], pb = ms.pos;
+    const cls = q.promoted ? 'Validated' : m.stat ? 'Promising but unconfirmed' : m.sessions < 30 ? 'Insufficient evidence' : 'Failed validation';
+    add({ name: sym + ' intraday: ' + q.name + ' (' + (w === 'early' ? '9:35 to 10am' : '10am to 3:30pm') + ')', cls, model: m.name, instrument: sym, horizon: 'rest of the session', sessions: m.sessions, n: m.n, bench: 'time and position frequency, skill ' + pb.bss, oos: m.name + ' skill ' + m.bss + ' vs time of day', ci: 'vs best benchmark ' + m.vsBenchCI.join(' to '), calib: 'calibration error ' + m.ece, regime: 'VIX high ' + m.regimes.vixHigh + ', low ' + m.regimes.vixLow + (m.oneRegime ? ' (one regime only in the test)' : ''), econ: m.econOk ? 'Economically useful' : C.isNum(m.econ) ? 'Not economically useful' : 'Too few signals', econVal: m.econ, fresh: W.to, prospective: q.prospective, note: 'Benchmark frequency itself: skill ' + pb.bss + ' vs time of day, calibration error ' + pb.ece }) }) }) });
+  Object.keys(WK.inst).forEach(sym => { const I = WK.inst[sym]; if (I.error) return; Object.keys(I.outcomes).forEach(o => { const q = I.outcomes[o], m = q.models.logit;
+    add({ name: sym + ' weekly: ' + q.name, cls: q.beatsBench ? 'Validated' : q.n < 100 ? 'Insufficient evidence' : 'Failed validation', model: 'Regularized logistic regression', instrument: sym, horizon: 'rest of the week', sessions: q.weeksTested, n: q.n, bench: 'better of day of week and day with position, error ' + Math.min(q.models.day.brier, q.models.daypos.brier), oos: 'error ' + m.brier, ci: 'improvement ' + m.ci.join(' to '), calib: 'squared error scored', econ: 'Not tested as a strategy', fresh: I.to }) }) });
+  const r = REC.rec; add({ name: 'Chip stock recovery after a 10% one day drop', cls: r[60].clusters >= 20 ? 'Promising but unconfirmed' : 'Insufficient evidence', why: 'A descriptive base rate, not a timing signal; events in the same selloff are correlated, so the ranges resample whole market clusters.', instrument: 'NVDA, MU, AMD, WDC, SMH, SOXX', horizon: '20, 60, 120 sessions', sessions: r[60].clusters, n: r[60].n, bench: 'none', oos: 'back in 60 sessions ' + Math.round(r[60].p * 100) + '%', ci: Math.round(r[60].ci[0] * 100) + ' to ' + Math.round(r[60].ci[1] * 100) + '%', calib: 'n/a', econ: 'Not tested as a strategy', fresh: REC.asof });
+  const op = JSON.parse(fs.readFileSync(path.join(D, 'research', 'options.json'))); add({ name: 'Option strategies (CSP, covered call, spreads)', cls: op.trades.length < 30 ? 'Insufficient evidence' : 'Promising but unconfirmed', why: op.trades.length + ' settled trades from ' + op.snapshots + ' saved chains', instrument: (op.tickers || []).join(', '), horizon: 'to expiry', n: op.trades.length, econ: op.trades.length < 30 ? 'Not enough settled trades' : 'See option research', fresh: now.slice(0, 10) });
+  save('registry.json', { asof: now, tests: total, distinct: UNIQ.size, code: CODEV, data: DATAV, rules: 'Statistical class: Validated means beating the benchmark out of sample with a 95% range above zero (intraday models must also be calibrated, hold in each VIX regime seen, and add economic value). Promising means it beat the benchmark but failed one condition, or was tested only on data already inspected. Economic class is separate and is measured with costs. Multiple testing uses ' + total + ' distinct configurations in the ledger.', signals: out });
 }
 
-(async () => { const fpRes = fingerprint(); seasonality(); try { await semis() } catch (e) { console.log('semis skipped:', e.message) } const intra = intraday(); options(); registry(fpRes, intra); fs.writeFileSync(LEDGER, JSON.stringify(ledger)); console.log('ledger', ledger.entries.length, 'configurations') })();
+function recoveryDefault() {
+  const L = ['NVDA', 'MU', 'AMD', 'WDC', 'SMH', 'SOXX'].map(s => { const o = load(s + '10'); o.sym = s; try { const k = load(s); o.low = {}; k.d.forEach((d, i) => { o.low[d] = k.l[i] }) } catch (e) { } return o });
+  const R = C.recovery2(L, 10, { days: 1 }), out = { asof: L[0].asof, x: 10, days: 1, events: R.ev.length, clusters: R.clusters, rec: R.rec, tmed: R.tmed, mae: R.mae, maeLow: R.maeLow, maeLowN: R.maeLowN };
+  logExp('recovery', { x: 10, days: 1, syms: L.map(s => s.sym) }, { events: out.events, clusters: out.clusters, rec60: R.rec[60].p }, 'descriptive'); return out;
+}
+(async () => {
+  const fpRes = fingerprint(), risk = fingerprintRisk(); const fp = JSON.parse(fs.readFileSync(path.join(D, 'research', 'fingerprint.json'))); fp.risk = risk; save('fingerprint.json', fp);
+  seasonality(); try { await semis() } catch (e) { console.log('semis skipped:', e.message) }
+  const I2 = await require('./intraday2.js').run((k, e) => logExp(k, { sym: e.sym, window: e.window, outcome: e.outcome, model: e.model }, e.result || (e.logloss != null ? { logloss: e.logloss } : null), e.stage, e.sessions));
+  const WK = require('./weekly.js').run((k, cfg, res) => logExp(k, cfg, res, 'test'));
+  const REC = recoveryDefault(); options(); registry(fpRes, risk, I2, WK, REC); saveLedger();
+  const old = path.join(D, 'research', 'intraday.json'); if (fs.existsSync(old)) fs.unlinkSync(old);
+  console.log('ledger', LIDX.total, 'entries,', LIDX.distinct, 'distinct configurations, code', CODEV, 'data', DATAV);
+})();

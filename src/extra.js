@@ -285,17 +285,52 @@ function loadPub() {
   if (!B.updated) return; var t = new Date(B.updated).getTime(), t5 = t - t % 3e5; if (PUB && PUB.t === t5) return;
   post({ type: 'candleSnapshot', req: { coin: 'xyz:SP500', interval: '5m', startTime: t5, endTime: t5 + 3e5 } }).then(function (k) { var c = (k || []).filter(function (z) { return +z.t === t5 })[0]; if (c) { PUB = { t: t5, px: +c.o }; renderInval() } }).catch(function () { });
 }
-function renderInval() {
-  var s = px('xyz:SP500'), el = $('inval'), sec = $('secInval'); if (!PUB || !s || !fresh('xyz:SP500')) { sec.style.display = 'none'; return }
-  var z0 = zoneOf(PUB.px), z1 = zoneOf(s), items = [], e0 = B.opt.em && B.opt.em[0], mv = (s / PUB.px - 1) * 100;
+function invalItems() {
+  var s = px('xyz:SP500'), items = []; if (!PUB || !s || !fresh('xyz:SP500')) return items;
+  var z0 = zoneOf(PUB.px), z1 = zoneOf(s), e0 = B.opt.em && B.opt.em[0], mv = (s / PUB.px - 1) * 100;
   if (z0 !== z1) items.push('The brief was written in the <b>' + z0 + '</b> zone (S&amp;P perp ' + f(PUB.px, 0) + '); it is now in the <b>' + z1 + '</b> zone (' + f(s, 0) + '). Its scenario no longer applies.');
   var name = z0 === 'Bull' ? 'Bullish' : z0 === 'Range' ? 'Neutral' : 'Bearish', sc = (B.scenarios || []).filter(function (q) { return q.n === name })[0];
   if (sc && sc.inval) { var m = String(sc.inval).match(/([\d,]{4,})/); if (m) { var L = +m[1].replace(/,/g, ''); if ((PUB.px - L) * (s - L) < 0) items.push('Crossed the brief\'s invalidation level ' + f(L, 0) + ': "' + esc(sc.inval) + '".') } }
   if (e0) { var daily = e0[1]; if (Math.abs(mv) >= daily * 0.75) items.push('The S&amp;P perp moved ' + sg(mv) + ' since the brief, ' + (Math.abs(mv) / daily * 100).toFixed(0) + '% of the nearest implied move, so its levels may be stale.') }
   var gf = gammaFlip(); if (gf && (PUB.px - gf) * (s - gf) < 0) items.push('Crossed the gamma flip ' + f(gf, 0) + ' since the brief (estimate from open interest).');
   if (REV && REV.label && /sustainable/.test(REV.label)) items.push('A ' + esc(REV.label.toLowerCase()) + ' is forming, see Reversal watch.');
-  if (!items.length) { sec.style.display = 'none'; return }
-  sec.style.display = ''; el.innerHTML = items.map(function (i) { return '<div class="r full">' + i + '</div>' }).join('') + '<div class="r full k">Brief published ' + esc(B.updatedLabel) + '. The next scheduled update is ' + esc(B.next || 'pending') + '.</div>';
+  return items;
+}
+function renderInval() { renderDecision() }
+
+/* ---------- Decision: six questions, validated evidence only ---------- */
+var DEC = { t: 0, w: null, i: null, reg: null };
+function scenarioNow(s) {
+  var zn = zoneOf(s), name = zn === 'Bull' ? 'Bullish' : zn === 'Range' ? 'Neutral' : 'Bearish';
+  return (B.scenarios || []).filter(function (x) { return x.n === name })[0] || { n: name, inval: zn === 'Bull' ? 'Back below ' + f(B.ladder.bull, 0) : zn === 'Risk' ? 'Back above ' + f(B.ladder.floor, 0) : 'A close outside ' + f(B.ladder.floor, 0) + ' to ' + f(B.ladder.bull, 0) };
+}
+function loadDecision() {
+  if (Date.now() - DEC.t < 120e3) return; DEC.t = Date.now();
+  loadRes('registry').then(function (R) { DEC.reg = R; var ws = ['SPY', 'QQQ', 'SMH', 'NVDA'];
+    return Promise.all(ws.map(function (s) { return weeklyState(s).catch(function () { return null }) })).then(function (W) { DEC.w = W.filter(Boolean); renderDecision() });
+  }).catch(function () { });
+  liveSession('SPY').catch(function () { return null }).then(function (live) { var sl = live ? curSlot(live) : null; if (!sl) { DEC.i = null; return } return intraState('SPY', sl, live).then(function (S) { DEC.i = S && !S.wait ? S : null; renderDecision() }) }).catch(function () { });
+}
+function renderDecision() {
+  var el = $('dec'); if (!el) return; var s = px('xyz:SP500'); if (!s) return;
+  var inv = invalItems(), t3 = B.top3 && B.top3.length ? B.top3 : (B.drivers || []).slice(0, 3).map(function (d) { return [d[1], d[2]] }), h = '', row = function (q, a) { h += '<div class="r full"><span class="k">' + q + '</span><div>' + a + '</div></div>' };
+  var chg = inv.length ? inv[0] : 'S&amp;P perp ' + f(s, 0) + ', ' + sg((s / B.base.spx - 1) * 100) + ' vs the last close' + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since the brief' : '') + '. ' + lite(B.headline || '');
+  row('What changed', chg + (inv.length > 1 ? ' <span class="k">+' + (inv.length - 1) + ' more below</span>' : ''));
+  if (t3[0]) row('Why it matters', '<b>' + lite(t3[0][0]) + '.</b> ' + lite(t3[0][1]));
+  var ev = [], nx = [];
+  (DEC.w || []).forEach(function (W) { if (W.fri) return; var cn = I2PERP[W.sym], pb = B.base && B.base.perp && B.base.perp[cn], lv = cn && px(cn) && fresh(cn) && pb ? W.s.c * px(cn) / pb : null; Object.keys(W.out).forEach(function (o) { var q = W.out[o]; if (!q.validated || Math.abs(q.p - 0.5) < 0.15) return; if (lv && ((o === 'highSet' && lv > W.s.hi) || (o === 'lowSet' && lv < W.s.lo))) { nx.push(W.sym + ' this week: the ' + (o === 'highSet' ? 'perp already implies a new weekly high' : 'perp already implies a new weekly low') + ' <span class="k">(' + f(lv, 2) + '), so the ' + pc(q.p) + ' estimate from the ' + dlab(W.d) + ' close no longer applies</span>'); return } nx.push(W.sym + ' this week: ' + q.name.toLowerCase() + ', ' + pc(q.p) + ' <span class="k">from the ' + dlab(W.d) + ' close</span>'); var g = (DEC.reg && DEC.reg.signals || []).filter(function (x) { return x.name === W.sym + ' weekly: ' + q.name })[0]; if (g) ev.push(W.sym + ', ' + q.name.toLowerCase() + ': model error ' + esc(String(g.oos).replace('error ', '')) + ' vs ' + esc(String(g.bench).replace(/^better of day of week and day with position, error /, '')) + ' for the best benchmark on ' + g.sessions + ' untouched weeks (' + esc(g.ci) + ')') }) });
+  if (DEC.i) CORE.OUT2.forEach(function (o) { var q = DEC.i.out[o]; if (q.promoted) { nx.push('SPY today: ' + DEC.i.W.outcomes[o].name.toLowerCase() + ' ' + pc(q.p)) } });
+  row('Most likely next', nx.length ? nx.slice(0, 3).join('<br>') : 'No validated signal applies right now. Base rates are in History.');
+  row('Evidence', ev.length ? ev.slice(0, 2).join('<br>') : 'Nothing that passed validation. Failed and unconfirmed signals are kept off this screen.');
+  var sc = scenarioNow(s); row('What would invalidate it', lite(sc.inval || 'not set in this brief'));
+  var dn = [], e0 = B.opt.em && B.opt.em[0];
+  if (DEC.i && DEC.i.q) dn.push('Rest of today: 1 in 10 similar sessions fell another ' + Math.abs(DEC.i.q.dn[0]).toFixed(2) + '% or more (S&amp;P ' + f(s * (1 + DEC.i.q.dn[0] / 100), 0) + ')');
+  var ws = (DEC.w || []).filter(function (W) { return W.sym === 'SPY' && !W.fri && W.rng })[0]; if (ws) dn.push('Rest of this week: 1 in 10 similar weeks fell another ' + Math.abs(ws.rng.dn[0]).toFixed(2) + '% or more');
+  if (e0) dn.push('Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]));
+  row('Realistic downside', dn.length ? dn.join('<br>') : 'n/a');
+  if (inv.length > 1) h += inv.slice(1).map(function (x) { return '<div class="r full k">' + x + '</div>' }).join('');
+  el.innerHTML = h; $('secDec').style.display = '';
+  loadDecision();
 }
 var _applyBrief4 = applyBrief;
 applyBrief = function (nb) { _applyBrief4(nb); PUB = null; try { loadPub() } catch (e) { } };

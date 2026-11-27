@@ -225,7 +225,7 @@ html.m30 .x30h{display:none!important}
 <div class="pills" id="healthSec" style="display:none;margin-top:6px"><span class="k" style="align-self:center">Data as of</span><span id="health" style="display:contents"></span></div>
 
 
-<div class="sec" id="secInval" style="display:none"><div class="sh"><h2 class="dn" style="color:var(--red)">The brief may be out of date</h2></div><div class="grp" id="inval"></div></div>
+<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Decision</h2><span>Validated evidence only</span></div><div class="grp ev" id="dec"></div></div>
 <div class="sec since" id="sinceSec" style="display:none">
 <div class="sh"><h2>What changed since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
 <div class="grp" id="since"></div>
@@ -315,13 +315,15 @@ html.m30 .x30h{display:none!important}
 <!-- HISTORY -->
 <div class="panel" id="p-hist">
 <div class="sec"><div class="sh"><h2>Signal reliability</h2><span>What has an edge, what does not</span></div><div class="grp" id="rreg"><div class="r mut">Loading</div></div></div>
-<div class="sec"><div class="sh"><h2>Intraday probabilities</h2><span>From the state so far</span></div><div class="grp hist" id="rintra"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>Intraday high and low</h2><span>Per stock, from 9:35am</span></div><div class="grp hist" id="rintra"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>This week</h2><span>Monday open to Friday close</span></div><div class="grp hist" id="rweek"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>Covered call research</h2><span>Assignment odds by strike</span></div><div class="grp hist" id="rcc"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Historical probability engine</h2></div><div class="chips" id="hstudies"></div><div class="grp pad" id="hparams"></div></div>
 <div class="sec"><div class="sh"><h2>Results</h2><span>95% ranges in brackets</span></div><div class="grp hist" id="hres"></div>
 <div class="note">Point in time: each event uses only data up to that day; results use later sessions only. Overlapping events are skipped. Probabilities are shown only with 10 or more events. History describes the past and is not a forecast.</div></div>
 <div class="sec"><div class="sh"><h2>Comparable dates</h2><span>Tap a date</span></div><div class="grp hist" id="hlist"></div></div>
 <div class="sec"><div class="sh"><h2>Recovery after big declines</h2><span>Chip stocks, 10 years</span></div><div class="grp pad hist" id="rrec"></div></div>
-<div class="sec"><div class="sh"><h2>Market fingerprint</h2><span>Closest past environments</span></div><div class="grp hist" id="rfp"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>Market fingerprint</h2><span>Closest past environments</span></div><div class="grp hist" id="rfp"><div class="r mut">Loading</div></div><div class="sh" style="margin-top:10px"><h2>Fingerprint for options</h2><span>Volatility, range, drawdown</span></div><div class="grp hist" id="rfprisk"></div></div>
 <div class="sec"><div class="sh"><h2>Intraday timing</h2><span>When highs and lows form</span></div><div class="grp hist" id="rseas"></div></div>
 <div class="sec"><div class="sh"><h2>Option strategy research</h2><span>Real chains only</span></div><div class="grp hist" id="ropt"></div></div>
 <div class="sec"><div class="sh"><h2>Asia to US chips</h2><span>Does the Asian session add anything</span></div><div class="grp hist" id="rsemis"></div></div>

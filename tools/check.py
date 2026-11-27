@@ -186,6 +186,7 @@ if os.path.exists("archive/index.json"):
 # history files used by the probability engine
 if os.path.isdir("data/hist"):
     for fn in sorted(os.listdir("data/hist")):
+        if fn == "earnings.json": continue
         try:
             h = json.load(open(os.path.join("data/hist", fn)))
             rows = h["rows"]; nf = len(h["fields"])
@@ -198,7 +199,7 @@ if os.path.isdir("data/hist"):
             err.append("data/hist/" + fn + " unreadable: " + str(e)[:60])
 
 # research outputs used by the page
-for fn, keys in (("fingerprint.json", ("test", "promoted", "horizon")), ("registry.json", ("signals", "tests", "rules")), ("intraday.json", ("skill", "days")), ("options.json", ("snapshots", "summary")), ("ledger.json", ("entries",)), ("seasonality.json", ("conds", "slots", "days")), ("semis.json", ("tests", "days", "note"))):
+for fn, keys in (("fingerprint.json", ("test", "promoted", "horizon", "risk")), ("registry.json", ("signals", "tests", "rules", "distinct")), ("intraday2.json", ("inst", "note")), ("models.json", ("inst", "feat")), ("weekly.json", ("inst", "cc", "ccNeeds")), ("frozen.json", ("models",)), ("options.json", ("snapshots", "summary")), ("ledger.json", ("runs", "distinct")), ("seasonality.json", ("conds", "slots", "days")), ("semis.json", ("tests", "days", "note"))):
     p = os.path.join("data", "research", fn)
     if os.path.exists(p):
         try:
@@ -206,5 +207,38 @@ for fn, keys in (("fingerprint.json", ("test", "promoted", "horizon")), ("regist
             for k in keys:
                 if k not in j: err.append("data/research/" + fn + " missing " + k)
         except Exception as e: err.append("data/research/" + fn + " unreadable")
+# research: every registry signal carries the required fields; append only ledger; intraday files intact
+try:
+    R = json.load(open("data/research/registry.json"))
+    for s in R["signals"]:
+        for k in ("name", "cls", "validated", "econ"):
+            if k not in s: err.append("registry signal missing " + k + ": " + s.get("name", "?"))
+        if s["cls"] not in ("Validated", "Promising but unconfirmed", "Insufficient evidence", "Failed validation", "Data unavailable"): err.append("registry class unknown: " + s["cls"])
+        if s["cls"] not in ("Data unavailable",) and not s.get("instrument") and "Option" not in s["name"]: err.append("registry signal without instrument: " + s["name"])
+    L = json.load(open("data/research/ledger.json"))
+    for r in L["runs"]:
+        if not os.path.exists(os.path.join("data", "research", "ledger", r["file"])): err.append("ledger run file missing: " + r["file"])
+    old = subprocess.run(["git", "show", "HEAD:data/research/ledger.json"], capture_output=True, text=True)
+    if old.returncode == 0:
+        try:
+            o = json.loads(old.stdout)
+            if "runs" in o and [x["file"] for x in o["runs"]] != [x["file"] for x in L["runs"]][:len(o["runs"])]: err.append("ledger index rewrote earlier runs")
+        except ValueError: pass
+    ch = subprocess.run(["git", "diff", "--name-status", "HEAD", "--", "data/research/ledger/"], capture_output=True, text=True).stdout.strip().splitlines()
+    for line in ch:
+        if line and not line.startswith("A"): err.append("ledger file changed or deleted: " + line)
+except FileNotFoundError: pass
+except Exception as e: err.append("research check failed: " + str(e))
+for sym in ("SPY", "QQQ", "SMH", "NVDA", "MU", "AMD", "SNDK"):
+    for res, full in (("5", 78), ("30", 13)):
+        p = os.path.join("data", "intraday", sym + res + ".json")
+        if not os.path.exists(p): continue
+        j = json.load(open(p)); seen = set(); bad = 0
+        for r in j["rows"]:
+            k = (r[0], r[1])
+            if k in seen: err.append(p + " duplicate bar " + str(k)); break
+            seen.add(k)
+            if not (930 <= r[1] < 1600) or not (r[4] <= min(r[2], r[5]) <= max(r[2], r[5]) <= r[3]): bad += 1
+        if bad: err.append(p + " has " + str(bad) + " bars outside the session or with high below low")
 for w in warn: print("warning: " + w)
 print("OK" if not err else "\n".join(err)); sys.exit(1 if err else 0)

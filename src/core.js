@@ -267,6 +267,168 @@ var STUDIES = [
     out.forEach(function (o) { o.ret = o.capital > 0 ? o.pnl / o.capital * 100 : null }); return out;
   }
 
-  return { dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+
+  /* ---------- Intraday engine v2: features, outcomes, model prediction (shared by research and page) ---------- */
+  var OUT2 = ['highDone', 'lowDone', 'closeAbove'];
+  var IFEAT = ['gap', 'ret', 'prev', 'rng', 'pos', 'dh', 'dl', 'vwap', 'rvol', 'orr', 'orpos', 'vix', 'rs', 'brd', 'earn', 'mon', 'fri', 'tod', 'atr'];
+  var INAMES = { gap: 'Opening gap', ret: 'Move from the open', prev: 'Previous session move', rng: 'Range so far', pos: 'Position in the range', dh: 'Distance below the high', dl: 'Distance above the low', vwap: 'VWAP distance', rvol: 'Relative volume', orr: 'Opening range', orpos: 'Position vs opening range', vix: 'VIX', rs: 'Semis relative strength', brd: 'Breadth (equal weight vs S&P)', earn: 'Earnings reaction', mon: 'Monday', fri: 'Friday', tod: 'Time of day', atr: 'Daily volatility' };
+  /* S: {b: [[hm,o,h,l,c,v]...] completed regular session bars, res: minutes per bar, prev: prior close, prevRet: prior session %,
+        atr: average daily range % (prior 20 sessions), cumv: average cumulative volume by bar index or null, ref: reference bars or null,
+        vix: prior VIX close, brd: prior day equal weight minus cap weight %, earn: 0/1, dow: 0 Monday .. 4 Friday }
+     k: number of completed bars at the decision time. Only bars 0..k-1 are read. */
+  function ifeat(S, k) {
+    var b = S.b, a = S.atr || 1, o = b[0][1], px = b[k - 1][4], hi = -1e18, lo = 1e18, pv = 0, vv = 0, cv = 0, orN = Math.max(1, Math.min(k, Math.round(30 / S.res))), oh = -1e18, ol = 1e18;
+    for (var i = 0; i < k; i++) { var r = b[i]; if (r[2] > hi) hi = r[2]; if (r[3] < lo) lo = r[3]; var tp = (r[2] + r[3] + r[4]) / 3; pv += tp * r[5]; vv += r[5]; cv += r[5]; if (i < orN) { if (r[2] > oh) oh = r[2]; if (r[3] < ol) ol = r[3] } }
+    var vw = vv > 0 ? pv / vv : px, rf = S.ref && S.ref.length >= k ? S.ref : null, base = S.cumv && S.cumv[k - 1] > 0 ? S.cumv[k - 1] : 0;
+    var f = {
+      gap: (o / S.prev - 1) * 100 / a, ret: (px / o - 1) * 100 / a, prev: (S.prevRet || 0) / a, rng: (hi - lo) / o * 100 / a,
+      pos: hi > lo ? (px - lo) / (hi - lo) : 0.5, dh: (hi - px) / o * 100 / a, dl: (px - lo) / o * 100 / a, vwap: (px / vw - 1) * 100 / a,
+      rvol: base && cv > 0 ? Math.log(cv / base) : 0, orr: (oh - ol) / o * 100 / a, orpos: oh > ol ? (px - ol) / (oh - ol) : 0.5,
+      vix: isNum(S.vix) ? (S.vix - 18) / 8 : 0, rs: rf ? ((px / o) - (rf[k - 1][4] / rf[0][1])) * 100 / a : 0, brd: S.brd || 0, earn: S.earn ? 1 : 0,
+      mon: S.dow === 0 ? 1 : 0, fri: S.dow === 4 ? 1 : 0, tod: k * S.res / 390, atr: Math.log(a)
+    };
+    return IFEAT.map(function (q) { var v = f[q]; return isFinite(v) ? v : 0 });
+  }
+  function iout(S, k) {
+    var b = S.b, px = b[k - 1][4], hi = -1e18, lo = 1e18, ha = -1e18, la = 1e18;
+    for (var i = 0; i < b.length; i++) { var r = b[i]; if (i < k) { if (r[2] > hi) hi = r[2]; if (r[3] < lo) lo = r[3] } else { if (r[2] > ha) ha = r[2]; if (r[3] < la) la = r[3] } }
+    var cl = b[b.length - 1][4];
+    if (k >= b.length) return null;
+    return { highDone: ha <= hi ? 1 : 0, lowDone: la >= lo ? 1 : 0, closeAbove: cl > px ? 1 : 0, remUp: Math.max(0, (ha / px - 1) * 100), remDn: Math.min(0, (la / px - 1) * 100), retClose: (cl / px - 1) * 100 };
+  }
+  function sigm(z) { return z > 30 ? 1 : z < -30 ? 0 : 1 / (1 + Math.exp(-z)) }
+  function binIdx(v, n) { return Math.max(0, Math.min(n - 1, Math.floor(v * n))) }
+  function freqKey(M, x) {
+    var t = Math.round(x[IFEAT.indexOf('tod')] * 1000), p = binIdx(x[IFEAT.indexOf('pos')], 5);
+    if (M.kind === 'tod') return [String(t)];
+    if (M.kind === 'pos') return [t + '|' + p, String(t)];
+    var g = x[IFEAT.indexOf('gap')] >= 0 ? 1 : 0, r = x[IFEAT.indexOf('rng')], rb = r < M.cut[0] ? 0 : r < M.cut[1] ? 1 : 2;
+    return [t + '|' + p + '|' + g + '|' + rb, t + '|' + p, String(t)];
+  }
+  function treeVal(T, x) { var i = 0; while (T[i].length === 4) i = x[T[i][0]] <= T[i][1] ? T[i][2] : T[i][3]; return T[i][0] }
+  /* M: a fitted model as exported by tools/ml.js. Returns a probability. */
+  function mlPredict(M, x) {
+    if (M.type === 'freq') { var ks = freqKey(M, x); for (var i = 0; i < ks.length; i++) if (M.p[ks[i]] != null) return M.p[ks[i]]; return M.base }
+    if (M.type === 'logit') { var z = M.b; for (var j = 0; j < M.w.length; j++) z += M.w[j] * (x[j] - M.mu[j]) / M.sd[j]; return sigm(z) }
+    if (M.type === 'gbt') { var s = M.f0; M.trees.forEach(function (T) { s += M.lr * treeVal(T, x) }); return sigm(s) }
+    if (M.type === 'rf') { var a = 0; M.trees.forEach(function (T) { a += treeVal(T, x) }); return a / M.trees.length }
+    if (M.type === 'knn') {
+      var d = M.X.map(function (r, n) { var s2 = 0; for (var q = 0; q < r.length; q++) { var u = (x[M.cols[q]] - M.mu[q]) / M.sd[q] - r[q]; s2 += u * u } return [s2, n] }).sort(function (A, B) { return A[0] - B[0] }).slice(0, M.k);
+      return (d.reduce(function (t, z) { return t + M.y[z[1]] }, 0) + 1) / (d.length + 2);
+    }
+    return null;
+  }
+  /* Remaining move percentiles from a conditional table with backoff: returns {up: [p10,p50,p90], dn: [...], n} */
+  function qLookup(Q, x) { var ks = freqKey({ kind: 'cond', cut: Q.cut }, x); for (var i = 0; i < ks.length; i++) { var e = Q.t[ks[i]]; if (e && e.n >= Q.minN) return e } return null }
+  function blockBoot(groups, stat, B, seed) {
+    var keys = Object.keys(groups), out = [], s = seed || 7, rnd = function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646 };
+    for (var b = 0; b < (B || 500); b++) { var pick = []; for (var i = 0; i < keys.length; i++) pick = pick.concat(groups[keys[Math.floor(rnd() * keys.length)]]); var v = stat(pick); if (isNum(v)) out.push(v) }
+    out.sort(function (a, c) { return a - c }); if (out.length < 20) return [null, null];
+    return [out[Math.floor(out.length * 0.025)], out[Math.floor(out.length * 0.975)]];
+  }
+  /* Kaplan Meier: items [{t: time or null, done: bool, obs: sessions observed}] -> S(h) for each h */
+  function kaplanMeier(items, hs) {
+    var ev = items.map(function (e) { return e.done ? { t: e.t, d: 1 } : { t: e.obs, d: 0 } }).sort(function (a, b) { return a.t - b.t || b.d - a.d });
+    var S = 1, n = ev.length, i = 0, curve = [[0, 1]];
+    while (i < ev.length) { var t = ev[i].t, d = 0, c = 0; while (i < ev.length && ev[i].t === t) { if (ev[i].d) d++; else c++; i++ } if (d) { S *= (1 - d / n); curve.push([t, S]) } n -= d + c }
+    var at = function (h) { var v = 1; curve.forEach(function (p) { if (p[0] <= h) v = p[1] }); return v };
+    var med = null; for (var q = 0; q < curve.length; q++) if (curve[q][1] <= 0.5) { med = curve[q][0]; break }
+    var r = { med: med, curve: curve }; (hs || []).forEach(function (h) { r[h] = at(h) }); return r;
+  }
+
+
+  /* Recovery engine v2. list: [{sym, d, c, breaks, low: {date: intraday low} optional}]. A decline of X% over `days` sessions must be complete
+     at the entry close before anything after it is measured. Events in the same stock are separated by at least the horizon being measured,
+     events in different stocks within 7 calendar days form one market cluster, and ranges resample whole clusters. Probabilities use
+     Kaplan Meier so events that have not had time to recover yet count as censored rather than as failures. */
+  function recovery2(list, X, opt) {
+    opt = opt || {}; var days = opt.days || 1, H = [20, 60, 120], ev = [];
+    list.forEach(function (S) {
+      var c = S.c, last = -1e9;
+      for (var i = days; i < c.length; i++) {
+        if (crossesBreak(S, i - days, i) || i - last < 20) continue;
+        var dr = (c[i] / c[i - days] - 1) * 100; if (dr > -X) continue; last = i;
+        var ref = c[i - days], t = null; for (var j = i + 1; j < c.length; j++) { if (crossesBreak(S, i, j)) break; if (c[j] >= ref) { t = j - i; break } }
+        var obs = c.length - 1 - i, mae = null, mfe = null, maeLow = null, more = null;
+        if (obs >= 1) { var w = c.slice(i + 1, Math.min(c.length, i + 61)); mae = (Math.min.apply(0, w) / c[i] - 1) * 100; mfe = (Math.max.apply(0, w) / c[i] - 1) * 100;
+          if (S.low) { var lw = []; for (var q = i + 1; q < Math.min(c.length, i + 61); q++) if (S.low[S.d[q]] != null) lw.push(S.low[S.d[q]]); if (lw.length === w.length) maeLow = (Math.min.apply(0, lw) / c[i] - 1) * 100 } }
+        if (obs >= 20) { more = false; for (var m = i + 1; m <= i + 20; m++) if (c[m] <= c[i] * (1 - X / 200)) { more = true; break } }
+        ev.push({ sym: S.sym, i: i, d: S.d[i], drop: dr, t: t, done: t != null, obs: obs, mae: mae, mfe: mfe, maeLow: maeLow, more: more, day: Date.UTC(Math.floor(S.d[i] / 1e4), Math.floor(S.d[i] / 100) % 100 - 1, S.d[i] % 100) / 864e5 });
+      }
+    });
+    ev.sort(function (a, b) { return a.day - b.day }); var cl = 0, lastDay = -1e9; ev.forEach(function (e) { if (e.day - lastDay > 7) cl++; e.cluster = cl; lastDay = e.day });
+    var out = { ev: ev, clusters: cl, rec: {} };
+    H.forEach(function (h) {
+      var sub = [], lastBy = {}; ev.forEach(function (e) { var lb = lastBy[e.sym]; if (lb != null && e.i - lb < h) return; lastBy[e.sym] = e.i; sub.push(e) });
+      var km = function (a) { var r = kaplanMeier(a.map(function (e) { return { t: e.t, done: e.done && e.t <= e.obs, obs: e.obs } }), [h]); return 1 - r[h] };
+      var g = {}; sub.forEach(function (e) { (g[e.cluster] = g[e.cluster] || []).push(e) });
+      var ci = blockBoot(g, function (a) { return a.length >= 5 ? km(a) : null }, 400, 13);
+      out.rec[h] = { n: sub.length, clusters: Object.keys(g).length, censored: sub.filter(function (e) { return !e.done && e.obs < h }).length, p: sub.length ? km(sub) : null, ci: ci };
+    });
+    var all = kaplanMeier(ev.map(function (e) { return { t: e.t, done: e.done, obs: e.obs } }), []); out.tmed = all.med; out.curve = all.curve;
+    var s20 = [], lb2 = {}; ev.forEach(function (e) { var lb = lb2[e.sym]; if (lb != null && e.i - lb < 20) return; lb2[e.sym] = e.i; s20.push(e) });
+    var mo = s20.filter(function (e) { return e.more != null }); out.more = { n: mo.length, k: mo.filter(function (e) { return e.more }).length };
+    var w60 = ev.filter(function (e) { return isNum(e.mae) && e.obs >= 60 }); out.mae = median(w60.map(function (e) { return e.mae })); out.mfe = median(w60.map(function (e) { return e.mfe }));
+    var wl = w60.filter(function (e) { return isNum(e.maeLow) }); out.maeLow = wl.length >= 5 ? median(wl.map(function (e) { return e.maeLow })) : null; out.maeLowN = wl.length; out.maeCloseSameN = wl.length >= 5 ? median(wl.map(function (e) { return e.mae })) : null;
+    return out;
+  }
+
+
+  /* Pre open context for a session dated d, built only from daily rows dated before d. Shared by research and the page.
+     dly, vix, rsp, spy: rows [d, o, h, l, c]; earn: [[yyyymmdd, 'pre' or 'post'], ...] */
+  function lastBefore(rows, d) { var lo = 0, hi = rows.length; while (lo < hi) { var m = (lo + hi) >> 1; if (rows[m][0] < d) lo = m + 1; else hi = m } return lo - 1 }
+  function ymdDow(d) { return (new Date(Date.UTC(Math.floor(d / 1e4), Math.floor(d / 100) % 100 - 1, d % 100)).getUTCDay() + 6) % 7 }
+  function iDayCtx(dly, vix, rsp, spy, earn, d) {
+    var i = lastBefore(dly, d); if (i < 21) return null;
+    var a = 0; for (var j = i - 19; j <= i; j++) a += (dly[j][2] - dly[j][3]) / dly[j][4] * 100; a /= 20;
+    var vi = lastBefore(vix, d), ri = lastBefore(rsp, d), si = lastBefore(spy, d), brd = 0;
+    if (ri > 0 && si > 0 && rsp[ri][0] === spy[si][0]) brd = ((rsp[ri][4] / rsp[ri - 1][4]) - (spy[si][4] / spy[si - 1][4])) * 100;
+    var ses = dly.map(function (r) { return r[0] }), earnF = 0, after = function (x) { for (var q = 0; q < ses.length; q++) if (ses[q] > x) return ses[q]; return 0 };
+    (earn || []).forEach(function (e) { var r0 = e[1] === 'pre' ? e[0] : (after(e[0]) || (e[0] < d ? d : 0)); if (!r0) return; var r1 = after(r0) || (r0 < d ? d : 0); if (d === r0 || d === r1) earnF = 1 });
+    return { prev: dly[i][4], prevRet: (dly[i][4] / dly[i - 1][4] - 1) * 100, atr: a, vix: vi >= 0 ? vix[vi][4] : null, brd: brd, earn: earnF, dow: ymdDow(d) };
+  }
+  /* average cumulative volume by bar index over up to 20 earlier sessions (each an array of bars) */
+  function iCumv(prior, nbar) {
+    var p = prior.slice(-20); if (p.length < 5) return null; var out = [];
+    for (var k = 0; k < nbar; k++) { var s = 0; p.forEach(function (b) { var c = 0; for (var j = 0; j <= k && j < b.length; j++) c += b[j][5]; s += c }); out.push(s / p.length) }
+    return out;
+  }
+
+
+  /* ---------- Weekly engine helpers (shared by research and page) ---------- */
+  var WFEAT = ['wret', 'pos', 'rng', 'day', 'prevw', 'vix', 'r5'];
+  function wkey(d) { return Date.UTC(Math.floor(d / 1e4), Math.floor(d / 100) % 100 - 1, d % 100) - ymdDow(d) * 864e5 }
+  function weeksOf(rows) { var by = {}, ks = []; rows.forEach(function (r) { var k = wkey(r[0]); if (!by[k]) { by[k] = []; ks.push(k) } by[k].push(r) }); return ks.sort(function (a, b) { return a - b }).map(function (k) { return by[k] }) }
+  /* state at the close of day j of week W (rows [d,o,h,l,c]); ctx: {watr, prevw, vix, r5} */
+  function wstate(W, j, ctx) {
+    var o = W[0][1], c = W[j][4], hi = -1e18, lo = 1e18; for (var i = 0; i <= j; i++) { hi = Math.max(hi, W[i][2]); lo = Math.min(lo, W[i][3]) }
+    var a = ctx.watr || 1;
+    return { x: [(c / o - 1) * 100 / a, hi > lo ? (c - lo) / (hi - lo) : 0.5, (hi - lo) / o * 100 / a, ymdDow(W[j][0]) / 4, (ctx.prevw || 0) / a, isNum(ctx.vix) ? (ctx.vix - 18) / 8 : 0, (ctx.r5 || 0) / a], hi: hi, lo: lo, c: c, o: o };
+  }
+  /* context for week wi known at the close of row index k of the daily rows */
+  function wctx(Wk, wi, rows, k, vixMap) {
+    var rg = []; for (var q = Math.max(0, wi - 20); q < wi; q++) { var w = Wk[q], h = -1e18, l = 1e18; w.forEach(function (r) { h = Math.max(h, r[2]); l = Math.min(l, r[3]) }); rg.push((h - l) / w[0][1] * 100) }
+    var pw = Wk[wi - 1]; return { watr: rg.length ? mean(rg) : null, prevw: pw ? (pw[pw.length - 1][4] / pw[0][1] - 1) * 100 : 0, vix: vixMap ? vixMap[rows[k][0]] : null, r5: k >= 5 ? (rows[k][4] / rows[k - 5][4] - 1) * 100 : 0 };
+  }
+  function wpred(M, x) {
+    if (M.type === 'wday') { var v = M.p[Math.round(x[3] * 4)]; return v == null ? M.base : v }
+    if (M.type === 'wdaypos') { var v2 = M.p[Math.round(x[3] * 4) + '|' + Math.min(2, Math.floor(x[1] * 3))]; return v2 == null ? M.base : v2 }
+    return mlPredict(M, x);
+  }
+
+
+  /* ---------- Live bar plumbing shared by the page and the tests ---------- */
+  var ETFMT = typeof Intl !== 'undefined' ? new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false }) : null;
+  function etParts(ms) { var p = {}; ETFMT.formatToParts(new Date(ms)).forEach(function (x) { p[x.type] = x.value }); return { d: +(p.year + p.month + p.day), hm: (+p.hour % 24) * 100 + +p.minute } }
+  /* six 5 minute bars -> one 30 minute bar, in order; an unfinished group is dropped */
+  function to30(b5) { var out = []; for (var i = 0; i + 6 <= b5.length; i += 6) { var g = b5.slice(i, i + 6), h = -1e18, l = 1e18, v = 0; g.forEach(function (x) { h = Math.max(h, x[2]); l = Math.min(l, x[3]); v += x[5] }); out.push([g[0][0], g[0][1], h, l, g[5][4], v]) } return out }
+  /* Unusual Whales REST candles -> completed regular session bars for the ET date of nowMs: [hm, o, h, l, c, v] */
+  function uwBars(j, nowMs) {
+    var today = etParts(nowMs).d, out = [];
+    ((j && j.data) || []).forEach(function (c) { if ((c.market_time || 'r') !== 'r') return; var t = Date.parse(c.start_time), e = Date.parse(c.end_time); if (!isFinite(t) || !(e <= nowMs)) return; var q = etParts(t); if (q.d !== today || q.hm < 930 || q.hm >= 1600) return; out.push([q.hm, +c.open, +c.high, +c.low, +c.close, +(c.volume || 0)]) });
+    out.sort(function (a, b) { return a[0] - b[0] }); var seen = {}; return out.filter(function (b) { if (seen[b[0]]) return false; seen[b[0]] = 1; return true });
+  }
+
+  return { etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;

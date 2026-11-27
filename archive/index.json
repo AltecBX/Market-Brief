@@ -6,5 +6,13 @@
   "label": "Thu 11:15pm ET",
   "headline": "S&P perps near 7,300. Chips keep pulling the bounce higher.",
   "file": "2026-11-26/2315.json"
+ },
+ {
+  "date": "2026-11-27",
+  "time": "0709",
+  "kind": "brief",
+  "label": "Fri 7:09am ET",
+  "headline": "Futures up 1.7% into the half day, memory chips lead.",
+  "file": "2026-11-27/0709.json"
  }
 ]

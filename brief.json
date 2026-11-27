@@ -1,130 +1,118 @@
 {
- "updated": "2026-11-26T23:15:00-05:00",
- "updatedLabel": "Thu 11:15pm ET",
- "next": "7:30am",
- "kicker": "THANKSGIVING NIGHT · MARKETS CLOSED THU · FRIDAY HALF DAY, STOCKS CLOSE 1:00PM",
- "headline": "S&P perps near 7,300. Chips keep pulling the bounce higher.",
- "lede": "S&P perps are up about 1.7% vs Wednesday's close and about 1% since 4pm, led by memory and chip names. Nasdaq 100 perps are up about 2.5%.",
+ "updated": "2026-11-27T07:09:05-05:00",
+ "updatedLabel": "Fri 7:09am ET",
+ "next": "9:02am",
+ "kicker": "BLACK FRIDAY HALF DAY · STOCKS CLOSE 1:00PM, BONDS 2:00PM ET · MORNING BRIEF",
+ "headline": "Futures up 1.7% into the half day, memory chips lead.",
+ "lede": "S&P futures were +1.73% and Nasdaq 100 futures +2.35% at 5:43am. Sandisk, Micron and WDC are up 6% to 11% premarket after Kospi rose 4.3% and the Nikkei 2.1%.",
  "pills": [
   [
    "g",
-   "S&P perps 7,306 · +1.7% vs Wed"
+   "S&P fut +1.7% · NQ +2.4%"
   ],
   [
    "g",
-   "SK Hynix +6.1% · MU +4.5% since 4pm"
+   "SNDK +11% · MU +6.6% pre"
   ],
   [
    "g",
-   "Kospi +2.2% · Nikkei +0.7%"
+   "Kospi +4.3% · Shanghai +3.7%"
   ],
   [
    "r",
-   "Brent $96.29 · Hormuz mines"
+   "Brent $97.62 · WTI +2.8%"
   ],
   [
    "r",
-   "NVDA export curbs · S&P credit watch"
+   "Dec 9 hike 98.9% priced"
   ],
   [
    "a",
-   "Half day · thin liquidity"
+   "Half day · 1:00pm close"
   ]
  ],
  "drivers": [
   [
    "g",
-   "CHIPS LEAD THE REBOUND",
-   "Since 4pm: SK Hynix perp +6.1%, MU +4.5%, AMD +4.3%, SMH +2.7%, NVDA +2.1%. In Tokyo, Kioxia and Socionext up 5% to 6%."
+   "MEMORY CHIPS LEAD",
+   "Premarket 6:47am: Sandisk +11.1%, Seagate +7.2%, WDC +7.0%, Micron +6.6%, AMD +4.8%, Nvidia +3.9%. Forbes calls it a rebound in battered AI shares after weeks of AI and rate worries."
   ],
   [
    "g",
-   "ASIA FOLLOWS THROUGH",
-   "Kospi +2.2% to 4,813 and Nikkei +0.7% to 57,919 in Friday morning trade. Korea 200 perp +3.7% since 4pm."
+   "ASIA RALLY BROADENS",
+   "Kospi +4.34%, Nikkei +2.11%, Hang Seng +2.1%, Shanghai +3.7%. In Tokyo, Lasertec +10%, Kioxia +8.9%, Advantest +7.1%, Tokyo Electron +4.4%."
   ],
   [
    "r",
-   "OIL AND HORMUZ",
-   "Iran says mines hit ships in the Strait of Hormuz. Brent $96.29, WTI $85.43, up 2.1%. Keeps inflation and Fed hike fears alive."
+   "OIL NEAR MONTH HIGHS",
+   "Brent $97.62, WTI $86.05 (AP). Yahoo says Brent rose after Houthi attacks on Saudi energy infrastructure. OPEC+ meets Sunday."
   ],
   [
    "r",
-   "NVIDIA OVERHANG",
-   "Server shipments to four SE Asian countries halted under new curbs. S&P has its AA rating on watch for a cut. Huang hearings Dec 1 and Dec 3."
+   "HIKE STILL PRICED",
+   "CME FedWatch: 98.9% odds of a 25bp hike Dec 9 (Forbes). The 10 year is down to about 4.84% (Yahoo). Thin half day books can swing both ways."
   ]
  ],
  "picks": [
   [
-   "Thu 11:15pm",
+   "Fri 7:10am",
    "FUT",
    "up",
-   "S&P perps at 7,306, +1.7% vs Wed close and +1.0% since 4pm. Nasdaq 100 perps +2.5% vs Wed. SK Hynix +6.1%, MU +4.5%, AMD +4.3% since 4pm."
+   "S&P perps 7,288, +1.4% vs Wed close and +0.8% since Thu 4pm. A bit below the 7,306 seen at 11:15pm Thu."
   ],
   [
-   "Fri Asia",
-   "ASIA",
+   "Fri 6:47am",
+   "AI",
    "up",
-   "Tokyo chip and power names lead: Socionext +6%, Kioxia +5%, IHI and Resonac near +6%. SoftBank and Tokyo Electron down about 3%."
+   "Premarket: Sandisk +11.1%, Seagate +7.2%, WDC +7.0%, Micron +6.6%, AMD +4.8%, Intel +4.8%, Nvidia +3.9%. Nasdaq futures +2.4%, S&P +1.8%."
   ],
   [
-   "Thu 9:18pm",
-   "FUT",
+   "Fri 6:34am",
+   "MACRO",
+   "",
+   "Gold futures +3.9% to $3,704.50 and the 10 year yield near 4.85% (Yahoo quotes). Silver perp +5% since Thu 4pm."
+  ],
+  [
+   "Fri 5:43am",
+   "FED",
+   "dn",
+   "CME FedWatch prices a 98.9% chance of a 25bp hike on Dec 9 (Forbes). Already known."
+  ],
+  [
+   "Fri 4:33am",
+   "MACRO",
    "up",
-   "CME futures: S&P +1.27% to 7,287.25, Nasdaq 100 +1.8% to 26,571, Dow +0.82% to 50,638."
+   "Stoxx 600 +1% to 643.52, best day since mid May. Tech +2.6% led by ASML, ASM International and Infineon; miners +4%."
   ],
   [
-   "Thu 9:18pm",
-   "ASIA",
-   "up",
-   "Friday morning in Asia: Nikkei +0.7% to 57,919, Kospi +2.2% to 4,813, Hang Seng +0.4%, ASX +0.4%. Shanghai −0.1%."
-  ],
-  [
-   "Thu 9:18pm",
+   "Fri 3:00am",
    "OIL",
    "dn",
-   "WTI +2.1% to $85.43 as it catches up after the holiday. Brent $96.29, −0.3%. Yen at 159.25 per dollar."
+   "Brent +1.1% to $97.62, WTI +2.8% to $86.05 (AP). Yahoo cites Houthi attacks on Saudi energy infrastructure."
   ],
   [
-   "Thu 6:00pm",
-   "FUT",
+   "Fri 1:30am",
+   "ASIA",
+   "up",
+   "Closes: Kospi +4.34% to 4,915.68, Nikkei +2.11% to 58,711.11, Hang Seng +2.2%, Shanghai +3.7%, Taiex +0.4%. China signaled stronger market support (AP)."
+  ],
+  [
+   "Thu 7:30pm",
+   "ASIA",
    "",
-   "CME equity futures reopen after the 1:00pm holiday halt."
+   "Tokyo core CPI 2.9% in Nov vs 3.0% forecast, up from 2.6%. Energy +9.5%. Markets still price about 74% odds of a BOJ hike Dec 18."
   ],
   [
    "Thu",
-   "OIL",
-   "dn",
-   "Brent settles $96.57, +1.2%, third straight gain and about 8% in 3 sessions. Saudi says air defenses intercepted drones aimed at Ras Tanura."
-  ],
-  [
-   "Thu AM",
-   "OIL",
-   "dn",
-   "Iran says mines struck ships in the Strait of Hormuz, reviving supply fears."
-  ],
-  [
-   "Thu AM",
    "MACRO",
-   "up",
-   "Europe rallies: DAX +1.9%, CAC +1.8%, FTSE +1.6%."
+   "dn",
+   "Trump calls the revised Q3 GDP of 4.3% (from 3.4%) fake and asks for an investigation (Yahoo)."
   ],
   [
    "Thu early",
    "AI",
    "dn",
-   "FT: Nvidia tells Dell and Supermicro to stop server shipments to Malaysia, Singapore, Thailand and Indonesia under new US export curbs."
-  ],
-  [
-   "Thu Asia",
-   "ASIA",
-   "up",
-   "Asia rebounds: Nikkei +0.9%, SoftBank +7.3%, Kioxia +12.6% on an Nvidia memory demo, Taiex +2.5%. Kospi +0.3% after −6.2%."
-  ],
-  [
-   "Thu",
-   "AI",
-   "dn",
-   "Huang faces a closed door House interview Dec 1, then public Senate Banking testimony Dec 3."
+   "FT: Nvidia tells Dell and Supermicro to stop server shipments to Malaysia, Singapore, Thailand and Indonesia under new US export curbs. Known."
   ],
   [
    "Wed 4:00pm",
@@ -135,39 +123,39 @@
  ],
  "planTitle": "FRIDAY GAME PLAN",
  "means": [
-  "Perps near <b>7,300</b> put the implied open about 100 points above <b>7,201</b>, Wednesday's bull trigger. Chips leading is the confirmation that was missing.",
-  "A gap this size on a half day can fade. Holding above 7,201 after 9:30am keeps the bounce; back under it puts the 7,060 to 7,200 range back in play.",
-  "Oil is the risk. Brent near $96 with mines in Hormuz feeds inflation fears and a Dec 9 hike that is already priced at 97.8%.",
-  "Thin books. Moves can be exaggerated both ways, like Wednesday."
+  "Perps near <b>7,288</b> sit above <b>7,201</b>, the bull trigger, and above <b>7,267</b>, the top of today's ±1.17% implied move from Wednesday. The gap already uses up the move options priced.",
+  "Holding above 7,201 after 9:30am keeps the rebound; back under it puts the 7,060 to 7,200 range in play. A full gap fill is Wednesday's 7,183 close.",
+  "Memory names lead. If Sandisk, Micron and WDC hold their premarket gains into the open, the move has breadth inside chips.",
+  "Risks stay outside stocks: Brent near $98, a Dec 9 hike priced near 99%, and a 1:00pm close with thin books."
  ],
  "calTitle": "FRIDAY CALENDAR · ET",
  "calendar": [
   [
-   "Overnight",
-   "Europe opens 3:00am. Watch if Asia's chip bid carries"
-  ],
-  [
    "8:30am",
-   "Advance goods trade, retail and wholesale inventories"
+   "Advance goods trade, retail inventories (Oct, prior +0.4%) and wholesale inventories (Oct, prior +0.7%)"
   ],
   [
    "9:30am",
-   "Cash open vs 7,201 trigger"
-  ],
-  [
-   "All day",
-   "Black Friday reads. Adobe forecast: $12.9B online, +9.2%"
+   "Cash open vs 7,201 trigger and 7,267 implied move top"
   ],
   [
    "1:00pm",
    "Stocks close. Bonds close 2:00pm"
   ],
   [
-   "Mon to Wed",
-   "Huang before House Dec 1, Senate Banking Dec 3"
+   "Sun",
+   "OPEC+ meets. Spain snap election"
+  ],
+  [
+   "Mon night",
+   "China NBS PMIs (Nov)"
+  ],
+  [
+   "Tue Dec 1",
+   "ISM manufacturing, JOLTS, Fed's Bowman. Huang House interview. Marvell earnings"
   ]
  ],
- "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can run ahead of CME futures in thin holiday hours. CME ES and NQ reopened 6:00pm ET. Options levels are from Wednesday, the last session.",
+ "impNote": "Perps (the xyz market on Liquid) trade 24/7. Stock perps are lagging some premarket quotes this morning: Nvidia perp about 152 vs a 155.20 premarket print at 5:43am. Options and VIX levels are from Wednesday, the last full session.",
  "base": {
   "label": "Wed close",
   "spx": 7182.78,
@@ -273,7 +261,8 @@
   "closesSrc": "Cash closes Wed Nov 25: Cboe and Nasdaq for indexes, Unusual Whales daily bars for stocks. Index perps track the cash index; stock perps track the stock."
  },
  "anchor": {
-  "label": "Since 4pm",
+  "label": "Since Thu 4pm",
+  "ts": "2026-11-26T16:00:00-05:00",
   "prices": {
    "xyz:SP500": 7231.4,
    "xyz:XYZ100": 26227.0,
@@ -350,19 +339,14 @@
    "xyz:UMC": 13.462,
    "xyz:GLW": 101.75,
    "xyz:TTWO": 223.55,
+   "xyz:ICE": 177.87,
    "xyz:PANW": 346.07
-  },
-  "ts": "2026-11-26T16:00:00-05:00"
+  }
  },
  "ladder": {
   "bull": 7201.09,
   "floor": 7060.33,
   "marks": [
-   [
-    6970.11,
-    "Low 6,970",
-    0
-   ],
    [
     7060.33,
     "Open 7,060",
@@ -379,13 +363,18 @@
     1
    ],
    [
-    7300,
-    "Perps 7,300",
+    7267.04,
+    "Implied 7,267",
     0
+   ],
+   [
+    7287.95,
+    "Perps 7,288",
+    1
    ]
   ],
-  "bullText": "Above the 7,201 trigger. Perps near 7,300; needs to hold through the 9:30am open with chips leading.",
-  "rangeText": "Between 7,060 and 7,201. Rotation without confirmation.",
+  "bullText": "Above the 7,201 trigger. Perps near 7,288, past the 7,267 implied move top; needs to hold after 9:30am.",
+  "rangeText": "Between 7,060 and 7,201. Gap fades back into Wednesday's range.",
   "riskText": "Below Wednesday's open. 7,000 and 6,970 are next."
  },
  "chart": {
@@ -393,8 +382,8 @@
   "start": "2026-11-25T16:00:00-05:00",
   "startLabel": "Wed 4pm",
   "marker": [
-   "2026-11-26T19:00:00-05:00",
-   "Asia opens 7pm"
+   "2026-11-27T03:00:00-05:00",
+   "Europe opens 3am"
   ]
  },
  "opt": {
@@ -589,28 +578,437 @@
  "recapLabel": "Wed recap",
  "sources": [
   [
-   "AP via News4JAX: Asian shares mostly rise ahead of Wall Street's reopening",
-   "https://www.news4jax.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-the-thanksgiving-holiday/"
+   "Forbes: Stock futures surge as battered AI shares rebound",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock-futures-surge-as-battered-ai-shares-rebound-ahead-of-shorterned-friday-trading/"
   ],
   [
-   "Al Jazeera: Asian stock markets rise after earlier tech rout",
-   "https://www.aljazeera.com/economy/2026/11/27/asian-stock-markets-rise-after-earlier-tech-rout"
+   "TokenPost: Semiconductor stocks lead premarket rally",
+   "https://www.tokenpost.com/news/investing/63525"
   ],
   [
-   "Investing.com via Yahoo: US stock futures rise sharply",
-   "https://uk.finance.yahoo.com/news/u-stock-futures-rise-sharply-003408206.html"
+   "AP via KSAT: Global shares mostly rise ahead of Wall Street reopening",
+   "https://www.ksat.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-thanksgiving/"
   ],
   [
-   "RTTNews via finanzen.ch: Japanese market notably higher",
-   "https://www.finanzen.ch/nachrichten/aktien/japanese-market-notably-higher-1036804056"
+   "Longbridge: Japan and Korea close higher",
+   "https://longbridge.com/en/news/306987611"
   ],
   [
-   "investingLive: S&P puts Nvidia's AA rating on watch",
+   "Reuters via Investing.com: European stocks extend recovery",
+   "https://www.investing.com/news/stock-market-news/european-stocks-extend-recovery-as-tech-miners-advance-5053129"
+  ],
+  [
+   "Yahoo Finance live: Stock market today, Nov 27",
+   "https://finance.yahoo.com/markets/live/stock-market-today-firday-november-27-dow-sp-500-nasdaq-black-friday-holiday-091152065.html"
+  ],
+  [
+   "NERO: Tokyo bought the chips and ignored the inflation print",
+   "https://nerosignal.substack.com/p/tokyo-bought-the-chips-and-ignored"
+  ],
+  [
+   "Motley Fool: Latest interest rate forecast",
+   "https://www.fool.com/investing/2026/11/27/latest-interest-rate-forecast-is-in-spells-trouble-historically-expensive-ai-bull-market/"
+  ],
+  [
+   "MarketSpeaker: December hike odds near 98%",
+   "https://marketspeaker.com/briefs/december-fed-rate-hike-odds-98-percent-cme-fedwatch/"
+  ],
+  [
+   "Seeking Alpha: Nvidia gains premarket",
+   "https://seekingalpha.com/news/4676986-nvidia-gains-premarket-as-stock-heads-for-end-to-volatile-week"
+  ],
+  [
+   "Newsquawk weekly calendar via StockNow",
+   "https://stocknow.ai/en/breaking-news/l1rrnoswtqbvfemrq0470kjc/newsquawk-weekly-economic-calendar-29th-november-4th-december-2026"
+  ],
+  [
+   "investingLive: S&P puts Nvidia AA rating on watch",
    "https://investinglive.com/stocks/s-p-puts-nvidia-s-aa-rating-on-watch-for-a-possible-cut-as-moody-s-holds-steady/"
+  ],
+  [
+   "Unusual Whales options data",
+   "https://unusualwhales.com/"
   ],
   [
    "Hyperliquid perps (tools/prices.py)",
    "https://app.hyperliquid.xyz/"
   ]
- ]
+ ],
+ "top3": [
+  [
+   "Chips lead a gap up",
+   "S&P futures +1.73%, Nasdaq 100 +2.35% at 5:43am. Memory leads premarket: Sandisk +11.1%, Seagate +7.2%, WDC +7.0%, Micron +6.6%, Nvidia +3.9% at 6:47am."
+  ],
+  [
+   "Asia and Europe rally",
+   "Kospi +4.34% to 4,915.68, Nikkei +2.11% to 58,711.11, Shanghai +3.73% after Chinese authorities signaled stronger market support (AP). Stoxx 600 +1% with tech +2.6%."
+  ],
+  [
+   "Oil and the Fed still loom",
+   "Brent +1.1% to $97.62, WTI +2.8% to $86.05 (AP). FedWatch prices a 98.9% chance of a 25bp hike on Dec 9."
+  ]
+ ],
+ "risks": [
+  [
+   "1:00pm close",
+   "Half day with thin books. Wednesday showed a 3.2% intraday swing."
+  ],
+  [
+   "Below 7,201",
+   "A gap fail puts the 7,060 to 7,200 range back in play; 7,183 is the full gap fill."
+  ],
+  [
+   "Brent $97.62",
+   "Oil near month highs on Hormuz and Saudi attacks; OPEC+ meets Sunday."
+  ],
+  [
+   "Dec 1 to 4",
+   "ISM, JOLTS, Huang before House and Senate, then the Nov jobs report."
+  ]
+ ],
+ "scenarios": [
+  {
+   "n": "Bullish",
+   "cond": "S&P holds above 7,250 after 9:30am and stays over 7,201 into the 1:00pm close.",
+   "confirm": "Memory names hold premarket gains, Nasdaq 100 outpaces S&P, 10 year stays under 4.85%.",
+   "risk": "A gap beyond the implied move on a thin half day can reverse fast.",
+   "inval": "A move back under 7,201."
+  },
+  {
+   "n": "Neutral",
+   "cond": "The gap fades into 7,201 to 7,267 and holds there.",
+   "confirm": "Chips give back part of the gains, breadth mixed, oil flat.",
+   "risk": "Drift into the close with no follow through for Monday.",
+   "inval": "Close above 7,300 or below 7,183."
+  },
+  {
+   "n": "Bearish",
+   "cond": "Full gap fill under Wednesday's 7,183 close.",
+   "confirm": "Memory names turn red, Brent above $98, yields back up.",
+   "risk": "Short covering after a weak November can snap back.",
+   "inval": "A reclaim of 7,250."
+  }
+ ],
+ "events7": [
+  [
+   "2026-11-27",
+   "8:30am",
+   "Advance goods trade, retail and wholesale inventories (Oct)",
+   1,
+   "DATA",
+   "",
+   "+0.4% / +0.7%",
+   ""
+  ],
+  [
+   "2026-11-30",
+   "Sun",
+   "OPEC+ meeting over the weekend, Spain snap election",
+   2,
+   "OIL",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-11-30",
+   "Night",
+   "China NBS PMIs (Nov)",
+   2,
+   "ASIA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "ISM manufacturing PMI (Nov)",
+   3,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "JOLTS job openings (Oct)",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "TBD",
+   "Fed's Bowman speaks",
+   2,
+   "FED",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "TBD",
+   "Marvell earnings",
+   3,
+   "EARN",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "TBD",
+   "Huang closed door House interview",
+   2,
+   "AI",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-02",
+   "8:15am",
+   "ADP employment (Nov)",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-02",
+   "TBD",
+   "Salesforce and Snowflake earnings",
+   2,
+   "EARN",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "8:30am",
+   "Initial jobless claims",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "10:00am",
+   "ISM services PMI (Nov)",
+   3,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "TBD",
+   "Huang testifies before Senate Banking",
+   3,
+   "AI",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-04",
+   "8:30am",
+   "Jobs report (Nov)",
+   3,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-04",
+   "10:00am",
+   "UMich sentiment prelim (Dec)",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ]
+ ],
+ "priced": {
+  "asof": "Fri 5:43am",
+  "asofTs": "2026-11-27T05:43:00-05:00",
+  "fed": [
+   [
+    "Dec 9 FOMC",
+    "98.9% odds of a 25bp hike to 4.00% to 4.25% (CME FedWatch via Forbes). Range now 3.75% to 4.00%.",
+    "exp"
+   ],
+   [
+    "Jan 27 FOMC",
+    "64% odds the range is at least 4.25% to 4.50% by Jan 27 (CME FedWatch via Motley Fool).",
+    "exp"
+   ]
+  ],
+  "data": [
+   [
+    "Tokyo core CPI (Nov)",
+    "Thu 7:30pm",
+    "3.0%",
+    "2.6%",
+    "2.9%",
+    "Below forecast, still the fastest since Jul 2025."
+   ],
+   [
+    "Retail inventories (Oct)",
+    "Fri 8:30am",
+    "n/a",
+    "+0.4%",
+    "",
+    ""
+   ]
+  ],
+  "other": [
+   [
+    "BOJ Dec 18",
+    "73.5% odds of a hike (MogWatch, Fri 1:07pm JST), down from 83.5% on Nov 21.",
+    "exp"
+   ],
+   [
+    "Today's range",
+    "SPXW options priced ±1.17% for today from Wednesday's close. Futures are already past that.",
+    "exp"
+   ]
+  ]
+ },
+ "qa": [
+  [
+   "Why are futures up?",
+   "Forbes says battered AI shares are rebounding after weeks of AI and rate worries; S&P futures +1.73% and Nasdaq 100 +2.35% at 5:43am. Memory names lead premarket, with Sandisk +11% and Micron +6.6%.",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock%2Dfutures%2Dsurge%2Das%2Dbattered%2Dai%2Dshares%2Drebound%2Dahead%2Dof%2Dshorterned%2Dfriday%2Dtrading/"
+  ],
+  [
+   "What happened in Asia?",
+   "Kospi closed +4.34% and the Nikkei +2.11%; Shanghai rose 3.7% after Chinese authorities signaled stronger market support. Taiwan lagged at +0.4%.",
+   "https://www.ksat.com/business/2026/11/27/asian%2Dshares%2Dmostly%2Drise%2Dahead%2Dof%2Dwall%2Dstreets%2Dreopening%2Dafter%2Dthanksgiving/"
+  ],
+  [
+   "What about the Fed?",
+   "CME FedWatch shows a 98.9% chance of a 25bp hike on Dec 9. Odds for at least one more hike by January stand near 64%.",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock%2Dfutures%2Dsurge%2Das%2Dbattered%2Dai%2Dshares%2Drebound%2Dahead%2Dof%2Dshorterned%2Dfriday%2Dtrading/"
+  ],
+  [
+   "Is Japan inflation a risk?",
+   "Tokyo core CPI rose to 2.9% in November, below the 3.0% forecast but up from 2.6%. A BOJ hike on Dec 18 is priced near 74%.",
+   "https://nerosignal.substack.com/p/tokyo%2Dbought%2Dthe%2Dchips%2Dand%2Dignored"
+  ],
+  [
+   "What is oil doing?",
+   "Brent rose 1.1% to $97.62 and WTI 2.8% to $86.05. Yahoo ties the rise to Houthi attacks on Saudi energy infrastructure.",
+   "https://www.ksat.com/business/2026/11/27/asian%2Dshares%2Dmostly%2Drise%2Dahead%2Dof%2Dwall%2Dstreets%2Dreopening%2Dafter%2Dthanksgiving/"
+  ],
+  [
+   "What do options imply?",
+   "From Wednesday's close, SPXW options priced ±1.17% for today and ±2.73% through Dec 4. A 1.7% futures gap is already beyond today's priced move.",
+   "https://unusualwhales.com/"
+  ],
+  [
+   "What changed since last night?",
+   "S&P perps were 7,306 at 11:15pm Thu and about 7,288 now. Kospi finished +4.3%, double its early gain, and Europe opened higher.",
+   "https://app.hyperliquid.xyz/"
+  ],
+  [
+   "Is the November selloff over?",
+   "Not established. Forbes notes the Nasdaq 100 was down about 8% in November through Wednesday, its worst month since Dec 2022.",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock%2Dfutures%2Dsurge%2Das%2Dbattered%2Dai%2Dshares%2Drebound%2Dahead%2Dof%2Dshorterned%2Dfriday%2Dtrading/"
+  ]
+ ],
+ "stories": [
+  {
+   "t": "6:47am",
+   "h": "Memory and chips lead premarket",
+   "what": "Sandisk +11.1%, Seagate +7.2%, WDC +7.0%, Micron +6.6%, AMD +4.8%, Nvidia +3.9% premarket.",
+   "why": "Chips led November's drop; Sandisk was down nearly half and Nvidia, Micron, Marvell over 25% (Forbes).",
+   "assets": "SNDK, MU, WDC, STX, NVDA, AMD, SMH",
+   "impl": "bull",
+   "read": "A rebound led by the hardest hit names.",
+   "reacted": "Memory perps were already up Thursday night: Sandisk perp +5.9% and Micron +3.5% since Thu 4pm. The move began before this report.",
+   "known": "new",
+   "confirm": "Gains hold after 9:30am with SMH above its premarket level.",
+   "invalid": "Memory names turn red by midday.",
+   "src": "https://www.tokenpost.com/news/investing/63525"
+  },
+  {
+   "t": "1:30am",
+   "h": "Asia rallies as China pledges support",
+   "what": "Kospi +4.34%, Nikkei +2.11%, Shanghai +3.73%, Hang Seng +2.1%.",
+   "why": "AP says Shanghai rose after Chinese authorities signaled stronger market support, including work with state backed funds.",
+   "assets": "Kospi, Nikkei, KR200 and JP225 perps",
+   "impl": "bull",
+   "read": "Risk appetite improved across Asia into the US half day.",
+   "reacted": "Korea 200 perp +3.1% and Japan 225 perp +1.6% since Thu 4pm.",
+   "known": "new",
+   "confirm": "Europe holds gains and US chips open higher.",
+   "invalid": "Asian futures reverse in the US session.",
+   "src": "https://www.ksat.com/business/2026/11/27/asian%2Dshares%2Dmostly%2Drise%2Dahead%2Dof%2Dwall%2Dstreets%2Dreopening%2Dafter%2Dthanksgiving/"
+  },
+  {
+   "t": "3:00am",
+   "h": "Oil stays near month highs",
+   "what": "Brent +1.1% to $97.62, WTI +2.8% to $86.05.",
+   "why": "Yahoo says Brent rose after Houthi attacks on Saudi energy infrastructure; Hormuz attacks were reported Thursday.",
+   "assets": "Brent, WTI, energy, rates",
+   "impl": "bear",
+   "read": "Higher oil keeps inflation and hike pricing in place.",
+   "reacted": "Brent perp +0.5% since Thu 4pm.",
+   "known": "known",
+   "confirm": "Brent above $98 with yields up.",
+   "invalid": "OPEC+ supply news Sunday that eases prices.",
+   "src": "https://www.ksat.com/business/2026/11/27/asian%2Dshares%2Dmostly%2Drise%2Dahead%2Dof%2Dwall%2Dstreets%2Dreopening%2Dafter%2Dthanksgiving/"
+  }
+ ],
+ "semis": {
+  "asof": "Fri 6:47am",
+  "asofTs": "2026-11-27T06:47:00-05:00",
+  "memory": [],
+  "notes": [
+   [
+    "US PREMARKET",
+    "Sandisk +11.1%, Seagate +7.2%, WDC +7.0%, Micron +6.6%, Marvell +7.7%, AMD +4.8%, Nvidia +3.9% at 6:47am.",
+    "https://www.tokenpost.com/news/investing/63525"
+   ],
+   [
+    "EUROPE",
+    "ASML, ASM International and Infineon up 5% to 6%; Stoxx tech +2.6% at 4:33am ET.",
+    "https://www.investing.com/news/stock%2Dmarket%2Dnews/european%2Dstocks%2Dextend%2Drecovery%2Das%2Dtech%2Dminers%2Dadvance-5053129"
+   ],
+   [
+    "JAPAN",
+    "Lasertec +10%, Kioxia +8.9%, Screen +8.7%, Advantest +7.1%, Tokyo Electron +4.4%, SoftBank +3.1% at the close.",
+    "https://nerosignal.substack.com/p/tokyo%2Dbought%2Dthe%2Dchips%2Dand%2Dignored"
+   ],
+   [
+    "NOVEMBER",
+    "Nasdaq 100 down about 8% in November through Wednesday. Sandisk down nearly half; Nvidia, Micron and Marvell each down over 25%.",
+    "https://www.forbes.com/sites/siladityaray/2026/11/27/stock%2Dfutures%2Dsurge%2Das%2Dbattered%2Dai%2Dshares%2Drebound%2Dahead%2Dof%2Dshorterned%2Dfriday%2Dtrading/"
+   ],
+   [
+    "NVIDIA",
+    "S&P put Nvidia's AA rating on watch for a possible cut; Moody's holds. Known since this week.",
+    "https://investinglive.com/stocks/s%2Dp%2Dputs%2Dnvidia%2Ds%2Daa%2Drating%2Don%2Dwatch%2Dfor%2Da%2Dpossible%2Dcut%2Das%2Dmoody%2Ds%2Dholds%2Dsteady/"
+   ]
+  ]
+ },
+ "forecast": {
+  "dir": "up",
+  "date": "2026-11-27",
+  "ref": 7182.78,
+  "basis": "S&P futures +1.7% at 5:43am with chips and Asia leading; a half day leaves little time to fill the gap."
+ }
 }

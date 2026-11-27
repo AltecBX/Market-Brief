@@ -133,6 +133,20 @@ if F is not None:
     if F.get("dir") not in ("up", "down") or not re.match(r"^\d{4}-\d{2}-\d{2}$", str(F.get("date", ""))) or not num(F.get("ref")): err.append("forecast needs dir up|down, ISO date and a numeric ref")
 for e in o.get("em", []):
     if len(e) >= 5 and not re.match(r"^\d{4}-\d{2}-\d{2}$", str(e[4])): err.append("opt.em expiry date must be YYYY-MM-DD: " + str(e[4]))
+S2 = B.get("semis")
+if S2 is not None:
+    for r in S2.get("memory", []) + S2.get("notes", []):
+        if len(r) != 3 or not str(r[2]).startswith("https://"): err.append("semis rows need [label, text, https source]")
+sk = o.get("skew")
+if sk is not None:
+    for r in sk.get("rows", []):
+        if len(r) != 4 or not all(num(x) and 1 < x < 300 for x in r[1:]): err.append("opt.skew rows need [label, put IV, ATM IV, call IV] in %")
+for r in o.get("ivchg", []):
+    if len(r) != 3 or not num(r[1]) or not num(r[2]): err.append("opt.ivchg rows need [label, IV now, IV before]")
+z = o.get("zero")
+if z is not None:
+    for g in z.get("rows", []):
+        if len(g) != 3 or not all(num(x) for x in g) or g[1] < 0 or g[2] > 0: err.append("opt.zero rows must be [strike, call_gex >= 0, put_gex <= 0]")
 for s in B.get("sources", []):
     if len(s) != 2 or not str(s[1]).startswith("https://"): err.append("sources need https links: " + str(s)[:60])
 

@@ -171,6 +171,7 @@ html.m30 .x30h{display:none!important}
 .hauto{cursor:pointer;font-size:13px}
 .uhide{display:none!important}
 #askout .r{font-size:14px}
+.ev .r.full{display:block}
 #cross .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
 /* recap legacy */
 .recap .hero h1{font-size:22px}.recap .kicker{font-size:12px;font-weight:600;color:var(--orange);margin-top:12px}
@@ -268,6 +269,7 @@ html.m30 .x30h{display:none!important}
 <div class="chips" id="filt"><button class="chipb on" data-g="key">Pinned</button><button class="chipb" data-g="semi">Semis</button><button class="chipb" data-g="idx">Indexes</button><button class="chipb" data-g="mega">Megacap</button><button class="chipb" data-g="macro">Commodities and FX</button><button class="chipb" data-g="cry">Crypto</button><button class="chipb" data-g="all">All</button></div>
 <div class="grp board" id="tb"></div>
 <div class="note" id="boardnote"></div></div>
+<div class="sec hist"><div class="sh"><h2>Semiconductor center</h2><span id="semisasof"></span></div><div class="grp hist" id="semis"></div></div>
 <div class="sec ev"><div class="sh"><h2>Under the surface</h2><span>Breadth and internals</span></div><div class="grp" id="internals"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Cross asset</h2><span>Confirmations and divergences</span></div><div class="grp" id="cross"></div></div>
 </div>
@@ -281,6 +283,7 @@ html.m30 .x30h{display:none!important}
 <div class="sec"><div class="sh"><h2>Big SPX option positions</h2><span>From open interest</span></div><div class="grp"><div class="pills" id="lvchips" style="margin:10px 14px 6px"></div><div id="gxrows"></div>
 <div class="legend"><span><i style="background:var(--gfill)"></i>Call gamma</span><span><i style="background:var(--rfill)"></i>Put gamma</span><span>Shaded row is nearest the live S&amp;P perp</span></div></div>
 <div class="note">Exposure is estimated from open interest. It is not a verified dealer position, and an expected move is not a guaranteed range.</div></div>
+<div class="sec" id="secOptx" style="display:none"><div class="sh"><h2>Skew, IV and 0DTE</h2><span>From the brief</span></div><div class="grp hist" id="optx"></div></div>
 <div class="sec"><div class="sh"><h2>VIX in context</h2><span>Cboe history</span></div><div class="grp ev" id="vixhist"></div></div>
 <div class="sec"><div class="sh"><h2>Volatility</h2><span id="vixasof"></span></div><div class="grp pad"><div class="vtag" id="vixtags"></div><div class="fig" style="height:180px"><svg id="vixc"></svg></div><div class="note" id="vixnote" style="margin:4px 0 0"></div></div></div>
 </div>

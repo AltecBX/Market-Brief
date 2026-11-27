@@ -171,6 +171,7 @@ html.m30 .x30h{display:none!important}
 .hauto{cursor:pointer;font-size:13px}
 .uhide{display:none!important}
 #askout .r{font-size:14px}
+.ev .r.full{display:block}
 #cross .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
 /* recap legacy */
 .recap .hero h1{font-size:22px}.recap .kicker{font-size:12px;font-weight:600;color:var(--orange);margin-top:12px}
@@ -268,6 +269,7 @@ html.m30 .x30h{display:none!important}
 <div class="chips" id="filt"><button class="chipb on" data-g="key">Pinned</button><button class="chipb" data-g="semi">Semis</button><button class="chipb" data-g="idx">Indexes</button><button class="chipb" data-g="mega">Megacap</button><button class="chipb" data-g="macro">Commodities and FX</button><button class="chipb" data-g="cry">Crypto</button><button class="chipb" data-g="all">All</button></div>
 <div class="grp board" id="tb"></div>
 <div class="note" id="boardnote"></div></div>
+<div class="sec hist"><div class="sh"><h2>Semiconductor center</h2><span id="semisasof"></span></div><div class="grp hist" id="semis"></div></div>
 <div class="sec ev"><div class="sh"><h2>Under the surface</h2><span>Breadth and internals</span></div><div class="grp" id="internals"><div class="r mut">Loading</div></div></div>
 <div class="sec"><div class="sh"><h2>Cross asset</h2><span>Confirmations and divergences</span></div><div class="grp" id="cross"></div></div>
 </div>
@@ -281,6 +283,7 @@ html.m30 .x30h{display:none!important}
 <div class="sec"><div class="sh"><h2>Big SPX option positions</h2><span>From open interest</span></div><div class="grp"><div class="pills" id="lvchips" style="margin:10px 14px 6px"></div><div id="gxrows"></div>
 <div class="legend"><span><i style="background:var(--gfill)"></i>Call gamma</span><span><i style="background:var(--rfill)"></i>Put gamma</span><span>Shaded row is nearest the live S&amp;P perp</span></div></div>
 <div class="note">Exposure is estimated from open interest. It is not a verified dealer position, and an expected move is not a guaranteed range.</div></div>
+<div class="sec" id="secOptx" style="display:none"><div class="sh"><h2>Skew, IV and 0DTE</h2><span>From the brief</span></div><div class="grp hist" id="optx"></div></div>
 <div class="sec"><div class="sh"><h2>VIX in context</h2><span>Cboe history</span></div><div class="grp ev" id="vixhist"></div></div>
 <div class="sec"><div class="sh"><h2>Volatility</h2><span id="vixasof"></span></div><div class="grp pad"><div class="vtag" id="vixtags"></div><div class="fig" style="height:180px"><svg id="vixc"></svg></div><div class="note" id="vixnote" style="margin:4px 0 0"></div></div></div>
 </div>
@@ -1265,13 +1268,16 @@ $('autohist').addEventListener('click', function (e) { var r = e.target.closest(
 
 /* VIX context from history */
 function vixHist() {
-  loadHist(['VIX', 'VIX9D', 'VIX3M', 'VVIX']).then(function () {
+  loadHist(['VIX', 'VIX9D', 'VIX3M', 'VVIX', 'SPX']).then(function () {
     var V = HIST.VIX, n = V.c.length - 1, v = V.c[n], all = V.c.filter(function (x, i) { return V.d[i] >= 19920101 }), y1 = V.c.slice(-252);
     var pr = function (a) { return a.filter(function (x) { return x <= v }).length / a.length * 100 };
     var h = [['VIX close', f(v, 2) + ' on ' + dlab(V.d[n])], ['Day range', f(V.l[n], 2) + ' to ' + f(V.h[n], 2)], ['Close vs day high', sg((v / V.h[n] - 1) * 100)], ['Percentile since 1992', pr(all).toFixed(0) + '%'], ['Percentile, last year', pr(y1).toFixed(0) + '%'], ['20 day average', f(V.c.slice(-20).reduce(function (s, x) { return s + x }, 0) / 20, 2)]];
     var V9 = HIST.VIX9D, V3 = HIST.VIX3M, VV = HIST.VVIX; if (V9) h.push(['VIX9D', f(V9.c[V9.c.length - 1], 2)]); if (V3) h.push(['VIX3M', f(V3.c[V3.c.length - 1], 2)]); if (VV) h.push(['VVIX', f(VV.c[VV.c.length - 1], 2)]);
+    var SP = HIST.SPX, sc = SP.c, rv = function (k) { var a = []; for (var i = sc.length - k; i < sc.length; i++) a.push(Math.log(sc[i] / sc[i - 1])); var m = a.reduce(function (s, x) { return s + x }, 0) / a.length; return Math.sqrt(a.reduce(function (s, x) { return s + (x - m) * (x - m) }, 0) / (a.length - 1) * 252) * 100 };
+    var am = 0; for (var i = sc.length - 20; i < sc.length; i++) am += Math.abs(sc[i] / sc[i - 1] - 1) * 100; am /= 20;
+    h.push(['S&P realized vol, 10 and 20 days', rv(10).toFixed(1) + '% / ' + rv(20).toFixed(1) + '%'], ['VIX minus 20 day realized', (v - rv(20) >= 0 ? '+' : '−') + Math.abs(v - rv(20)).toFixed(1) + ' pts'], ['Implied daily move from VIX', '±' + (v / Math.sqrt(252)).toFixed(2) + '%'], ['Average daily move, last 20', '±' + am.toFixed(2) + '%']);
     var d5 = v - V.c[n - 5]; h.push(['Change over 5 sessions', (d5 >= 0 ? '+' : '−') + Math.abs(d5).toFixed(2) + ' pts']);
-    $('vixhist').innerHTML = h.map(function (x) { return '<div class="r"><span>' + esc(x[0]) + '</span><b class="num">' + esc(x[1]) + '</b></div>' }).join('') + '<div class="r k">Fear reading: ' + (v >= 30 ? 'high' : v >= 20 ? 'elevated' : 'low') + ', ' + (d5 > 2 ? 'rising over the last week' : d5 < -2 ? 'falling over the last week' : 'about flat over the last week') + (v < V.h[n] * 0.9 ? ', and it closed well off its intraday high' : '') + '. Cboe daily closes; not live.</div>';
+    $('vixhist').innerHTML = h.map(function (x) { return '<div class="r"><span>' + esc(x[0]) + '</span><b class="num">' + esc(x[1]) + '</b></div>' }).join('') + '<div class="r k">Fear reading: ' + (v >= 30 ? 'high' : v >= 20 ? 'elevated' : 'low') + ', ' + (d5 > 2 ? 'rising over the last week' : d5 < -2 ? 'falling over the last week' : 'about flat over the last week') + (v < V.h[n] * 0.9 ? ', and it closed well off its intraday high' : '') + '. Options are ' + (v > rv(20) ? 'pricing more movement than the S&P has recently delivered' : 'pricing less movement than the S&P has recently delivered') + '. Cboe daily closes; not live.</div>';
   }).catch(function () { $('vixhist').innerHTML = '<div class="r mut">VIX history unavailable.</div>' });
 }
 
@@ -1382,7 +1388,7 @@ function renderInternals() {
     var verdict = '';
     var spx = chgOf('xyz:SP500', 'perp');
     if (b.n >= 30 && isNum(spx)) verdict = spx > 0 && b.pct < 50 ? 'Weaker underneath than the index: the S&P perp is up but most stock perps are not.' : spx < 0 && b.pct > 55 ? 'Healthier underneath than the index: most stock perps are up while the S&P perp is down.' : b.pct >= 65 && spx > 0 ? 'Participation is broad, consistent with the index move.' : b.pct <= 35 && spx < 0 ? 'Selling is broad, consistent with the index move.' : 'Underneath roughly matches the index.';
-    $('internals').innerHTML = h + x + (verdict ? '<div class="r"><b>' + verdict + '</b><div class="k">Perp breadth uses ' + b.n + ' US listed stocks that trade as live perps, not the whole exchange; ETF spreads are last session closes. Exchange advance and decline counts appear here when the brief includes them.</div></div>' : '');
+    $('internals').innerHTML = h + x + (verdict ? '<div class="r full"><b>' + verdict + '</b><div class="k">Perp breadth uses ' + b.n + ' US listed stocks that trade as live perps, not the whole exchange; ETF spreads are last session closes. Exchange advance and decline counts appear here when the brief includes them.</div></div>' : '');
   }).catch(function () { $('internals').innerHTML = h });
 }
 function renderCross() {
@@ -1432,6 +1438,39 @@ var _showTab = showTab;
 showTab = function (p) { _showTab(p); if (p === 'board') { renderInternals(); renderCross() } if (p === 'mem') { var t = setInterval(function () { if (MEM) { clearInterval(t); scorecard() } }, 300); setTimeout(function () { clearInterval(t) }, 8000) } };
 var _setMode = setMode;
 setMode = function (m) { _setMode(m); try { renderCal7() } catch (e) { } };
+
+/* ---------- Semiconductor center ---------- */
+var SEMIG = [['Chip designers', 'NVDA AMD AVGO QCOM MRVL ARM'], ['Memory and storage, US', 'MU SNDK WDC'], ['Equipment', 'ASML LRCX AMAT'], ['Foundry', 'TSM UMC INTC'], ['Memory, Asia', 'SKHX SMSN KIOXIA']];
+function grpMed(ids, k) { var v = ids.split(' ').map(function (s) { return fresh('xyz:' + s) ? chgOf('xyz:' + s, k) : null }).filter(isNum); return v.length ? median(v) : null }
+function renderSemis() {
+  var k = 'perp', nd = fresh('xyz:XYZ100') ? chgOf('xyz:XYZ100', k) : null, smh = fresh('xyz:SMH') ? chgOf('xyz:SMH', k) : null, h = '';
+  h += '<div class="r hrow head"><span>Group, median perp</span><b>Move</b><b>vs NDX</b></div>';
+  SEMIG.forEach(function (g) { var m = grpMed(g[1], k); h += '<div class="r hrow"><span>' + esc(g[0]) + ' <span class="k">' + esc(g[1].split(' ').join(', ')) + '</span></span><span class="' + (isNum(m) ? m >= 0 ? 'up' : 'dn' : '') + '">' + (isNum(m) ? sg(m) : 'n/a') + '</span><span>' + (isNum(m) && isNum(nd) ? sg(m - nd) : 'n/a') + '</span></div>' });
+  h += '<div class="r hrow"><span>Semis ETF (SMH)</span><span class="' + (isNum(smh) ? smh >= 0 ? 'up' : 'dn' : '') + '">' + (isNum(smh) ? sg(smh) : 'n/a') + '</span><span>' + (isNum(smh) && isNum(nd) ? sg(smh - nd) : 'n/a') + '</span></div>';
+  var am = grpMed(SEMIG[4][1], k), um = grpMed(SEMIG[1][1], k), jp = fresh('xyz:JP225') ? chgOf('xyz:JP225', 'ref24') : null, kr = fresh('xyz:KR200') ? chgOf('xyz:KR200', 'ref24') : null;
+  var read = '';
+  if (isNum(am) && isNum(um)) read += 'Asia memory perps ' + sg(am) + ' vs US memory perps ' + sg(um) + ' since the ' + baseDay() + ' US close. ';
+  if (isNum(jp)) read += 'Nikkei perp ' + sg(jp) + (isNum(kr) ? ', Kospi 200 perp ' + sg(kr) : '') + ' over 24h. ';
+  h += '<div class="r full"><b>Asia read for the next US session</b><div class="k">' + (read || 'Waiting for live Asia prices. ') + 'Asia often follows the prior US session, so a big Asian move is partly a reaction, not new information. ' + (isNum(jp) && Math.abs(jp) >= 1 ? '<a href="#" id="semistudy" data-x="' + Math.floor(Math.abs(jp) * 2) / 2 + '" data-dir="' + (jp > 0 ? 1 : 0) + '">See how US semis did after similar Nikkei moves</a>.' : 'The History tab tests Nikkei moves against the next US session and semis.') + '</div></div>';
+  var S = B.semis;
+  if (S) { (S.memory || []).forEach(function (r) { h += '<div class="r full"><b>' + esc(r[0]) + '</b> ' + lite(r[1]) + (r[2] && /^https:\/\//.test(r[2]) ? ' <a class="k" href="' + esc(r[2]) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') + '</div>' }); (S.notes || []).forEach(function (r) { h += '<div class="r full"><span class="cat">' + esc(r[0]) + '</span>' + lite(r[1]) + (r[2] && /^https:\/\//.test(r[2]) ? ' <a class="k" href="' + esc(r[2]) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') + '</div>' }) }
+  else h += '<div class="r full k">Memory pricing (DRAM, NAND, HBM), supply and demand, export rules, AI and hyperscaler spending, earnings and estimate changes appear here once a scheduled brief includes them, each with its source.</div>';
+  $('semis').innerHTML = h; $('semisasof').textContent = 'Perps vs ' + basisDef(k)[1].toLowerCase() + (S && S.asof ? ', notes ' + S.asof : '');
+}
+$('semis').addEventListener('click', function (e) { var a = e.target.closest('#semistudy'); if (!a) return; e.preventDefault(); openStudy('asiasmh', { x: +a.dataset.x, dir: +a.dataset.dir }) });
+var _showTab2 = showTab;
+showTab = function (p) { _showTab2(p); if (p === 'board') renderSemis() };
+
+/* ---------- Options extras from the scheduled brief: skew, 0DTE, IV change ---------- */
+function renderOptExtra() {
+  var O = B.opt, h = '';
+  if (O.skew && O.skew.rows) { h += '<div class="r hrow head"><span>Skew, ' + esc(O.skew.asof || O.asof) + '</span><b>25d put / ATM / 25d call IV</b><b>Put minus call</b></div>'; O.skew.rows.forEach(function (r) { h += '<div class="r hrow"><span>' + esc(r[0]) + '</span><span>' + r[1].toFixed(1) + ' / ' + r[2].toFixed(1) + ' / ' + r[3].toFixed(1) + '%</span><span>' + (r[1] - r[3] >= 0 ? '+' : '−') + Math.abs(r[1] - r[3]).toFixed(1) + '</span></div>' }) }
+  if (O.ivchg) O.ivchg.forEach(function (r) { h += '<div class="r hrow"><span>' + esc(r[0]) + ' IV</span><span>' + r[1].toFixed(1) + '%</span><span>' + (r[1] - r[2] >= 0 ? '+' : '−') + Math.abs(r[1] - r[2]).toFixed(1) + ' pts</span></div>' });
+  if (O.zero && O.zero.rows) { var mx = 0; O.zero.rows.forEach(function (g) { mx = Math.max(mx, g[1] - g[2]) }); h += '<div class="r full"><b>0DTE positioning</b> <span class="k">' + esc(O.zero.expiry || '') + ', ' + esc(O.zero.asof || '') + '. ' + esc(O.zero.note || '') + '</span></div>' + O.zero.rows.map(function (g) { return '<div class="gx"><span class="num"><b>' + f(g[0], 0) + '</b></span><span class="gb"><i style="width:' + (g[1] / mx * 100) + '%;background:var(--gfill)"></i><i style="width:' + (-g[2] / mx * 100) + '%;background:var(--rfill)"></i></span><span class="lb"></span></div>' }).join('') }
+  $('optx').innerHTML = h; $('secOptx').style.display = h ? '' : 'none';
+}
+var _applyBrief2 = applyBrief;
+applyBrief = function (nb) { _applyBrief2(nb); try { renderOptExtra() } catch (e) { } };
 
 /* ---------- Start ---------- */
 setTheme(THEME); setMode(MODE); sectors(); applyBrief(DEF); BRIEF_V = '';

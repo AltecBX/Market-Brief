@@ -104,7 +104,7 @@ function renderInternals() {
     var verdict = '';
     var spx = chgOf('xyz:SP500', 'perp');
     if (b.n >= 30 && isNum(spx)) verdict = spx > 0 && b.pct < 50 ? 'Weaker underneath than the index: the S&P perp is up but most stock perps are not.' : spx < 0 && b.pct > 55 ? 'Healthier underneath than the index: most stock perps are up while the S&P perp is down.' : b.pct >= 65 && spx > 0 ? 'Participation is broad, consistent with the index move.' : b.pct <= 35 && spx < 0 ? 'Selling is broad, consistent with the index move.' : 'Underneath roughly matches the index.';
-    $('internals').innerHTML = h + x + (verdict ? '<div class="r"><b>' + verdict + '</b><div class="k">Perp breadth uses ' + b.n + ' US listed stocks that trade as live perps, not the whole exchange; ETF spreads are last session closes. Exchange advance and decline counts appear here when the brief includes them.</div></div>' : '');
+    $('internals').innerHTML = h + x + (verdict ? '<div class="r full"><b>' + verdict + '</b><div class="k">Perp breadth uses ' + b.n + ' US listed stocks that trade as live perps, not the whole exchange; ETF spreads are last session closes. Exchange advance and decline counts appear here when the brief includes them.</div></div>' : '');
   }).catch(function () { $('internals').innerHTML = h });
 }
 function renderCross() {
@@ -154,3 +154,36 @@ var _showTab = showTab;
 showTab = function (p) { _showTab(p); if (p === 'board') { renderInternals(); renderCross() } if (p === 'mem') { var t = setInterval(function () { if (MEM) { clearInterval(t); scorecard() } }, 300); setTimeout(function () { clearInterval(t) }, 8000) } };
 var _setMode = setMode;
 setMode = function (m) { _setMode(m); try { renderCal7() } catch (e) { } };
+
+/* ---------- Semiconductor center ---------- */
+var SEMIG = [['Chip designers', 'NVDA AMD AVGO QCOM MRVL ARM'], ['Memory and storage, US', 'MU SNDK WDC'], ['Equipment', 'ASML LRCX AMAT'], ['Foundry', 'TSM UMC INTC'], ['Memory, Asia', 'SKHX SMSN KIOXIA']];
+function grpMed(ids, k) { var v = ids.split(' ').map(function (s) { return fresh('xyz:' + s) ? chgOf('xyz:' + s, k) : null }).filter(isNum); return v.length ? median(v) : null }
+function renderSemis() {
+  var k = 'perp', nd = fresh('xyz:XYZ100') ? chgOf('xyz:XYZ100', k) : null, smh = fresh('xyz:SMH') ? chgOf('xyz:SMH', k) : null, h = '';
+  h += '<div class="r hrow head"><span>Group, median perp</span><b>Move</b><b>vs NDX</b></div>';
+  SEMIG.forEach(function (g) { var m = grpMed(g[1], k); h += '<div class="r hrow"><span>' + esc(g[0]) + ' <span class="k">' + esc(g[1].split(' ').join(', ')) + '</span></span><span class="' + (isNum(m) ? m >= 0 ? 'up' : 'dn' : '') + '">' + (isNum(m) ? sg(m) : 'n/a') + '</span><span>' + (isNum(m) && isNum(nd) ? sg(m - nd) : 'n/a') + '</span></div>' });
+  h += '<div class="r hrow"><span>Semis ETF (SMH)</span><span class="' + (isNum(smh) ? smh >= 0 ? 'up' : 'dn' : '') + '">' + (isNum(smh) ? sg(smh) : 'n/a') + '</span><span>' + (isNum(smh) && isNum(nd) ? sg(smh - nd) : 'n/a') + '</span></div>';
+  var am = grpMed(SEMIG[4][1], k), um = grpMed(SEMIG[1][1], k), jp = fresh('xyz:JP225') ? chgOf('xyz:JP225', 'ref24') : null, kr = fresh('xyz:KR200') ? chgOf('xyz:KR200', 'ref24') : null;
+  var read = '';
+  if (isNum(am) && isNum(um)) read += 'Asia memory perps ' + sg(am) + ' vs US memory perps ' + sg(um) + ' since the ' + baseDay() + ' US close. ';
+  if (isNum(jp)) read += 'Nikkei perp ' + sg(jp) + (isNum(kr) ? ', Kospi 200 perp ' + sg(kr) : '') + ' over 24h. ';
+  h += '<div class="r full"><b>Asia read for the next US session</b><div class="k">' + (read || 'Waiting for live Asia prices. ') + 'Asia often follows the prior US session, so a big Asian move is partly a reaction, not new information. ' + (isNum(jp) && Math.abs(jp) >= 1 ? '<a href="#" id="semistudy" data-x="' + Math.floor(Math.abs(jp) * 2) / 2 + '" data-dir="' + (jp > 0 ? 1 : 0) + '">See how US semis did after similar Nikkei moves</a>.' : 'The History tab tests Nikkei moves against the next US session and semis.') + '</div></div>';
+  var S = B.semis;
+  if (S) { (S.memory || []).forEach(function (r) { h += '<div class="r full"><b>' + esc(r[0]) + '</b> ' + lite(r[1]) + (r[2] && /^https:\/\//.test(r[2]) ? ' <a class="k" href="' + esc(r[2]) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') + '</div>' }); (S.notes || []).forEach(function (r) { h += '<div class="r full"><span class="cat">' + esc(r[0]) + '</span>' + lite(r[1]) + (r[2] && /^https:\/\//.test(r[2]) ? ' <a class="k" href="' + esc(r[2]) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') + '</div>' }) }
+  else h += '<div class="r full k">Memory pricing (DRAM, NAND, HBM), supply and demand, export rules, AI and hyperscaler spending, earnings and estimate changes appear here once a scheduled brief includes them, each with its source.</div>';
+  $('semis').innerHTML = h; $('semisasof').textContent = 'Perps vs ' + basisDef(k)[1].toLowerCase() + (S && S.asof ? ', notes ' + S.asof : '');
+}
+$('semis').addEventListener('click', function (e) { var a = e.target.closest('#semistudy'); if (!a) return; e.preventDefault(); openStudy('asiasmh', { x: +a.dataset.x, dir: +a.dataset.dir }) });
+var _showTab2 = showTab;
+showTab = function (p) { _showTab2(p); if (p === 'board') renderSemis() };
+
+/* ---------- Options extras from the scheduled brief: skew, 0DTE, IV change ---------- */
+function renderOptExtra() {
+  var O = B.opt, h = '';
+  if (O.skew && O.skew.rows) { h += '<div class="r hrow head"><span>Skew, ' + esc(O.skew.asof || O.asof) + '</span><b>25d put / ATM / 25d call IV</b><b>Put minus call</b></div>'; O.skew.rows.forEach(function (r) { h += '<div class="r hrow"><span>' + esc(r[0]) + '</span><span>' + r[1].toFixed(1) + ' / ' + r[2].toFixed(1) + ' / ' + r[3].toFixed(1) + '%</span><span>' + (r[1] - r[3] >= 0 ? '+' : '−') + Math.abs(r[1] - r[3]).toFixed(1) + '</span></div>' }) }
+  if (O.ivchg) O.ivchg.forEach(function (r) { h += '<div class="r hrow"><span>' + esc(r[0]) + ' IV</span><span>' + r[1].toFixed(1) + '%</span><span>' + (r[1] - r[2] >= 0 ? '+' : '−') + Math.abs(r[1] - r[2]).toFixed(1) + ' pts</span></div>' });
+  if (O.zero && O.zero.rows) { var mx = 0; O.zero.rows.forEach(function (g) { mx = Math.max(mx, g[1] - g[2]) }); h += '<div class="r full"><b>0DTE positioning</b> <span class="k">' + esc(O.zero.expiry || '') + ', ' + esc(O.zero.asof || '') + '. ' + esc(O.zero.note || '') + '</span></div>' + O.zero.rows.map(function (g) { return '<div class="gx"><span class="num"><b>' + f(g[0], 0) + '</b></span><span class="gb"><i style="width:' + (g[1] / mx * 100) + '%;background:var(--gfill)"></i><i style="width:' + (-g[2] / mx * 100) + '%;background:var(--rfill)"></i></span><span class="lb"></span></div>' }).join('') }
+  $('optx').innerHTML = h; $('secOptx').style.display = h ? '' : 'none';
+}
+var _applyBrief2 = applyBrief;
+applyBrief = function (nb) { _applyBrief2(nb); try { renderOptExtra() } catch (e) { } };

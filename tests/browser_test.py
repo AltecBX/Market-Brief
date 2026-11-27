@@ -7,7 +7,8 @@ its questions; perp API failure; stale data (clock moved 3 days ahead); a brief 
 import json, sys
 from playwright.sync_api import sync_playwright
 
-URL = "http://localhost:8766/index.html"
+import os
+URL = os.environ.get("URL", "http://localhost:8766/index.html")
 fails, n = 0, 0
 def ok(c, msg):
     global fails, n

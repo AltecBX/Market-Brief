@@ -28,5 +28,13 @@
   "label": "Fri 7:09am ET",
   "headline": "Futures up 1.7% into the half day, memory chips lead.",
   "file": "2026-11-27/0709.json"
+ },
+ {
+  "date": "2026-11-27",
+  "time": "0919",
+  "kind": "brief",
+  "label": "Fri 9:19am ET",
+  "headline": "Gap up holds into the open; trade deficit widens more than expected.",
+  "file": "2026-11-27/0919.json"
  }
 ]

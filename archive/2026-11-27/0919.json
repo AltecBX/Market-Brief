@@ -1,0 +1,1134 @@
+{
+ "updated": "2026-11-27T09:19:25-05:00",
+ "updatedLabel": "Fri 9:19am ET",
+ "next": "1:12pm",
+ "kicker": "BLACK FRIDAY HALF DAY · STOCKS CLOSE 1:00PM, BONDS 2:00PM ET · PRE OPEN BRIEF",
+ "headline": "Gap up holds into the open; trade deficit widens more than expected.",
+ "lede": "S&P perps are near 7,282, +1.4% vs Wednesday's close and a bit under the 7,297 seen at 8:29am. The October goods deficit came in at $149.5B vs $133.1B expected, with no clear move in perps after 8:30am.",
+ "pills": [
+  [
+   "g",
+   "S&P perp +1.4% · NQ +2.1%"
+  ],
+  [
+   "g",
+   "SNDK +9.8% · MU +5.5% perps"
+  ],
+  [
+   "r",
+   "Goods deficit $149.5B vs $133.1B"
+  ],
+  [
+   "a",
+   "Gap past ±1.17% implied move"
+  ],
+  [
+   "r",
+   "Dec 9 hike near 99% priced"
+  ],
+  [
+   "a",
+   "Half day · 1:00pm close"
+  ]
+ ],
+ "drivers": [
+  [
+   "g",
+   "CHIPS LEAD THE GAP",
+   "Perps vs Wednesday's close at 9:19am: Sandisk +9.8%, WDC +6.0%, Micron +5.5%, Lam +5.2%, AMD +3.9%, SMH +3.5%, Nvidia +2.1%. TokenPost says selling in AI stocks paused."
+  ],
+  [
+   "r",
+   "TRADE GAP WIDENS",
+   "October goods deficit $149.5B vs $133.1B consensus and $135.1B prior; imports jumped 6.1% (ActionForex). Wholesale inventories +0.9% vs +0.5% expected."
+  ],
+  [
+   "a",
+   "GAP BEYOND OPTIONS",
+   "SPXW options priced ±1.17% for today from Wednesday's 7,182.78 close, a top near 7,267. Perps near 7,282 already sit above it."
+  ],
+  [
+   "r",
+   "HIKE STILL PRICED",
+   "CME FedWatch near 99% for a 25bp hike Dec 9 (Forbes 98.9% Fri, Invezz 99.4% Thu). Treasury quotes differ: 10 year 4.85% on Yahoo, 4.92% on TipRanks."
+  ]
+ ],
+ "picks": [
+  [
+   "Fri 9:19am",
+   "FUT",
+   "up",
+   "S&P perps 7,282, +1.4% vs Wed close and −0.1% since 7am. Nasdaq 100 perp 26,584, +2.1%."
+  ],
+  [
+   "Fri 8:38am",
+   "MACRO",
+   "dn",
+   "October goods trade deficit $149.5B vs $133.1B consensus, prior $135.1B. Imports +6.1% to $365.3B, capital goods imports +8.5% (ActionForex). New."
+  ],
+  [
+   "Fri 8:38am",
+   "MACRO",
+   "",
+   "Wholesale inventories +0.9% vs +0.5% expected; retail inventories +0.8%, prior 0.7% (ActionForex). S&P perp was 7,297 at 8:29am and 7,296 at 8:45am."
+  ],
+  [
+   "Fri 7:53am",
+   "FUT",
+   "up",
+   "Yahoo: S&P futures 7,314 (+1.64%), Nasdaq 26,700 (+2.30%), Dow +1.40%. Yahoo says nerves over AI profitability eased."
+  ],
+  [
+   "Fri 7:53am",
+   "OIL",
+   "dn",
+   "WTI futures $84.83 (+1.4%) on Yahoo, which cites Houthi attacks on Saudi energy sites. Brent perp near $91.6."
+  ],
+  [
+   "Fri 5:43am",
+   "FED",
+   "dn",
+   "CME FedWatch prices a 98.9% chance of a 25bp hike on Dec 9 (Forbes). Already known."
+  ],
+  [
+   "Fri 4:33am",
+   "MACRO",
+   "up",
+   "Stoxx 600 +1% with tech +2.6%, led by ASML, ASM International and Infineon (Reuters)."
+  ],
+  [
+   "Fri 4:08am",
+   "AI",
+   "up",
+   "TokenPost: Sandisk nearly +10%, Micron and SK hynix over +6%, Nvidia over +4% premarket as selling in AI stocks paused."
+  ],
+  [
+   "Fri 1:30am",
+   "ASIA",
+   "up",
+   "Closes: Kospi +4.34%, Nikkei +2.11%, Shanghai +3.7% after China signaled market support (AP)."
+  ],
+  [
+   "Thu",
+   "MACRO",
+   "",
+   "TrendForce cut its 2027 DRAM contract price outlook; DDR4 spot prices have started to fall (Wisevoter). Known since Wed."
+  ],
+  [
+   "Wed 4:00pm",
+   "MACRO",
+   "",
+   "Wed close: S&P 7,182.78 (−0.25%) after a 3.2% intraday drop. See the Wed recap tab."
+  ]
+ ],
+ "planTitle": "OPEN GAME PLAN",
+ "means": [
+  "Perps near <b>7,282</b> sit above <b>7,267</b>, the top of today's ±1.17% implied move, and above the <b>7,201</b> trigger. The gap already uses all of the priced move.",
+  "The wider trade gap did not move perps: 7,297 at 8:29am, 7,296 at 8:45am. Since then perps eased to 7,282.",
+  "Memory leads again: Sandisk, WDC and Micron perps +5% to +10%. Holding that after 9:30am keeps the rebound led by the hardest hit names.",
+  "Back under <b>7,201</b> reopens the 7,060 to 7,200 range; a full gap fill is <b>7,183</b>. The cash close is 1:00pm with thin books."
+ ],
+ "calTitle": "FRIDAY CALENDAR · ET",
+ "calendar": [
+  [
+   "8:30am",
+   "Goods trade deficit (Oct) $149.5B vs $133.1B consensus. Wholesale inventories +0.9% vs +0.5%. Retail inventories +0.8%"
+  ],
+  [
+   "9:30am",
+   "Cash open vs 7,201 trigger and 7,267 implied move top"
+  ],
+  [
+   "1:00pm",
+   "Stocks close. Bonds close 2:00pm"
+  ],
+  [
+   "4:30pm",
+   "Fed H.4.1 balance sheet"
+  ],
+  [
+   "Sun",
+   "OPEC+ meets"
+  ],
+  [
+   "Tue Dec 1",
+   "ISM manufacturing, JOLTS, Fed's Bowman. Marvell earnings"
+  ]
+ ],
+ "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can sit below futures quotes, which trade on a different basis. Options and VIX levels are from Wednesday, the last full session.",
+ "base": {
+  "label": "Wed close",
+  "spx": 7182.78,
+  "closes": {
+   "xyz:SP500": 7182.78,
+   "xyz:XYZ100": 26046.9,
+   "xyz:NVDA": 149.3,
+   "xyz:AMD": 406.03,
+   "xyz:MU": 601.25,
+   "xyz:SMH": 422.46,
+   "xyz:AVGO": 300.86,
+   "xyz:TSM": 342.34,
+   "xyz:LRCX": 185.01,
+   "xyz:SNDK": 73.61,
+   "xyz:ORCL": 103.88,
+   "xyz:AAPL": 355.58,
+   "xyz:MSFT": 489.93,
+   "xyz:GOOGL": 273.1,
+   "xyz:AMZN": 244.43,
+   "xyz:META": 609.89,
+   "xyz:TSLA": 380.14
+  },
+  "ts": "2026-11-25T16:00:00-05:00",
+  "perp": {
+   "xyz:SP500": 7184.1,
+   "xyz:XYZ100": 26057.0,
+   "xyz:JP225": 57226.0,
+   "xyz:KR200": 731.09,
+   "xyz:NVDA": 149.4,
+   "xyz:AMD": 406.98,
+   "xyz:MU": 604.62,
+   "xyz:SNDK": 73.607,
+   "xyz:WDC": 272.05,
+   "xyz:AVGO": 301.14,
+   "xyz:TSM": 342.23,
+   "xyz:ASML": 1304.2,
+   "xyz:LRCX": 184.58,
+   "xyz:AMAT": 311.08,
+   "xyz:SMH": 422.8,
+   "xyz:SKHX": 780.43,
+   "xyz:SMSN": 127.94,
+   "xyz:KIOXIA": 44.353,
+   "xyz:ORCL": 103.82,
+   "xyz:AAPL": 355.49,
+   "xyz:MSFT": 490.03,
+   "xyz:GOOGL": 273.18,
+   "xyz:AMZN": 244.46,
+   "xyz:META": 609.23,
+   "xyz:TSLA": 380.31,
+   "xyz:GOLD": 3578.5,
+   "xyz:SILVER": 41.137,
+   "xyz:BRENTOIL": 90.72,
+   "xyz:CL": 84.12,
+   "xyz:COPPER": 5.479,
+   "xyz:JPY": 159.13,
+   "xyz:EUR": 1.0978,
+   "BTC": 60266.0,
+   "ETH": 1689.4,
+   "SOL": 70.592,
+   "xyz:HOOD": 65.801,
+   "xyz:INTC": 54.473,
+   "xyz:PLTR": 163.56,
+   "xyz:COIN": 103.77,
+   "xyz:MSTR": 80.06,
+   "xyz:CRCL": 48.272,
+   "xyz:NFLX": 59.333,
+   "xyz:COST": 1087.0,
+   "xyz:LLY": 1393.2,
+   "xyz:RIVN": 11.718,
+   "xyz:BABA": 86.28,
+   "xyz:CRWV": 42.58,
+   "xyz:GME": 26.894,
+   "xyz:HIMS": 14.67,
+   "xyz:DKNG": 17.666,
+   "xyz:LITE": 476.55,
+   "xyz:BX": 119.12,
+   "xyz:MRVL": 130.98,
+   "xyz:RKLB": 47.093,
+   "xyz:ZM": 88.394,
+   "xyz:EBAY": 115.78,
+   "xyz:ARM": 161.51,
+   "xyz:DELL": 297.29,
+   "xyz:IBM": 243.29,
+   "xyz:NOW": 92.027,
+   "xyz:NBIS": 85.09,
+   "xyz:NOK": 7.3159,
+   "xyz:BE": 152.86,
+   "xyz:QCOM": 168.6,
+   "xyz:GEV": 715.15,
+   "xyz:IREN": 12.853,
+   "xyz:NET": 283.35,
+   "xyz:CRWD": 209.72,
+   "xyz:RDDT": 91.707,
+   "xyz:AAOI": 36.97,
+   "xyz:MRNA": 220.72,
+   "xyz:CVX": 211.2,
+   "xyz:UMC": 13.216,
+   "xyz:GLW": 100.02,
+   "xyz:TTWO": 227.58,
+   "xyz:ICE": 178.58,
+   "xyz:PANW": 355.29
+  },
+  "closesSrc": "Cash closes Wed Nov 25: Cboe and Nasdaq for indexes, Unusual Whales daily bars for stocks. Index perps track the cash index; stock perps track the stock."
+ },
+ "anchor": {
+  "label": "Since 7am",
+  "ts": "2026-11-27T07:00:00-05:00",
+  "prices": {
+   "xyz:SP500": 7290.6,
+   "xyz:XYZ100": 26598.0,
+   "xyz:JP225": 58600.0,
+   "xyz:KR200": 754.05,
+   "xyz:NVDA": 152.87,
+   "xyz:AMD": 423.85,
+   "xyz:MU": 636.5,
+   "xyz:SNDK": 80.87,
+   "xyz:WDC": 287.99,
+   "xyz:AVGO": 311.14,
+   "xyz:TSM": 351.65,
+   "xyz:ASML": 1328.9,
+   "xyz:LRCX": 194.74,
+   "xyz:AMAT": 326.57,
+   "xyz:SMH": 437.32,
+   "xyz:SKHX": 825.93,
+   "xyz:SMSN": 133.65,
+   "xyz:KIOXIA": 52.716,
+   "xyz:ORCL": 108.07,
+   "xyz:AAPL": 357.37,
+   "xyz:MSFT": 499.42,
+   "xyz:GOOGL": 279.42,
+   "xyz:AMZN": 250.45,
+   "xyz:META": 627.82,
+   "xyz:TSLA": 386.56,
+   "xyz:GOLD": 3675.8,
+   "xyz:SILVER": 44.123,
+   "xyz:BRENTOIL": 92.069,
+   "xyz:CL": 85.258,
+   "xyz:COPPER": 5.6521,
+   "xyz:JPY": 159.34,
+   "xyz:EUR": 1.097,
+   "BTC": 61650.0,
+   "ETH": 1723.4,
+   "SOL": 73.126,
+   "xyz:HOOD": 69.391,
+   "xyz:INTC": 56.722,
+   "xyz:PLTR": 168.36,
+   "xyz:COIN": 108.38,
+   "xyz:MSTR": 84.27,
+   "xyz:CRCL": 50.512,
+   "xyz:NFLX": 59.906,
+   "xyz:COST": 1085.3,
+   "xyz:LLY": 1397.2,
+   "xyz:RIVN": 12.022,
+   "xyz:BABA": 89.879,
+   "xyz:CRWV": 44.915,
+   "xyz:GME": 26.942,
+   "xyz:HIMS": 15.345,
+   "xyz:DKNG": 17.945,
+   "xyz:LITE": 514.96,
+   "xyz:BX": 120.89,
+   "xyz:MRVL": 139.63,
+   "xyz:RKLB": 49.518,
+   "xyz:ZM": 89.362,
+   "xyz:EBAY": 116.46,
+   "xyz:ARM": 170.92,
+   "xyz:DELL": 309.31,
+   "xyz:IBM": 246.48,
+   "xyz:NOW": 94.129,
+   "xyz:NBIS": 90.957,
+   "xyz:NOK": 7.458,
+   "xyz:BE": 163.75,
+   "xyz:QCOM": 173.13,
+   "xyz:GEV": 739.45,
+   "xyz:IREN": 13.793,
+   "xyz:NET": 292.9,
+   "xyz:CRWD": 213.2,
+   "xyz:RDDT": 94.337,
+   "xyz:AAOI": 40.015,
+   "xyz:MRNA": 226.19,
+   "xyz:CVX": 214.4,
+   "xyz:UMC": 13.459,
+   "xyz:GLW": 104.71,
+   "xyz:TTWO": 224.09,
+   "xyz:ICE": 179.7,
+   "xyz:PANW": 348.68
+  }
+ },
+ "ladder": {
+  "bull": 7201.09,
+  "floor": 7060.33,
+  "marks": [
+   [
+    7060.33,
+    "Open 7,060",
+    1
+   ],
+   [
+    7182.78,
+    "Close 7,183",
+    0
+   ],
+   [
+    7201.09,
+    "Trigger 7,201",
+    1
+   ],
+   [
+    7267.04,
+    "Implied 7,267",
+    0
+   ],
+   [
+    7281.75,
+    "Perps 7,282",
+    1
+   ]
+  ],
+  "bullText": "Above the 7,201 trigger. Perps near 7,282, past the 7,267 implied move top; needs to hold after 9:30am.",
+  "rangeText": "Between 7,060 and 7,201. Gap fades back into Wednesday's range.",
+  "riskText": "Below Wednesday's open. 7,000 and 6,970 are next."
+ },
+ "chart": {
+  "title": "PATH · WED 4PM TO NOW",
+  "start": "2026-11-25T16:00:00-05:00",
+  "startLabel": "Wed 4pm",
+  "marker": [
+   "2026-11-27T08:30:00-05:00",
+   "Trade data 8:30am"
+  ]
+ },
+ "opt": {
+  "asof": "Wed close",
+  "base": 7182.78,
+  "em": [
+   [
+    "Friday, half day",
+    1.1731,
+    "Nov 27 expiry",
+    "SPXW",
+    "2026-11-27"
+   ],
+   [
+    "Through next Friday",
+    2.7342,
+    "Dec 4 expiry",
+    "SPXW",
+    "2026-12-04"
+   ],
+   [
+    "December monthly",
+    4.0254,
+    "Dec 18 expiry",
+    "SPX",
+    "2026-12-18"
+   ]
+  ],
+  "vix": {
+   "idx": [
+    [
+     "9D",
+     9,
+     29.6
+    ],
+    [
+     "VIX",
+     30,
+     28.29
+    ],
+    [
+     "3M",
+     91,
+     26.3
+    ]
+   ],
+   "fut": [
+    [
+     "Dec",
+     21,
+     25.03
+    ],
+    [
+     "Jan",
+     56,
+     24.29
+    ],
+    [
+     "Feb",
+     84,
+     24.0
+    ],
+    [
+     "Mar",
+     112,
+     23.6
+    ],
+    [
+     "Apr",
+     147,
+     23.4
+    ],
+    [
+     "May",
+     175,
+     23.1
+    ],
+    [
+     "Jun",
+     203,
+     23.1
+    ]
+   ],
+   "asof": "Wed close",
+   "asofTs": "2026-11-25T16:15:00-05:00"
+  },
+  "levels": [
+   [
+    "Magnet",
+    7000,
+    "a"
+   ],
+   [
+    "Put wall",
+    7095,
+    "r"
+   ],
+   [
+    "Gamma flip",
+    7186.58,
+    "b"
+   ],
+   [
+    "Flow put wall",
+    7175,
+    "r"
+   ],
+   [
+    "Flow call wall",
+    7200,
+    "g"
+   ],
+   [
+    "Dec max pain",
+    7400,
+    "b"
+   ]
+  ],
+  "gex": [
+   [
+    7000,
+    64763,
+    -73722
+   ],
+   [
+    7100,
+    2707,
+    -8295
+   ],
+   [
+    7150,
+    3254,
+    -8662
+   ],
+   [
+    7175,
+    1934,
+    -9078
+   ],
+   [
+    7180,
+    2843,
+    -7518
+   ],
+   [
+    7200,
+    10315,
+    -12899
+   ],
+   [
+    7250,
+    5215,
+    -11962
+   ],
+   [
+    7300,
+    4678,
+    -11913
+   ],
+   [
+    7350,
+    4516,
+    -6945
+   ],
+   [
+    7400,
+    8873,
+    -11337
+   ]
+  ],
+  "emSpy": [
+   [
+    "Friday, half day",
+    1.2162,
+    "Nov 27 expiry"
+   ],
+   [
+    "Through next Friday",
+    2.7927,
+    "Dec 4 expiry"
+   ],
+   [
+    "December monthly",
+    4.1614,
+    "Dec 18 expiry"
+   ]
+  ],
+  "spyBase": 716.7,
+  "emSrc": "Unusual Whales implied move from the Wed Nov 25 close. SPX rows use SPX and SPXW options, SPY rows use SPY options.",
+  "asofTs": "2026-11-25T16:15:00-05:00",
+  "skew": {
+   "asof": "Wed close",
+   "asofTs": "2026-11-25T16:15:00-05:00",
+   "rows": [
+    [
+     "Dec 4 weekly",
+     31.0,
+     25.7,
+     21.7
+    ],
+    [
+     "Dec 18 monthly",
+     29.5,
+     23.7,
+     19.6
+    ]
+   ]
+  }
+ },
+ "recapLabel": "Wed recap",
+ "sources": [
+  [
+   "ActionForex: US goods trade deficit widens to $149.5B",
+   "https://www.actionforex.com/live-comments/662315-us-goods-trade-deficit-widens-to-149-5b-as-capital-goods-imports-surge/"
+  ],
+  [
+   "TipRanks: October trade deficit and inventory reports",
+   "https://www.tipranks.com/news/october-trade-deficit-and-inventory-reports-put-q4-growth-and-yields-on-trial-this-black-friday"
+  ],
+  [
+   "Yahoo Finance live: Stock market today, Nov 27",
+   "https://finance.yahoo.com/markets/live/stock-market-today-firday-november-27-dow-sp-500-nasdaq-black-friday-holiday-091152065.html"
+  ],
+  [
+   "TokenPost: U.S. stocks rebound before open",
+   "https://www.tokenpost.com/news/investing/63405"
+  ],
+  [
+   "Saxo: Futures run past the weekly range",
+   "https://www.home.saxo/en-sg/content/articles/options/futures-run-past-the-weekly-range---options-brief---27-november-2026-27112026"
+  ],
+  [
+   "Forbes: Stock futures surge as battered AI shares rebound",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock-futures-surge-as-battered-ai-shares-rebound-ahead-of-shorterned-friday-trading/"
+  ],
+  [
+   "Invezz via TradingView: Fed hike odds near 100%",
+   "https://www.tradingview.com/news/invezz:d9c077336094b:0-fed-rate-hike-odds-rise-to-almost-100-can-ai-selloff-force-a-rethink/"
+  ],
+  [
+   "Gate: CME FedWatch 97.8% December hike",
+   "https://www.gate.com/news/detail/cme-fedwatch-978-probability-of-25bp-fed-rate-hike-in-december-2026-25860188"
+  ],
+  [
+   "AP via KSAT: Global shares mostly rise",
+   "https://www.ksat.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-thanksgiving/"
+  ],
+  [
+   "Reuters via Investing.com: European stocks extend recovery",
+   "https://www.investing.com/news/stock-market-news/european-stocks-extend-recovery-as-tech-miners-advance-5053129"
+  ],
+  [
+   "NERO: Tokyo bought the chips",
+   "https://nerosignal.substack.com/p/tokyo-bought-the-chips-and-ignored"
+  ],
+  [
+   "TrendForce: NAND prices set to decline in 2027",
+   "https://www.trendforce.com/presscenter/news/20261119-13314.html"
+  ],
+  [
+   "Wisevoter: DRAM price forecast cut",
+   "https://wisevoter.com/world/2026/11/26/dram-price-forecast-cut-2027-demand-softens"
+  ],
+  [
+   "VLSI: TrendForce cuts 2027 memory outlook",
+   "https://www.vlsi.kr/en/trendforce-2027-memory-outlook-cut-en/"
+  ],
+  [
+   "Newsquawk weekly calendar via StockNow",
+   "https://stocknow.ai/en/breaking-news/l1rrnoswtqbvfemrq0470kjc/newsquawk-weekly-economic-calendar-29th-november-4th-december-2026"
+  ],
+  [
+   "Unusual Whales options data and SPX chains",
+   "https://unusualwhales.com/"
+  ],
+  [
+   "Hyperliquid perps (tools/prices.py)",
+   "https://app.hyperliquid.xyz/"
+  ]
+ ],
+ "top3": [
+  [
+   "Chips lead a 1.4% gap",
+   "S&P perp 7,282, +1.4% vs Wednesday; Nasdaq 100 perp +2.1%. Memory leads: Sandisk +9.8%, WDC +6.0%, Micron +5.5% perps."
+  ],
+  [
+   "Trade deficit widens",
+   "October goods deficit $149.5B vs $133.1B expected as imports jumped 6.1% (ActionForex). Perps barely moved at 8:30am."
+  ],
+  [
+   "Gap past the priced move",
+   "Options priced ±1.17% for today from 7,182.78; the gap sits above the 7,267 top into a 1:00pm close."
+  ]
+ ],
+ "risks": [
+  [
+   "1:00pm close",
+   "Half day with thin books. Wednesday showed a 3.2% intraday swing."
+  ],
+  [
+   "Below 7,201",
+   "A gap fail reopens 7,060 to 7,200; 7,183 is the full gap fill."
+  ],
+  [
+   "Dec 9 FOMC",
+   "A 25bp hike is near 99% priced; jobs data Dec 4 can move January odds."
+  ],
+  [
+   "Memory pricing",
+   "TrendForce sees NAND prices −0% to −5% in 1Q27 and cut its 2027 DRAM price outlook."
+  ]
+ ],
+ "scenarios": [
+  {
+   "n": "Bullish",
+   "cond": "S&P opens and holds above 7,267 and stays over 7,201 into the 1:00pm close.",
+   "confirm": "Memory names hold premarket gains, Nasdaq 100 outpaces the S&P.",
+   "risk": "A gap beyond the implied move on a thin half day can reverse fast.",
+   "inval": "A move back under 7,201."
+  },
+  {
+   "n": "Neutral",
+   "cond": "The gap fades into 7,201 to 7,267 and holds there.",
+   "confirm": "Chips give back part of the gains, breadth mixed.",
+   "risk": "Drift into the close with no follow through for Monday.",
+   "inval": "Close above 7,300 or below 7,183."
+  },
+  {
+   "n": "Bearish",
+   "cond": "Full gap fill under Wednesday's 7,183 close.",
+   "confirm": "Memory names turn red, oil and yields up.",
+   "risk": "Short covering after a weak November can snap back.",
+   "inval": "A reclaim of 7,250."
+  }
+ ],
+ "events7": [
+  [
+   "2026-11-27",
+   "8:30am",
+   "Goods trade deficit, retail and wholesale inventories (Oct)",
+   1,
+   "DATA",
+   "$133.1B / +0.5%",
+   "$135.1B / +0.8%",
+   "$149.5B / +0.9%"
+  ],
+  [
+   "2026-11-30",
+   "Sun",
+   "OPEC+ meeting over the weekend, Spain snap election",
+   2,
+   "OIL",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-11-30",
+   "Night",
+   "China NBS PMIs (Nov)",
+   2,
+   "ASIA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "ISM manufacturing PMI (Nov)",
+   3,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "JOLTS job openings (Oct)",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "TBD",
+   "Fed's Bowman speaks",
+   2,
+   "FED",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "TBD",
+   "Marvell earnings",
+   3,
+   "EARN",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-02",
+   "8:15am",
+   "ADP employment (Nov)",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-02",
+   "TBD",
+   "Salesforce and Snowflake earnings",
+   2,
+   "EARN",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "8:30am",
+   "Initial jobless claims",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "10:00am",
+   "ISM services PMI (Nov)",
+   3,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "TBD",
+   "Huang testifies before Senate Banking",
+   3,
+   "AI",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-04",
+   "8:30am",
+   "Jobs report (Nov)",
+   3,
+   "DATA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-04",
+   "10:00am",
+   "UMich sentiment prelim (Dec)",
+   2,
+   "DATA",
+   "",
+   "",
+   ""
+  ]
+ ],
+ "priced": {
+  "asof": "Fri 9:19am",
+  "asofTs": "2026-11-27T09:19:25-05:00",
+  "fed": [
+   [
+    "Dec 9 FOMC",
+    "98.9% odds of a 25bp hike to 4.00% to 4.25% (CME FedWatch via Forbes, Fri 5:43am); 99.4% on Thursday (Invezz).",
+    "exp"
+   ],
+   [
+    "Jan 27 FOMC",
+    "58.4% odds of a cumulative 50bp of hikes by January (CME FedWatch via Gate, Wed).",
+    "exp"
+   ]
+  ],
+  "data": [
+   [
+    "Goods trade deficit (Oct)",
+    "Fri 8:30am",
+    "$133.1B",
+    "$135.1B",
+    "$149.5B",
+    "Wider than expected; imports +6.1%."
+   ],
+   [
+    "Wholesale inventories (Oct)",
+    "Fri 8:30am",
+    "+0.5%",
+    "+0.8%",
+    "+0.9%",
+    "Above forecast."
+   ]
+  ],
+  "earn": [],
+  "other": [
+   [
+    "Today's range",
+    "SPXW options priced ±1.17% for today from Wednesday's close; perps are past the top.",
+    "exp"
+   ],
+   [
+    "BOJ Dec 18",
+    "73.5% odds of a hike (MogWatch, Fri 1:07pm JST).",
+    "exp"
+   ]
+  ]
+ },
+ "qa": [
+  [
+   "Why are stocks set to open higher?",
+   "Yahoo says semis rose as nerves over AI profitability eased, and TokenPost says selling in AI stocks paused. S&P perp +1.4% and Nasdaq 100 perp +2.1% vs Wednesday.",
+   "https://finance.yahoo.com/markets/live/stock%2Dmarket%2Dtoday%2Dfirday%2Dnovember%2D27%2Ddow%2Dsp%2D500%2Dnasdaq%2Dblack%2Dfriday%2Dholiday%2D091152065.html"
+  ],
+  [
+   "What did the 8:30am data show?",
+   "The October goods deficit widened to $149.5B vs $133.1B expected as imports jumped 6.1%. Wholesale inventories rose 0.9% vs 0.5% expected.",
+   "https://www.actionforex.com/live%2Dcomments/662315%2Dus%2Dgoods%2Dtrade%2Ddeficit%2Dwidens%2Dto%2D149%2D5b%2Das%2Dcapital%2Dgoods%2Dimports%2Dsurge/"
+  ],
+  [
+   "Did the data move futures?",
+   "Not visibly: the S&P perp was 7,297 at 8:29am and 7,296 at 8:45am. It has since eased to 7,282.",
+   "https://app.hyperliquid.xyz/"
+  ],
+  [
+   "What about the Fed?",
+   "CME FedWatch shows a 98.9% chance of a 25bp hike on Dec 9. Odds of 50bp of hikes by January were 58.4% on Wednesday.",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock%2Dfutures%2Dsurge%2Das%2Dbattered%2Dai%2Dshares%2Drebound%2Dahead%2Dof%2Dshorterned%2Dfriday%2Dtrading/"
+  ],
+  [
+   "What do options imply?",
+   "From Wednesday's close SPXW options priced ±1.17% for today and ±2.73% through Dec 4. Puts at 25 delta trade at 31% IV vs 26% at the money for Dec 4.",
+   "https://unusualwhales.com/"
+  ],
+  [
+   "What happened in Korea and Japan?",
+   "Kospi closed +4.34% and the Nikkei +2.11%; Shanghai rose 3.7% after China signaled market support. Japanese chip equipment led.",
+   "https://www.ksat.com/business/2026/11/27/asian%2Dshares%2Dmostly%2Drise%2Dahead%2Dof%2Dwall%2Dstreets%2Dreopening%2Dafter%2Dthanksgiving/"
+  ],
+  [
+   "What are memory prices doing?",
+   "TrendForce sees NAND contract prices −0% to −5% in 1Q27 as Chinese cloud buyers cut SSD orders, and cut its 2027 DRAM outlook. HBM and server DRAM stay the tightest.",
+   "https://www.trendforce.com/presscenter/news/20261119%2D13314.html"
+  ],
+  [
+   "What changed since 7am?",
+   "The trade data printed wider than expected and perps eased about 0.1%. Brent is near $92 on Yahoo and the perp, below the $97.62 cited earlier.",
+   "https://finance.yahoo.com/markets/live/stock%2Dmarket%2Dtoday%2Dfirday%2Dnovember%2D27%2Ddow%2Dsp%2D500%2Dnasdaq%2Dblack%2Dfriday%2Dholiday%2D091152065.html"
+  ]
+ ],
+ "stories": [
+  {
+   "t": "8:30am",
+   "h": "Goods deficit widens to $149.5B",
+   "what": "October advance goods deficit $149.5B vs $133.1B consensus and $135.1B prior; imports +6.1%, capital goods imports +8.5%.",
+   "why": "A wider deficit subtracts from Q4 growth estimates.",
+   "assets": "S&P, Treasuries, dollar",
+   "impl": "mixed",
+   "read": "A growth drag on paper, but driven by capital goods imports.",
+   "reacted": "S&P perp 7,297 at 8:29am and 7,296 at 8:45am; no clear move.",
+   "known": "new",
+   "material": false,
+   "confirm": "GDPNow trims Q4 growth.",
+   "invalid": "Revisions in the full trade report.",
+   "src": "https://www.actionforex.com/live%2Dcomments/662315%2Dus%2Dgoods%2Dtrade%2Ddeficit%2Dwidens%2Dto%2D149%2D5b%2Das%2Dcapital%2Dgoods%2Dimports%2Dsurge/"
+  },
+  {
+   "t": "4:08am",
+   "h": "Memory and AI names lead premarket",
+   "what": "Sandisk nearly +10%, Micron and SK hynix over +6%, Nvidia over +4% premarket (TokenPost).",
+   "why": "Chips led November's drop; TokenPost says selling in AI stocks paused.",
+   "assets": "SNDK, MU, WDC, NVDA, AMD, SMH",
+   "impl": "bull",
+   "read": "A rebound led by the hardest hit names.",
+   "reacted": "Perps at 9:19am vs Wednesday: Sandisk +9.8%, Micron +5.5%, Nvidia +2.1%. The move began Thursday night.",
+   "known": "known",
+   "material": false,
+   "confirm": "Gains hold after 9:30am with SMH above its premarket level.",
+   "invalid": "Memory names turn red by midday.",
+   "src": "https://www.tokenpost.com/news/investing/63405"
+  },
+  {
+   "t": "Thu",
+   "h": "TrendForce trims memory outlook",
+   "what": "TrendForce cut its 2027 DRAM contract price outlook and sees NAND prices −0% to −5% in 1Q27; NAND spot fell over 20%.",
+   "why": "Chinese cloud buyers cut 2027 SSD orders on GPU shortages; high prices weigh on consumer buying.",
+   "assets": "MU, SNDK, WDC, SK hynix, Samsung, Kioxia",
+   "impl": "bear",
+   "read": "Pricing momentum slows for NAND first; HBM stays tight.",
+   "reacted": "Memory perps rallied anyway on Friday.",
+   "known": "known",
+   "material": true,
+   "changes": "Raises the risk that memory earnings peak in 2027; not reflected in today's rebound.",
+   "confirm": "Weaker December contract prices.",
+   "invalid": "Contract prices beat in the next TrendForce bulletin.",
+   "src": "https://www.trendforce.com/presscenter/news/20261119%2D13314.html"
+  }
+ ],
+ "semis": {
+  "asof": "Fri 9:19am",
+  "asofTs": "2026-11-27T09:19:25-05:00",
+  "memory": [
+   [
+    "DRAM",
+    "TrendForce cut its 2027 DRAM contract price increase forecast (Nov 25); DDR4 spot prices started to fall. 4Q26 conventional DRAM contracts were seen +10% to +15%.",
+    "https://wisevoter.com/world/2026/11/26/dram%2Dprice%2Dforecast%2Dcut%2D2027%2Ddemand%2Dsoftens"
+   ],
+   [
+    "NAND",
+    "TrendForce: NAND prices −0% to −5% QoQ in 1Q27 after a spot correction of over 20%; Chinese cloud buyers cut 2027 SSD orders.",
+    "https://www.trendforce.com/presscenter/news/20261119%2D13314.html"
+   ],
+   [
+    "HBM",
+    "No new pricing since Sep 29 (TrendForce: blended HBM price +121% in 2027). Shortage deepest in HBM and server DRAM, contracted through 2027 to 2029.",
+    "https://www.vlsi.kr/en/trendforce%2D2027%2Dmemory%2Doutlook%2Dcut%2Den/"
+   ]
+  ],
+  "notes": [
+   [
+    "PRICING",
+    "Memory perps vs Wednesday at 9:19am: Sandisk +9.8%, WDC +6.0%, Micron +5.5%, Lam +5.2%, AMD +3.9%, Nvidia +2.1%.",
+    "https://app.hyperliquid.xyz/"
+   ],
+   [
+    "KOREA",
+    "Kospi +4.34% to 4,915.68; SK hynix up over 6% premarket per TokenPost.",
+    "https://www.tokenpost.com/news/investing/63405"
+   ],
+   [
+    "JAPAN",
+    "Lasertec +10%, Kioxia +8.9%, Advantest +7.1%, Tokyo Electron +4.4% at the close.",
+    "https://nerosignal.substack.com/p/tokyo%2Dbought%2Dthe%2Dchips%2Dand%2Dignored"
+   ],
+   [
+    "DEMAND",
+    "TrendForce: Chinese cloud buyers scaled back 2027 enterprise SSD plans from mid 4Q26 on GPU supply worries.",
+    "https://www.vlsi.kr/en/trendforce%2D2027%2Dmemory%2Doutlook%2Dcut%2Den/"
+   ],
+   [
+    "SUPPLY",
+    "Samsung, SK hynix and Micron have shifted substantial capacity toward HBM for AI accelerators.",
+    "https://wisevoter.com/world/2026/11/26/dram%2Dprice%2Dforecast%2Dcut%2D2027%2Ddemand%2Dsoftens"
+   ],
+   [
+    "EARNINGS",
+    "Marvell reports Tue Dec 1, the next chip print.",
+    "https://stocknow.ai/en/breaking%2Dnews/l1rrnoswtqbvfemrq0470kjc/newsquawk%2Dweekly%2Deconomic%2Dcalendar%2D29th%2Dnovember%2D4th%2Ddecember%2D2026"
+   ]
+  ]
+ },
+ "forecast": {
+  "dir": "up",
+  "date": "2026-11-27",
+  "ref": 7182.78,
+  "basis": "S&P perps +1.4% at 9:19am with chips leading; a half day leaves little time to fill the gap."
+ },
+ "daily": {
+  "asofTs": "2026-11-27T09:19:25-05:00",
+  "happened": "Since 7am the S&P perp is flat to slightly lower, 7,291 to 7,282, still +1.4% vs Wednesday's 7,182.78 close. Nasdaq 100 perp +2.1%; memory perps lead with Sandisk +9.8% and Micron +5.5%.",
+  "cause": "Yahoo says semis rose \"as investors' nerves over AI profitability eased\" and TokenPost says selling in AI stocks paused. No source gives a cause for the move since 7am.",
+  "causeSrc": "https://finance.yahoo.com/markets/live/stock%2Dmarket%2Dtoday%2Dfirday%2Dnovember%2D27%2Ddow%2Dsp%2D500%2Dnasdaq%2Dblack%2Dfriday%2Dholiday%2D091152065.html",
+  "since": "New since 7:09am: the 8:30am goods deficit widened to $149.5B vs $133.1B expected, and wholesale inventories beat. Confirmed: chips still lead and the gap holds above the 7,267 implied top. Corrected: Yahoo and the Brent perp put Brent near $92, not the $97.62 cited at 7am.",
+  "expected": [
+   [
+    "Goods trade deficit (Oct)",
+    "$133.1B deficit",
+    "$149.5B deficit",
+    "https://www.actionforex.com/live%2Dcomments/662315%2Dus%2Dgoods%2Dtrade%2Ddeficit%2Dwidens%2Dto%2D149%2D5b%2Das%2Dcapital%2Dgoods%2Dimports%2Dsurge/"
+   ],
+   [
+    "Wholesale inventories (Oct)",
+    "+0.5%",
+    "+0.9%",
+    "https://www.actionforex.com/live%2Dcomments/662315%2Dus%2Dgoods%2Dtrade%2Ddeficit%2Dwidens%2Dto%2D149%2D5b%2Das%2Dcapital%2Dgoods%2Dimports%2Dsurge/"
+   ],
+   [
+    "Retail inventories ex autos (Oct)",
+    "+0.4%",
+    "+0.8% (headline)",
+    "https://www.tipranks.com/news/october%2Dtrade%2Ddeficit%2Dand%2Dinventory%2Dreports%2Dput%2Dq4%2Dgrowth%2Dand%2Dyields%2Don%2Dtrial%2Dthis%2Dblack%2Dfriday"
+   ]
+  ],
+  "affected": [
+   [
+    "Memory (SNDK, WDC, MU)",
+    "up",
+    "Perps +5.5% to +9.8% vs Wednesday's close; the hardest hit names in November lead."
+   ],
+   [
+    "Chip equipment (LRCX)",
+    "up",
+    "Lam perp +5.2%; Europe's ASML and ASM International rose 5% to 6% (Reuters)."
+   ],
+   [
+    "Nvidia, AMD",
+    "up",
+    "Perps +2.1% and +3.9%."
+   ],
+   [
+    "Oil",
+    "up",
+    "WTI futures $84.83, +1.4% (Yahoo)."
+   ]
+  ],
+  "priced": "SPXW options priced ±1.17% for today and ±2.73% through Dec 4 from Wednesday's close; the gap already uses today's move. CME FedWatch near 99% for a 25bp hike Dec 9.",
+  "catalysts": [
+   [
+    "9:30am",
+    "Cash open",
+    "Shows whether the 1.4% gap holds above the 7,267 implied top."
+   ],
+   [
+    "1:00pm",
+    "Half day close",
+    "Thin books; this close scores today's call."
+   ],
+   [
+    "Tue Dec 1 10:00am",
+    "ISM manufacturing and JOLTS",
+    "First data of the jobs week before the Dec 9 Fed."
+   ]
+  ],
+  "invalid": "An S&P move back under 7,201 after the open, and a full gap fill to 7,183, would end the rebound read."
+ },
+ "gaps": [
+  [
+   "internals",
+   "Before the open; no session yet"
+  ]
+ ]
+}

@@ -8,13 +8,13 @@ On iPhone: open the link in Safari, tap Share, then Add to Home Screen. It opens
 ## Tabs
 | Tab | What it shows |
 |---|---|
-| Brief | Market session, regime with its evidence, an Ask box that searches the brief and live wire, what changed since your last visit, comparable history, the 3 things that matter most, key readings, drivers, risks, the next 7 trading days ranked for chips and the Fed, what is priced in, scenarios, and the distance to every key level. Reading modes: 30 seconds, 2 minutes (default) and Deep. Customize pins instruments, news topics and which sections show, saved on the device |
+| Brief | Market session, regime with its evidence, a reversal watch (how much of a big move has been retraced, when the turn began, VWAP and opening range reclaims, failed breakdowns, semis and breadth participation, classified as bounce, partial, broad, rotation or potential sustainable reversal), an Ask box that searches the brief and live wire, what changed since your last visit, comparable history, the 3 things that matter most, key readings, drivers, risks, the next 7 trading days ranked for chips and the Fed, what is priced in, scenarios, and the distance to every key level. Reading modes: 30 seconds, 2 minutes (default) and Deep. Customize pins instruments, news topics and which sections show, saved on the device |
 | Board | Overnight chart, breadth across about 60 stock perps, a semiconductor center (US designers, memory and storage, equipment, foundry and Asia memory vs the Nasdaq, plus the Asia read and sourced chip news), internals (equal weight, small caps, semis vs Nasdaq), cross asset confirmations and divergences, and the live board (semis, indexes, megacaps, commodities and FX, crypto). Pick one comparison basis at a time. Tap a row for mark, oracle, funding, open interest, volume and spread |
 | Options | SPX expected moves from SPX and SPXW options (SPY shown separately), how much of each move is used, a price scenario simulator, big option positions, skew, IV changes and 0DTE positioning when the brief has them, VIX in context (percentiles, realized vs implied volatility), and the VIX index and futures curves |
 | History | Probability engine: pick a market condition (big S&P drop, losing streak, VIX level, VIX spike and reversal, intraday recovery, gaps, big chip stock drops, breadth divergence, Nikkei moves and the next US session or semis), set thresholds and years, and see how markets did next, with sample size, 95% ranges, a baseline of all days, a stability check and every comparable date. The Brief shows matches for today's conditions automatically |
-| News | Live wire filtered to market moving headlines, with the perp reaction 5, 15, 30 and 60 minutes after each one, the move before it, and the move vs the S&P. Plus Claude's picks |
+| News | Story impact from the brief (what, why it matters, assets, read, reaction, new or known, what confirms or invalidates). Live wire filtered to market moving headlines, with the perp reaction 5, 15, 30 and 60 minutes after each one, the move before it, and the move vs the S&P. Plus Claude's picks |
 | Recap | The day's close recap |
-| Memory | Forecast scorecard (implied move coverage, directional calls vs an always up baseline), and every scheduled brief and recap as published. Never edited afterward |
+| Memory | Forecast scorecard (implied move coverage by horizon, directional calls vs an always up baseline and by regime, which scenario zone the next close landed in, option levels crossed), compare any two briefs side by side, and every scheduled brief and recap as published. Never edited afterward |
 
 ## Where the data comes from
 | Part | Source | How often |
@@ -60,7 +60,10 @@ The token is stored only in that browser on that device. It is never saved in th
 | `tools/prices.py` | Perp prices now, at an exact time, and instrument checks | Rarely |
 | `data/hist/` | Daily history: S&P since 1975, VIX family since 1990, Nasdaq 100, Nikkei, 10 year yield, USD/JPY, and about 2 years of SPY, QQQ, NVDA, MU, SNDK, RSP, SMH, IWM bars | The close run adds new days |
 | `tools/history.py` | Refreshes `data/hist/` | Rarely |
+| `tests/time.test.js` | Checks Eastern time, daylight saving changes, holidays, half days and session states. Run `node tests/time.test.js` | When the calendar changes |
 | `tools/archive.py` | Copies the brief into the archive | Rarely |
 | `manifest.json`, `icon-*.png` | Home Screen app name and icon | Rarely |
+
+Before changing the page: `python3 tools/build.py`, `python3 tools/check.py` and `node tests/time.test.js`. The NYSE holiday list in `src/app.js` covers 2026 and 2027; add the next year each December.
 
 If `brief.json` is missing or broken, the page falls back to the brief built into `index.html`, labeled with its own time.

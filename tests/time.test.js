@@ -1,0 +1,27 @@
+// Run: node tests/time.test.js   Checks Eastern time, DST, holidays, half days and session states used by the page.
+const fs = require('fs');
+const src = fs.readFileSync(__dirname + '/../src/app.js', 'utf8');
+const a = src.indexOf('/* ---------- Eastern time'), b = src.indexOf('/* ---------- Instruments');
+eval(src.slice(a, b) + '\nglobalThis.T={et,etMs,session,lastOpenMs,last6pmMs,isTradingDay,HOL,HALF};');
+let fails = 0; const ok = (c, m) => { if (!c) { fails++; console.log('FAIL', m) } else console.log('ok  ', m) };
+const Z = s => Date.parse(s);
+ok(T.etMs(2026, 3, 9, 9, 30) === Z('2026-03-09T13:30:00Z'), 'DST start: Mar 9 2026 9:30 ET is 13:30 UTC');
+ok(T.etMs(2026, 3, 6, 9, 30) === Z('2026-03-06T14:30:00Z'), 'Before DST: Mar 6 2026 9:30 ET is 14:30 UTC');
+ok(T.etMs(2026, 11, 2, 9, 30) === Z('2026-11-02T14:30:00Z'), 'DST end: Nov 2 2026 9:30 ET is 14:30 UTC');
+ok(T.etMs(2026, 10, 30, 16, 0) === Z('2026-10-30T20:00:00Z'), 'Oct 30 2026 4pm ET is 20:00 UTC');
+ok(T.session(Z('2026-11-26T15:00:00Z')).txt.includes('Thanksgiving'), 'Thanksgiving closed');
+ok(T.session(Z('2026-11-27T16:00:00Z')).st === 'open', 'Black Friday 11am open');
+ok(T.session(Z('2026-11-27T18:30:00Z')).st === 'post', 'Black Friday 1:30pm after the 1pm close');
+ok(T.session(Z('2026-11-27T22:30:00Z')).st === 'closed', 'Black Friday 5:30pm closed (half day after hours end 5pm)');
+ok(T.session(Z('2026-11-28T15:00:00Z')).txt.includes('weekend'), 'Saturday weekend');
+ok(T.session(Z('2026-12-01T12:00:00Z')).st === 'pre', 'Tuesday 7am premarket');
+ok(T.session(Z('2026-12-01T08:00:00Z')).st === 'closed', 'Tuesday 3am closed');
+ok(T.session(Z('2026-12-01T22:00:00Z')).st === 'post', 'Tuesday 5pm after hours');
+ok(T.session(Z('2026-07-03T15:00:00Z')).st === 'closed', 'Jul 3 2026 observed holiday');
+ok(T.session(Z('2026-12-24T19:00:00Z')).st === 'post', 'Dec 24 2026 2pm after the 1pm close');
+ok(T.lastOpenMs(Z('2026-11-27T06:00:00Z')) === Z('2026-11-25T14:30:00Z'), 'Last open before Friday 1am is Wed 9:30, skipping Thanksgiving');
+ok(T.lastOpenMs(Z('2026-11-30T13:00:00Z')) === Z('2026-11-27T14:30:00Z'), 'Last open before Monday 8am is Friday 9:30');
+ok(T.last6pmMs(Z('2026-11-28T15:00:00Z')) === Z('2026-11-26T23:00:00Z'), 'Last 6pm futures open before Saturday is Thursday 6pm');
+ok(T.last6pmMs(Z('2026-11-30T03:00:00Z')) === Z('2026-11-29T23:00:00Z'), 'Sunday 10pm: last 6pm open is Sunday 6pm');
+ok(T.etMs(2026, 3, 8, 3, 0) === Z('2026-03-08T07:00:00Z'), 'Mar 8 2026 3am EDT right after the switch');
+console.log(fails ? fails + ' failed' : 'all passed'); process.exit(fails ? 1 : 0);

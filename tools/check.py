@@ -133,6 +133,8 @@ if F is not None:
     if F.get("dir") not in ("up", "down") or not re.match(r"^\d{4}-\d{2}-\d{2}$", str(F.get("date", ""))) or not num(F.get("ref")): err.append("forecast needs dir up|down, ISO date and a numeric ref")
 for e in o.get("em", []):
     if len(e) >= 5 and not re.match(r"^\d{4}-\d{2}-\d{2}$", str(e[4])): err.append("opt.em expiry date must be YYYY-MM-DD: " + str(e[4]))
+for s in B.get("stories", []):
+    if not all(k in s for k in ("t","h","what","why","assets","impl","reacted","known","confirm","invalid","src")) or s.get("impl") not in ("bull","bear","mixed") or s.get("known") not in ("new","known") or not str(s.get("src","")).startswith("https://"): err.append("stories need t, h, what, why, assets, impl bull|bear|mixed, reacted, known new|known, confirm, invalid, https src")
 S2 = B.get("semis")
 if S2 is not None:
     for r in S2.get("memory", []) + S2.get("notes", []):

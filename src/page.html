@@ -170,6 +170,7 @@ html.m30 .x30h{display:none!important}
 .hp input,.hp select{font-size:16px;padding:5px 8px;border-radius:8px;border:0;background:var(--fill);width:100%;text-align:right}
 .hauto{cursor:pointer;font-size:13px}
 .uhide{display:none!important}
+.sdl{margin:6px 0 4px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:3px 8px;font-size:13px}.sdl dt{color:var(--ink2)}.sdl dd{margin:0}
 #askout .r{font-size:14px}
 .ev .r.full{display:block}
 #cross .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
@@ -231,6 +232,7 @@ html.m30 .x30h{display:none!important}
 <div class="sec x2" id="autoSec" style="display:none"><div class="sh"><h2>Comparable history</h2><span>Tap for detail</span></div><div class="grp" id="autohist"></div></div>
 <div class="sec top3" id="secTop3"><div class="sh"><h2>What matters most</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
 
+<div class="sec x2" id="secRev" style="display:none"><div class="sh"><h2>Reversal watch</h2><span id="revasof"></span></div><div class="grp ev" id="rev"></div></div>
 <div class="sec" id="secRead"><div class="sh"><h2>Readings</h2><span id="stripbasis"></span></div>
 <div class="strip" id="strip"></div>
 <div class="grp pad" style="margin-top:8px">
@@ -300,6 +302,7 @@ html.m30 .x30h{display:none!important}
 <div class="chips" id="nfilt" style="margin-top:10px"><button class="chipb on" data-n="all">All</button><button class="chipb" data-n="FUT">Markets</button><button class="chipb" data-n="FED">Fed and data</button><button class="chipb" data-n="AI">AI and chips</button><button class="chipb" data-n="OIL">Oil and geo</button><button class="chipb" data-n="EARN">Earnings</button><button class="chipb" data-n="ASIA">Asia</button><button class="chipb" data-n="MACRO">Macro</button></div>
 <div class="sec feed"><div class="sh"><h2>Live wire</h2><span>Price after the headline</span></div><div class="grp" id="wire"><div class="r"><span></span><span class="mut">Tap Connect news to turn on the live wire.</span></div></div>
 <div class="note">Reaction chips use completed 1 minute perp candles. "Before" is the 15 minutes ahead of the headline. "vs S&amp;P" removes the market move. Timing is not proof of cause.</div></div>
+<div class="sec" id="secStories" style="display:none"><div class="sh"><h2>Story impact</h2><span>From the brief</span></div><div class="grp" id="stories"></div></div>
 <div class="sec feed"><div class="sh"><h2>Claude's picks</h2><span id="picksasof"></span></div><div class="grp" id="feed"></div></div>
 </div>
 
@@ -321,6 +324,7 @@ html.m30 .x30h{display:none!important}
 <div class="sec"><div class="sh"><h2>Forecast scorecard</h2><span>From the archive</span></div><div class="grp" id="score"><div class="r mut">Loading</div></div></div>
 <div class="sec"><input class="search" id="memq" placeholder="Search past briefs" autocomplete="off"></div>
 <div class="sec mem"><div class="sh"><h2>Archive</h2><span>Saved as published, never edited</span></div><div class="grp" id="memlist"><div class="r mut">Loading</div></div></div>
+<div class="sec" id="memcmp"></div>
 <div class="sec" id="memview"></div>
 </div>
 

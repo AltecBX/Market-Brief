@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Markets">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="manifest" href="manifest.json">
+<title>Market Brief</title>
+<style>
+:root{
+--bg:#f2f2f7;--card:#fff;--card2:#f2f2f7;--fill:rgba(118,118,128,.12);--fill2:rgba(118,118,128,.2);
+--ink:#000;--ink2:rgba(60,60,67,.6);--ink3:rgba(60,60,67,.3);--sep:rgba(60,60,67,.18);
+--green:#248a3d;--red:#d70015;--orange:#c93400;--blue:#007aff;--yellow:#b25000;
+--gfill:#34c759;--rfill:#ff3b30;--ofill:#ff9500;--bfill:#007aff;
+--gtint:rgba(52,199,89,.14);--rtint:rgba(255,59,48,.12);--otint:rgba(255,149,0,.14);--btint:rgba(0,122,255,.12);
+--bar:rgba(242,242,247,.78);--shadow:0 1px 2px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){:root{
+--bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);
+--ink:#fff;--ink2:rgba(235,235,245,.6);--ink3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);
+--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--blue:#0a84ff;--yellow:#ffd60a;
+--gfill:#30d158;--rfill:#ff453a;--ofill:#ff9f0a;--bfill:#0a84ff;
+--gtint:rgba(48,209,88,.16);--rtint:rgba(255,69,58,.16);--otint:rgba(255,159,10,.16);--btint:rgba(10,132,255,.18);
+--bar:rgba(0,0,0,.72);--shadow:none}}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Arial,sans-serif;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+button{font:inherit;color:inherit;touch-action:manipulation}
+a{color:var(--blue);text-decoration:none}
+.num,.mono{font-variant-numeric:tabular-nums}
+.up{color:var(--green)}.dn{color:var(--red)}.am{color:var(--orange)}.bl{color:var(--blue)}
+/* nav */
+.nav{position:sticky;top:0;z-index:20;background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep);padding-top:env(safe-area-inset-top)}
+.navin{max-width:1100px;margin:0 auto;padding:8px max(16px,env(safe-area-inset-left)) 10px;display:grid;grid-template-columns:1fr auto;gap:8px 12px;align-items:center}
+.ttl{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px}
+.st{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:500;color:var(--ink2)}
+.st i{width:7px;height:7px;border-radius:50%;background:var(--ofill)}
+.st.on i{background:var(--gfill);animation:pl 2s infinite}
+@keyframes pl{50%{opacity:.35}}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:0;background:var(--fill);display:grid;place-items:center;cursor:pointer}
+.iconbtn svg{width:18px;height:18px;stroke:var(--blue);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.iconbtn.spin svg{animation:sp .8s linear}
+@keyframes sp{to{transform:rotate(360deg)}}
+.seg{grid-column:1/-1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill);border-radius:9px;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:7px;padding:6px 8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);min-height:32px}
+.seg button.on{background:var(--card);box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){.seg button.on{background:#636366}}
+/* layout */
+.wrap{max-width:1100px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) 40px max(16px,env(safe-area-inset-right))}
+.panel{display:none}.panel.on{display:block}
+.hero{padding:20px 0 4px}
+.kicker{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:0}
+.kicker.blue{color:var(--blue)}
+h1{font-size:30px;line-height:1.12;font-weight:700;letter-spacing:-.025em;margin:6px 0 8px;text-wrap:balance}
+.lede{color:var(--ink2);font-size:17px;margin:0 0 14px;text-wrap:pretty}
+h2{font-size:22px;font-weight:700;letter-spacing:-.02em;margin:34px 0 4px;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+h2 b{display:none}
+h2 span,.h2sub{font-size:13px;font-weight:500;color:var(--ink2);letter-spacing:0}
+.h2sub{margin:0 0 12px}
+.card{background:var(--card);border-radius:16px;padding:16px;box-shadow:var(--shadow)}
+.sub{font-size:13px;font-weight:600;color:var(--ink2);margin:0 0 8px;letter-spacing:0}
+.note,.chartnote{font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.35}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.scroll{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x proximity;scroll-padding-inline:max(16px,env(safe-area-inset-left));-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 calc(-1 * max(16px,env(safe-area-inset-left)));padding:2px max(16px,env(safe-area-inset-left)) 4px}
+.scroll::-webkit-scrollbar{display:none}
+.scroll>*{flex:none;scroll-snap-align:start}
+/* pills / chips */
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.pill{font-size:13px;font-weight:600;padding:5px 11px;border-radius:999px;background:var(--fill);color:var(--ink);white-space:nowrap}
+.pill.g{background:var(--gtint);color:var(--green)}.pill.r{background:var(--rtint);color:var(--red)}.pill.a{background:var(--otint);color:var(--orange)}.pill.b{background:var(--btint);color:var(--blue)}
+.chg{display:inline-block;min-width:74px;text-align:right;padding:4px 8px;border-radius:7px;font-size:15px;font-weight:600;color:var(--ink2);background:var(--fill);font-variant-numeric:tabular-nums}
+.chg.u{background:var(--gfill);color:#fff}.chg.d{background:var(--rfill);color:#fff}
+@media (prefers-color-scheme:light){.chg.u{background:#34c759}}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 12px;padding:0 16px}
+.chips::-webkit-scrollbar{display:none}
+.chipb{flex:none;border:0;background:var(--fill);color:var(--ink);font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;cursor:pointer;min-height:34px}
+.chipb.on{background:var(--ink);color:var(--bg)}
+.btn{border:0;background:var(--fill);color:var(--blue);font-size:15px;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;min-height:36px}
+.btn.on{background:var(--blue);color:#fff}
+/* market strip */
+.tile{width:146px;background:var(--card);border-radius:16px;padding:12px 14px;box-shadow:var(--shadow)}
+.tile .l{font-size:13px;font-weight:600;color:var(--ink2);display:flex;justify-content:space-between;gap:6px}
+.tile .l em{font-style:normal;font-weight:500;color:var(--ink3)}
+.tile .v{font-size:21px;font-weight:700;letter-spacing:-.02em;margin:4px 0 6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tile .chg{font-size:13px;min-width:0;padding:2px 7px;border-radius:6px}
+/* implied card */
+.imp .big{font-size:44px;font-weight:700;letter-spacing:-.03em;line-height:1;font-variant-numeric:tabular-nums}
+.imp .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 2px}
+.lad{position:relative;height:58px;margin:18px 6px 4px}
+.lad .rail{position:absolute;left:0;right:0;top:24px;height:6px;border-radius:3px;background:linear-gradient(90deg,var(--rfill),var(--ofill) 50%,var(--gfill));opacity:.35}
+.lad .tk{position:absolute;top:19px;width:2px;height:16px;background:var(--ink3);border-radius:1px}
+.lad .tl{position:absolute;top:42px;font-size:11px;color:var(--ink2);transform:translateX(-50%);white-space:nowrap}
+.lad .tl.up{top:0}
+.lad .dot{position:absolute;top:18px;width:18px;height:18px;border-radius:50%;background:var(--bfill);border:3px solid var(--card);box-shadow:0 0 0 1px var(--bfill),0 2px 6px rgba(0,0,0,.25);transform:translateX(-50%);transition:left .6s cubic-bezier(.2,.8,.2,1)}
+.zone{margin-top:12px;font-size:15px;padding:10px 12px;border-radius:12px;background:var(--fill)}
+.sw{display:flex;gap:4px;background:var(--fill);border-radius:8px;padding:2px}
+.sw .chipb{min-height:28px;padding:4px 10px;font-size:13px;border-radius:6px;background:transparent}
+.sw .chipb.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+@media (prefers-color-scheme:dark){.sw .chipb.on{background:#636366}}
+.fig{position:relative;height:210px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif}
+/* drivers */
+.sc{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px}
+.sc .k,.k{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);border:0}
+.k h4{margin:0 0 6px;font-size:13px;font-weight:700;letter-spacing:.01em;display:flex;align-items:center;gap:7px}
+.k h4::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.k p{margin:0;font-size:15px;line-height:1.4}
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+/* board (Stocks style list) */
+.list{background:var(--card);border-radius:16px;box-shadow:var(--shadow);overflow:hidden}
+.rowi{display:grid;grid-template-columns:minmax(0,1fr) 64px auto;gap:12px;align-items:center;padding:11px 16px;position:relative;min-height:60px}
+.rowi+.rowi::before{content:"";position:absolute;top:0;left:16px;right:0;border-top:.5px solid var(--sep)}
+.rowi .n{font-size:17px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rowi .t{font-size:13px;color:var(--ink2)}
+.rowi .r{text-align:right}
+.rowi .p{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:3px;transition:color .4s}
+.rowi .p.fu{color:var(--green)}.rowi .p.fd{color:var(--red)}
+.spark{width:64px;height:28px}
+.rowi .chg{cursor:pointer}
+/* options */
+.em{margin:6px 0 16px}.em .h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:15px}
+.em .bar2{position:relative;height:30px;margin-top:8px}
+.em .rail2{position:absolute;left:0;right:0;top:12px;height:6px;border-radius:3px;background:var(--fill)}
+.em .rng{position:absolute;top:8px;height:14px;border-radius:7px;background:var(--btint);box-shadow:inset 0 0 0 1.5px var(--bfill)}
+.em .ctr{position:absolute;top:5px;width:2px;height:20px;background:var(--ink3);border-radius:1px}
+.em .ldot{position:absolute;top:7px;width:16px;height:16px;border-radius:50%;background:var(--bfill);border:3px solid var(--card);box-shadow:0 0 0 1px var(--bfill);transform:translateX(-50%);transition:left .6s}
+.em .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.gx{display:grid;grid-template-columns:58px 1fr 108px;gap:10px;align-items:center;font-size:15px;padding:7px 8px;border-radius:10px}
+.gx.near{background:var(--btint)}
+.gx .gb{height:10px;display:flex;border-radius:5px;overflow:hidden;background:var(--fill)}
+.gx .gb i{display:block;height:100%}
+.gx .lb{font-size:12px;color:var(--ink2);text-align:right}
+.lv{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 12px}
+.lv .pill{font-size:12px;padding:4px 9px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink2);margin-top:8px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:0}
+/* news */
+.feed .it{display:grid;grid-template-columns:70px minmax(0,1fr);gap:12px;padding:11px 0;border-top:.5px solid var(--sep);font-size:15px;line-height:1.38}
+.feed .it:first-child{border-top:0}
+.feed .it.fresh{background:var(--otint);border-radius:10px;padding-left:8px;padding-right:8px;border-top-color:transparent}
+.feed .tm{color:var(--ink2);font-size:13px;font-variant-numeric:tabular-nums;padding-top:1px}
+.feed .cat{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.02em;padding:1px 6px;border-radius:5px;margin-right:6px;background:var(--fill);color:var(--ink2);vertical-align:1px}
+.feed .imp-u{color:var(--green)}.feed .imp-d{color:var(--red)}
+.ichip{display:inline-block;font-size:12px;font-weight:600;padding:1px 7px;border-radius:6px;margin-left:6px;white-space:nowrap;vertical-align:1px}
+.ichip.u{color:var(--green);background:var(--gtint)}.ichip.d{color:var(--red);background:var(--rtint)}
+.wsrc{font-size:12px;color:var(--ink2)}
+#breaking .bk{background:var(--rtint);border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:15px}
+.keyp{background:var(--card2);border-radius:12px;padding:14px;margin-bottom:12px}
+.keyp input{width:100%;font-size:16px;padding:11px 12px;border-radius:10px;border:0;background:var(--card);color:var(--ink);margin:8px 0;outline:none;box-shadow:inset 0 0 0 1px var(--sep)}
+.keyp input:focus{box-shadow:inset 0 0 0 2px var(--blue)}
+.subhead{font-size:13px;font-weight:600;color:var(--ink2);margin:14px 0 2px}
+/* plan */
+.means{margin:0;padding:0;list-style:none}
+.means li{padding:10px 0 10px 20px;position:relative;border-top:.5px solid var(--sep);font-size:15px}
+.means li:first-child{border-top:0;padding-top:2px}
+.means li::before{content:"";position:absolute;left:2px;top:17px;width:7px;height:7px;border-radius:50%;background:var(--bfill)}
+.means li:first-child::before{top:9px}
+.cal .r{display:grid;grid-template-columns:96px minmax(0,1fr);gap:12px;padding:10px 0;border-top:.5px solid var(--sep);font-size:15px}
+.cal .r:first-child{border-top:0;padding-top:2px}
+.cal .r span:first-child{color:var(--ink2);font-variant-numeric:tabular-nums;font-weight:500}
+/* recap legacy classes */
+.idx{background:var(--card);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
+.idx .n{font-size:13px;color:var(--ink2);display:flex;justify-content:space-between;font-weight:600}
+.idx .v{font-size:22px;font-weight:700;letter-spacing:-.02em;margin-top:4px;font-variant-numeric:tabular-nums}
+.idx .c{font-weight:600;font-size:15px}
+.idx .s{font-size:12px;color:var(--ink2)}
+.bar{position:relative;height:6px;background:var(--fill);border-radius:3px;margin:10px 0 6px;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gfill);border-radius:3px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.02em;padding:2px 7px;border-radius:6px;margin-right:6px;vertical-align:1px}
+.tag.c{color:var(--green);background:var(--gtint)}.tag.l{color:var(--blue);background:var(--btint)}.tag.p{color:var(--orange);background:var(--otint)}.tag.x{color:var(--red);background:var(--rtint)}
+.why ul{margin:0;padding:0}.why li{margin:8px 0;list-style:none;font-size:15px}
+.strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.cell{background:var(--card);border-radius:14px;padding:12px;box-shadow:var(--shadow)}
+.cell .l{font-size:12px;color:var(--ink2);font-weight:600}
+.cell .v{font-size:19px;font-weight:700;margin-top:2px;font-variant-numeric:tabular-nums}
+.cell .s{font-size:12px;color:var(--ink2)}
+.hb{display:grid;grid-template-columns:112px 1fr 62px;gap:10px;align-items:center;font-size:14px;padding:4px 0}
+.hb .t{height:9px;background:var(--fill);border-radius:5px;position:relative}
+.hb .t i{position:absolute;top:0;bottom:0;border-radius:5px}
+.hb .p{text-align:right;font-weight:600;font-variant-numeric:tabular-nums}
+.mv{display:grid;grid-template-columns:64px 72px minmax(0,1fr);gap:10px;font-size:14px;padding:8px 0;border-top:.5px solid var(--sep)}
+.mv:first-of-type{border-top:0}
+.mv .why2{color:var(--ink2)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:10px 8px;border-top:.5px solid var(--sep);vertical-align:top}
+tr:first-child td{border-top:0}
+td:first-child{color:var(--ink2);width:104px;font-size:13px;font-variant-numeric:tabular-nums}
+.qa{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.q{background:var(--card);border-radius:16px;padding:14px 16px;box-shadow:var(--shadow);font-size:15px}
+.q b{display:block;margin-bottom:4px;font-size:16px}
+.q span{color:var(--ink2)}
+.ladder .r{display:grid;grid-template-columns:78px minmax(0,1fr) auto;gap:10px;padding:9px 10px;border-radius:10px;font-size:14px;align-items:center}
+.ladder .hi{background:var(--otint)}
+details{margin-top:28px}
+summary{cursor:pointer;color:var(--blue);font-size:15px;font-weight:500;padding:8px 0;list-style:none}
+summary::-webkit-details-marker{display:none}
+.src{font-size:13px;color:var(--ink2);line-height:2}
+.src a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--ink3)}
+.foot{font-size:12px;color:var(--ink2);margin-top:22px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+body.quick .detail{display:none}
+@media (min-width:760px){h1{font-size:40px}.hero{padding-top:28px}.tile{width:168px}}
+@media (max-width:400px){.imp .big{font-size:38px}.gx{grid-template-columns:52px 1fr 86px}.hb{grid-template-columns:96px 1fr 56px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="navin">
+<div class="ttl">Market Brief <span class="st" id="status"><i></i><span id="stxt">Snapshot</span></span></div>
+<div style="display:flex;gap:8px;align-items:center">
+<button class="iconbtn" id="qbtn" aria-label="Quick scan"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h6"/></svg></button>
+<button class="iconbtn" id="refresh" aria-label="Refresh"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
+</div>
+<div class="seg" role="tablist"><button class="on" data-p="now">Right now</button><button data-p="wed" id="recaptab">Wed recap</button></div>
+</div></header>
+
+<main class="wrap">
+<div class="panel on" id="p-now">
+
+<section class="hero">
+<div class="kicker" id="kick">THANKSGIVING NIGHT</div>
+<h1 id="hl">Market brief</h1>
+<p class="lede" id="lede"></p>
+<div class="pills" id="pills"></div>
+</section>
+
+<div class="scroll" id="strip" aria-label="Markets"></div>
+
+<div class="two" style="margin-top:12px">
+<div class="card imp">
+<div class="sub" id="impsub">S&amp;P 500 IMPLIED FROM PERPS</div>
+<div class="big" id="spx">0</div>
+<div class="row"><span class="chg" id="spxchg">0%</span><span class="num" style="color:var(--ink2);font-size:15px" id="spxpts"></span></div>
+<div class="lad" id="lad"></div>
+<div class="zone" id="zone"></div>
+<div class="note" id="impnote"></div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;flex-wrap:wrap"><span class="sub" id="chtitle" style="margin:0">OVERNIGHT PATH</span><span class="sw"><button class="chipb on" data-c="xyz:SP500">S&amp;P</button><button class="chipb" data-c="xyz:XYZ100">NDX</button><button class="chipb" data-c="xyz:NVDA">NVDA</button></span></div>
+<div class="fig"><svg id="ovn"></svg></div>
+<div class="note">Hourly closes. Dashed line is the last cash close.</div>
+</div>
+</div>
+
+<h2>Options Map <span id="optasof"></span></h2>
+<div class="two">
+<div class="card">
+<div class="sub" id="emsub">SPX EXPECTED MOVE</div>
+<div id="emrows"></div>
+<div class="zone" id="emzone"></div>
+<div class="note">Implied move from options pricing. Blue box is the expected range, line is the last close, dot is the live S&amp;P.</div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px"><span class="sub" style="margin:0">VIX CURVE</span><span class="pill r" style="font-size:12px;padding:3px 9px" id="vixtag">Backwardation</span></div>
+<div class="fig" style="height:200px"><svg id="vixc"></svg></div>
+<div class="note" id="vixnote"></div>
+</div>
+</div>
+<div class="card" style="margin-top:12px">
+<div class="sub">WHERE THE BIG SPX OPTION POSITIONS SIT</div>
+<div class="lv" id="lvchips"></div>
+<div id="gxrows"></div>
+<div class="legend"><span><i style="background:var(--gfill)"></i>Call gamma</span><span><i style="background:var(--rfill)"></i>Put gamma</span><span>Highlighted row is nearest the live S&amp;P</span></div>
+<div class="note detail"><b>How to read it.</b> Big strikes act like magnets and speed bumps. Above the gamma flip, dealer hedging tends to calm moves. Below it, hedging tends to speed them up.</div>
+</div>
+
+<h2>What's Driving It</h2>
+<div class="sc" id="drivers"></div>
+
+<h2>Markets <span>Updates every 15 seconds</span></h2>
+<div class="seg" id="basis" style="margin:4px 0 10px"><button class="on" data-b="base" id="b-base">vs close</button><button data-b="anchor" id="b-anc">Since 7pm</button><button data-b="24h">24h</button></div>
+<div class="chips" id="filt"><button class="chipb on" data-g="key">Key 10</button><button class="chipb" data-g="all">All</button><button class="chipb" data-g="idx">Indexes</button><button class="chipb" data-g="chip">AI and chips</button><button class="chipb" data-g="mega">Megacap</button><button class="chipb" data-g="macro">Commodities and FX</button><button class="chipb" data-g="cry">Crypto</button></div>
+<div class="list" id="tb"></div>
+<div class="note">Tap any % to switch between vs close, since the anchor time and 24h. Prices are Hyperliquid perps, the same feed Liquid uses.</div>
+
+<h2>News That Moves Markets</h2>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+<span class="st" id="wstat"><i></i><span id="wtxt">Live wire off</span></span>
+<button class="btn" id="keybtn">Connect news</button>
+</div>
+<div id="keypanel" class="keyp" style="display:none">
+<div style="font-size:15px">Paste your Unusual Whales API token. It is saved only in this browser on this device, never in the page or on GitHub. It also turns on the live VIX price.</div>
+<input id="keyin" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Unusual Whales API token">
+<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn on" id="keysave">Save and turn on</button><button class="btn" id="keydel">Remove token</button></div>
+<div class="note" id="keymsg"></div>
+</div>
+<div id="breaking"></div>
+<div class="chips" id="nfilt"><button class="chipb on" data-n="all">All</button><button class="chipb" data-n="FUT">Markets</button><button class="chipb" data-n="FED">Fed and data</button><button class="chipb" data-n="AI">AI and chips</button><button class="chipb" data-n="OIL">Oil and geo</button><button class="chipb" data-n="EARN">Earnings</button><button class="chipb" data-n="ASIA">Asia</button><button class="chipb" data-n="MACRO">Macro</button></div>
+<div class="subhead">Live wire</div>
+<div class="feed" id="wire"><div class="note">Tap Connect news to turn on the live wire.</div></div>
+<div class="subhead" style="margin-top:18px">Claude's picks</div>
+<div class="feed" id="feed"></div>
+<div class="note detail">The live wire keeps only headlines that can move markets: Fed and data, tariffs and policy, oil and conflict, megacaps and chips, index moves. The % chip is how the related market moved in the 30 minutes after the headline.</div>
+</div>
+
+<h2 id="plantitle">Game Plan</h2>
+<div class="two">
+<div class="card"><div class="sub">WHAT IT MEANS</div><ul class="means" id="means"></ul></div>
+<div class="card"><div class="sub" id="caltitle">CALENDAR · ET</div><div class="cal" id="cal"></div></div>
+</div>
+</div>
+
+<div class="panel" id="p-wed"><div id="recapbox">
+<section class="hero">
+<div class="kicker">PRE THANKSGIVING SESSION · MARKETS CLOSED THU · HALF DAY FRI</div>
+<h1>Morning flush, noon reversal. Chips still lost.</h1>
+<p class="lede">The S&amp;P won back 92% of a 3.2% drop. The bounce was a rotation into cyclicals and small caps, not a return to AI leaders.</p>
+<div class="pills">
+<span class="pill r">Core PCE 3.3% hot</span>
+<span class="pill r">Tariffs on 14 economies</span>
+<span class="pill a">No single catalyst for the turn</span>
+<span class="pill g">74% of S&amp;P green</span>
+<span class="pill a">VIX 28.29 · peak 34.95</span>
+<span class="pill b">Dec hike odds 97.8%</span>
+</div>
+<div class="three">
+<div class="k"><h4>WHAT HAPPENED</h4><p>Hot inflation, a new tariff proposal and day 2 of AI selling hit at the open. S&amp;P −3.2%, Nasdaq −4.6%, Dow −1,105 pts. Lows held through late morning, then stocks turned at about noon.</p></div>
+<div class="k"><h4>WHY IT TURNED</h4><p>Short covering near S&amp;P 7,000, tariff fine print softer than the headline, Burry saying he is almost entirely long, and falling yields. Thin holiday volume amplified both moves.</p></div>
+<div class="k"><h4>WHAT IT MEANS</h4><p>Breadth was strong but leadership changed. Until NVDA, MU and the semis join, a durable bottom is unconfirmed. The Fed is still on track to hike Dec 9.</p></div>
+</div>
+</section>
+
+<h2 id="score"><b>01</b> SCOREBOARD <span style="font-weight:500;letter-spacing:0">· bar = share of the drop recovered by the close</span></h2>
+<div class="grid">
+<div class="idx"><div class="n"><span>S&amp;P 500</span><span class="mono">SPX</span></div><div class="v num">7,182.78</div><div class="c dn num">−0.25%</div><div class="bar"><i style="width:92%"></i></div><div class="s num">Low 6,970.11 (−3.2%) · 92% back</div></div>
+<div class="idx"><div class="n"><span>Nasdaq Comp</span><span class="mono">IXIC</span></div><div class="v num">23,585.80</div><div class="c dn num">−0.62%</div><div class="bar"><i style="width:87%"></i></div><div class="s num">Low 22,632.40 (−4.6%) · 87% back</div></div>
+<div class="idx"><div class="n"><span>Dow</span><span class="mono">DJI</span></div><div class="v num">50,182.95</div><div class="c up num">+0.33%</div><div class="bar"><i style="width:100%"></i></div><div class="s num">Low 48,913.74 (−2.2%) · fully back</div></div>
+<div class="idx"><div class="n"><span>Nasdaq 100</span><span class="mono">QQQ</span></div><div class="v num">$633.93</div><div class="c dn num">−0.65%</div><div class="bar"><i style="width:86%"></i></div><div class="s num">Low $607.76 · NDX briefly −20% off record</div></div>
+<div class="idx"><div class="n"><span>Russell 2000</span><span class="mono">RUT</span></div><div class="v num">2,704.06</div><div class="c up num">+0.71%</div><div class="s" style="margin-top:8px">Small caps led the rebound</div></div>
+<div class="idx"><div class="n"><span>MidCap 400</span><span class="mono">MID</span></div><div class="v num">3,577.34</div><div class="c up num">+1.23%</div><div class="s" style="margin-top:8px">Best major average</div></div>
+<div class="idx"><div class="n"><span>Equal weight S&amp;P</span><span class="mono">RSP</span></div><div class="v num">+0.83%</div><div class="c up num">vs SPY −0.25%</div><div class="s" style="margin-top:8px">Average stock beat the index</div></div>
+<div class="idx"><div class="n"><span>Week to date</span><span class="mono">3 DAYS</span></div><div class="v num up">+3.94%</div><div class="c num">S&amp;P</div><div class="s num" style="margin-top:8px">Nasdaq +4.28% · Dow +4.23%</div></div>
+</div>
+
+<h2 id="day"><b>02</b> HOW THE DAY UNFOLDED <span style="font-weight:500;letter-spacing:0">· S&amp;P 500, ET</span></h2>
+<div class="two">
+<div class="card">
+<svg viewBox="0 0 560 270" width="100%" role="img" aria-label="Approximate S&P 500 path on Nov 25 2026">
+<line x1="40" x2="545" y1="40" y2="40" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>
+<text x="545" y="33" text-anchor="end" font-size="10.5" fill="var(--mute)">Prior close 7,201</text>
+<line x1="40" x2="545" y1="200" y2="200" stroke="var(--amber)" stroke-dasharray="4 4" opacity=".7"/>
+<text x="545" y="215" text-anchor="end" font-size="10.5" fill="var(--amber)">7,000 pivot, held twice</text>
+<path d="M40,40 C55,40 58,138 62,138 C72,150 80,215 92,224 C120,236 160,214 200,210 C230,206 250,206 268,207 C300,206 315,170 345,110 C370,60 400,44 440,42 C480,46 520,50 545,53" fill="none" stroke="var(--blue)" stroke-width="2.5"/>
+<circle cx="40" cy="40" r="4.5" fill="var(--mute)"/>
+<circle cx="62" cy="138" r="4.5" fill="var(--red)"/><text x="68" y="132" font-size="11" fill="var(--ink)">Open 7,060</text>
+<circle cx="92" cy="224" r="5" fill="var(--red)"/><text x="84" y="250" font-size="11" fill="var(--red)" font-weight="700">Low 6,970 ~9:45</text>
+<circle cx="250" cy="206" r="5" fill="var(--amber)"/><text x="196" y="190" font-size="11" fill="var(--amber)" font-weight="700">11:31 · 7,008</text>
+<circle cx="268" cy="207" r="5" fill="var(--green)"/><text x="276" y="232" font-size="11" fill="var(--green)" font-weight="700">~12:00 turn</text>
+<circle cx="440" cy="42" r="4.5" fill="var(--green)"/><text x="400" y="62" font-size="11" fill="var(--ink)">High 7,199</text>
+<circle cx="545" cy="53" r="5" fill="var(--green)"/><text x="545" y="78" text-anchor="end" font-size="11" fill="var(--ink)" font-weight="700">Close 7,183</text>
+<g font-size="10" fill="var(--mute)"><text x="40" y="266">9:30</text><text x="168" y="266">11:00</text><text x="268" y="266">12:00</text><text x="368" y="266">1:00</text><text x="440" y="266">2:00</text><text x="520" y="266">4:00</text></g>
+</svg>
+<div class="chartnote">Shape drawn from reported prints (open, low, 11:31, high, close). Not tick data.</div>
+</div>
+<div class="card" style="padding:6px 14px">
+<table>
+<tr><td class="num">8:30am</td><td><b class="dn">Core PCE 3.3%</b> vs 3.2% est, highest since Nov 2023. Headline 3.8%. Q3 GDP revised up to 4.3%. Claims 189k vs 200k.</td></tr>
+<tr><td>Morning</td><td><b class="dn">USTR tariff proposal</b> on 14 economies, 15% to 35%.</td></tr>
+<tr><td class="num">9:30 to 9:45</td><td>Flush. NVDA down as much as 8%. VIX spikes toward 35.</td></tr>
+<tr class="detail"><td class="num">10:00am</td><td>New home sales 701k vs 650k est.</td></tr>
+<tr class="detail"><td class="num">11:02am</td><td>Retest. QQQ still −4.38%.</td></tr>
+<tr><td class="num">11:30am</td><td><b class="am">7 year auction</b> $44B at 4.708%, 1 bp tail. S&amp;P 7,008 at 11:31.</td></tr>
+<tr><td>Late AM</td><td><b class="bl">Burry note</b> hits Bloomberg and CNBC: "temporarily almost entirely long."</td></tr>
+<tr><td class="num">~12:00pm</td><td><b class="up">The turn.</b> Nearly all losses recovered in 2 hours.</td></tr>
+<tr class="detail"><td class="num">2:00pm</td><td>Beige Book: 8 of 12 districts grew.</td></tr>
+<tr><td class="num">4:00pm</td><td>Dow green. S&amp;P −0.25%, Nasdaq −0.62%.</td></tr>
+</table>
+</div>
+</div>
+
+<h2 id="why"><b>03</b> WHY IT FELL · WHY IT TURNED <span style="font-weight:500;letter-spacing:0">· evidence graded</span></h2>
+<div class="two why">
+<div class="card"><div class="sub dn">THE SELLOFF</div><ul>
+<li><span class="tag c">CONFIRMED</span><b>Hot core PCE.</b> 3.3% y/y keeps a Dec 9 hike near certain (CME 97.8%).</li>
+<li><span class="tag c">CONFIRMED</span><b>Tariffs.</b> Section 301 on China, EU, Japan, Korea, Taiwan, India, Vietnam and 7 more.</li>
+<li><span class="tag c">CONFIRMED</span><b>AI unwind day 2.</b> Asia led overnight: Kospi −6.2%, Taiex −4.8%. NVDA −27% in November.</li>
+<li class="detail"><span class="tag l">LIKELY</span><b>Thin liquidity.</b> Holiday books made the open gap worse.</li>
+</ul></div>
+<div class="card"><div class="sub up">THE REVERSAL</div><ul>
+<li><span class="tag l">LIKELY</span><b>Short covering and dealer hedges</b> near 7,000. Desks: no headline explains the turn.</li>
+<li><span class="tag c">CONFIRMED</span><b>Tariff fine print softer.</b> Not in force, no stacking, 232 goods incl. chips exempt (not China). Hearing Jan 25.</li>
+<li><span class="tag c">CONFIRMED</span><b>Yields fell.</b> 10Y −6 bp to 4.85% as investors bought bonds for protection.</li>
+<li><span class="tag p">POSSIBLE</span><b>Burry flips long.</b> He says CNBC discussed it "about the time the market reversed." Exact timestamp vs the tape unproven.</li>
+</ul></div>
+</div>
+
+<h2 id="assets"><b>04</b> CROSS ASSET</h2>
+<div class="strip">
+<div class="cell"><div class="l">10Y TREASURY</div><div class="v num up">4.85%</div><div class="s num">−6 bp · 2Y 4.61% −2 bp</div></div>
+<div class="cell"><div class="l">VIX</div><div class="v num dn">28.29</div><div class="s num">+7.3% · intraday 34.95</div></div>
+<div class="cell"><div class="l">WTI / BRENT</div><div class="v num">$83.68</div><div class="s num">+2.0% · Brent $94.61 +3.5%</div></div>
+<div class="cell"><div class="l">GOLD</div><div class="v num dn">$3,535</div><div class="s num">−0.7% · broke $3,500 intraday</div></div>
+<div class="cell"><div class="l">BITCOIN</div><div class="v num">~$60.1K</div><div class="s num">+0.6% · low ~$57.3K</div></div>
+<div class="cell"><div class="l">DOLLAR (DXY)</div><div class="v num">103.71</div><div class="s num">−0.1%</div></div>
+<div class="cell"><div class="l">FED DEC 9 HIKE</div><div class="v num am">97.8%</div><div class="s">CME FedWatch</div></div>
+<div class="cell"><div class="l">7Y AUCTION</div><div class="v num">4.708%</div><div class="s num">1 bp tail · 2.43x cover</div></div>
+</div>
+<p class="detail" style="color:var(--mute);font-size:13px;margin:8px 2px 0">Oil jumped after Houthis claimed a strike on Saudi Arabia's Ras Tanura refinery. Gold hit its lowest since August 2025 with a December hike priced in.</p>
+
+<h2 id="rotation"><b>05</b> ROTATION · SECTORS AND MOVERS</h2>
+<div class="two">
+<div class="card">
+<div class="sub">11 S&amp;P SECTORS</div>
+<div id="sectors"></div>
+<div class="chartnote">8 of 11 up. Breadth 370 up / 128 down.</div>
+</div>
+<div class="card">
+<div class="sub">MOVERS AND WHY</div>
+<div class="mv"><span class="mono">HPQ</span><span class="num up">+11.49%</span><span class="why2">Q4 beat, outlook, dividend hike</span></div>
+<div class="mv"><span class="mono">CNH</span><span class="num up">+8.00%</span><span class="why2">Farm equipment read from Deere</span></div>
+<div class="mv"><span class="mono">ADI</span><span class="num up">+6.44%</span><span class="why2">Rebound after −17% Tuesday</span></div>
+<div class="mv"><span class="mono">DE</span><span class="num up">+4.44%</span><span class="why2">EPS miss, weak FY27, bought anyway</span></div>
+<div class="mv"><span class="mono">META</span><span class="num up">+3.40%</span><span class="why2">Only megacap tech green</span></div>
+<div class="mv detail"><span class="mono">AMBA</span><span class="num dn">−19.77%</span><span class="why2">Q4 guide $70 to 75M, far below est</span></div>
+<div class="mv detail"><span class="mono">NTNX</span><span class="num dn">−15.19%</span><span class="why2">FY27 guide, CEO exit</span></div>
+<div class="mv detail"><span class="mono">URBN</span><span class="num dn">−10.33%</span><span class="why2">Comps 4.4% vs 5.3% est</span></div>
+<div class="mv"><span class="mono">LRCX</span><span class="num dn">−5.68%</span><span class="why2">Chip equipment led losers</span></div>
+<div class="mv"><span class="mono">SNDK</span><span class="num dn">−5.57%</span><span class="why2">Memory selloff</span></div>
+<div class="mv"><span class="mono">ORCL</span><span class="num dn">−5.13%</span><span class="why2">AI credit worries</span></div>
+<div class="mv"><span class="mono">MU</span><span class="num dn">−4.53%</span><span class="why2">Memory, Korea chip rout</span></div>
+<div class="mv"><span class="mono">NVDA</span><span class="num dn">−3.91%</span><span class="why2">Down 27% in November</span></div>
+<div class="mv detail"><span class="mono">AMZN · GOOGL</span><span class="num dn">−3.12 · −2.13</span><span class="why2">Megacap AI lagged</span></div>
+<div class="mv"><span class="mono">SMH</span><span class="num dn">−1.01%</span><span class="why2">Semis closed red, SOXX −0.50%</span></div>
+</div>
+</div>
+
+<h2 id="ask"><b>06</b> KEY QUESTIONS</h2>
+<div class="qa">
+<div class="q"><b>Why did stocks tank Wednesday morning?</b><span>Three hits at once: core PCE came in hot at 3.3%, the US proposed tariffs on 14 economies, and AI stocks kept selling off after a chip rout in Korea and Taiwan.</span></div>
+<div class="q"><b>What turned it around?</b><span>No single headline. Shorts covered near S&amp;P 7,000, the tariff details were softer than feared, yields fell, and Burry said he was almost entirely long. Holiday trading was thin, so the move snowballed.</span></div>
+<div class="q"><b>So is the bottom in?</b><span>Not confirmed. 74% of stocks rose, but chips and megacap AI still closed red. Only 5 Nasdaq reversals this size since 1985, and 3 were lower a month later.</span></div>
+<div class="q"><b>Is the Fed cutting?</b><span>No, hiking. Markets price a 25 bp hike at the Dec 8 to 9 meeting with about 97.8% odds. Inflation is 3.8% headline, nearly double target.</span></div>
+<div class="q"><b>Is the AI trade over?</b><span>It is under pressure, not dead. NVDA is down 27% this month and the Nasdaq 100 briefly touched 20% off its record. Money moved to materials, industrials and small caps.</span></div>
+<div class="q"><b>How bad are the tariffs?</b><span>15% for EU, Japan, Korea, Switzerland and Taiwan, up to 35% for Vietnam. They won't stack on existing duties and aren't in force. Final duties likely Feb or March.</span></div>
+<div class="q detail"><b>Where are bonds, oil, gold?</b><span>10Y fell to 4.85% as a safe haven. Oil up 2% to 3.5% on a Houthi strike on a Saudi refinery. Gold down near a 14 month low.</span></div>
+<div class="q detail"><b>How was the week?</b><span>Strong despite Wednesday. S&amp;P +3.9%, Nasdaq +4.3%, Dow +4.2% in three days. The Dow closed above 50,000 for the first time Tuesday.</span></div>
+</div>
+
+<h2 id="next"><b>07</b> FRIDAY AND WHAT'S NEXT</h2>
+<div class="two">
+<div class="card">
+<div class="sub">S&amp;P LEVELS</div>
+<div class="ladder">
+<div class="r"><span class="num">7,201.09</span><span>Prior close. Above it = bullish confirmation</span><span class="tag c">BULL</span></div>
+<div class="r hi"><span class="num">7,199.31</span><span>Wed session high</span><span class="tag p">RANGE</span></div>
+<div class="r hi"><span class="num">7,182.78</span><span>Wed close</span><span class="tag p">RANGE</span></div>
+<div class="r hi"><span class="num">7,060.33</span><span>Wed open, range floor</span><span class="tag p">RANGE</span></div>
+<div class="r"><span class="num">7,000.00</span><span>Pivot, held twice Wednesday</span><span class="tag x">BEAR</span></div>
+<div class="r"><span class="num">6,970.11</span><span>Wed low. Break = flush resumes</span><span class="tag x">BEAR</span></div>
+</div>
+<div class="chartnote">52 week high 7,844.52 on Oct 6. S&amp;P is 8.4% below it.</div>
+</div>
+<div class="card">
+<div class="sub">CALENDAR</div>
+<div class="cal">
+<div class="r"><span class="num">Fri 8:30am</span><span>Advance goods trade, retail and wholesale inventories</span></div>
+<div class="r"><span class="num">Fri 1:00pm</span><span>Stocks close early. Bonds close 2:00pm</span></div>
+<div class="r"><span class="num">Mon Dec 1</span><span>Jensen Huang before House committees</span></div>
+<div class="r"><span class="num">Fri Dec 4</span><span>November jobs report</span></div>
+<div class="r"><span class="num">Dec 8 to 9</span><span>FOMC, hike expected</span></div>
+<div class="r"><span class="num">Jan 25</span><span>Tariff hearing</span></div>
+</div>
+</div>
+</div>
+<div class="sc" style="margin-top:10px">
+<div class="k" style="border-top-color:var(--green)"><h4 class="up">BULL · ABOVE 7,201</h4><p>Semis (SMH, NVDA, MU) join small caps. VIX drops under 25. Rotation turns into a broad rally.</p></div>
+<div class="k" style="border-top-color:var(--amber)"><h4 class="am">BASE · 7,060 TO 7,200</h4><p>Cyclicals hold, chips lag, VIX stays 25 to 30. Rotation without leadership. Wait for confirmation.</p></div>
+<div class="k" style="border-top-color:var(--red)"><h4 class="dn">BEAR · BELOW 6,970</h4><p>Wednesday's low breaks. AI selling resumes and risk off carries into the weekend.</p></div>
+</div>
+<p class="detail" style="color:var(--mute);font-size:13px;margin:10px 2px 0">Half day context: with the VIX at 25 or higher heading into Thanksgiving, Friday's range has averaged about 1.3% since 1990. Expect wider option spreads and thin liquidity into the 1:00pm close.</p>
+
+
+</div></div>
+
+<details><summary>Sources</summary><div class="src" id="srcbox"></div></details>
+<div class="foot"><span>Live prices from Hyperliquid perps. News from Unusual Whales.</span><span id="footupd"></span></div>
+</main>
+
+<script>
+{
+var DEF={
+ "updated": "2026-11-26T23:15:00-05:00",
+ "updatedLabel": "Thu 11:15pm ET",
+ "next": "7:30am",
+ "kicker": "THANKSGIVING NIGHT · MARKETS CLOSED THU · FRIDAY HALF DAY, STOCKS CLOSE 1:00PM",
+ "headline": "S&P perps near 7,300. Chips keep pulling the bounce higher.",
+ "lede": "S&P perps are up about 1.7% vs Wednesday's close and about 1% since 4pm, led by memory and chip names. Nasdaq 100 perps are up about 2.5%.",
+ "pills": [
+  [
+   "g",
+   "S&P perps 7,306 · +1.7% vs Wed"
+  ],
+  [
+   "g",
+   "SK Hynix +6.1% · MU +4.5% since 4pm"
+  ],
+  [
+   "g",
+   "Kospi +2.2% · Nikkei +0.7%"
+  ],
+  [
+   "r",
+   "Brent $96.29 · Hormuz mines"
+  ],
+  [
+   "r",
+   "NVDA export curbs · S&P credit watch"
+  ],
+  [
+   "a",
+   "Half day · thin liquidity"
+  ]
+ ],
+ "drivers": [
+  [
+   "g",
+   "CHIPS LEAD THE REBOUND",
+   "Since 4pm: SK Hynix perp +6.1%, MU +4.5%, AMD +4.3%, SMH +2.7%, NVDA +2.1%. In Tokyo, Kioxia and Socionext up 5% to 6%."
+  ],
+  [
+   "g",
+   "ASIA FOLLOWS THROUGH",
+   "Kospi +2.2% to 4,813 and Nikkei +0.7% to 57,919 in Friday morning trade. Korea 200 perp +3.7% since 4pm."
+  ],
+  [
+   "r",
+   "OIL AND HORMUZ",
+   "Iran says mines hit ships in the Strait of Hormuz. Brent $96.29, WTI $85.43, up 2.1%. Keeps inflation and Fed hike fears alive."
+  ],
+  [
+   "r",
+   "NVIDIA OVERHANG",
+   "Server shipments to four SE Asian countries halted under new curbs. S&P has its AA rating on watch for a cut. Huang hearings Dec 1 and Dec 3."
+  ]
+ ],
+ "picks": [
+  [
+   "Thu 11:15pm",
+   "FUT",
+   "up",
+   "S&P perps at 7,306, +1.7% vs Wed close and +1.0% since 4pm. Nasdaq 100 perps +2.5% vs Wed. SK Hynix +6.1%, MU +4.5%, AMD +4.3% since 4pm."
+  ],
+  [
+   "Fri Asia",
+   "ASIA",
+   "up",
+   "Tokyo chip and power names lead: Socionext +6%, Kioxia +5%, IHI and Resonac near +6%. SoftBank and Tokyo Electron down about 3%."
+  ],
+  [
+   "Thu 9:18pm",
+   "FUT",
+   "up",
+   "CME futures: S&P +1.27% to 7,287.25, Nasdaq 100 +1.8% to 26,571, Dow +0.82% to 50,638."
+  ],
+  [
+   "Thu 9:18pm",
+   "ASIA",
+   "up",
+   "Friday morning in Asia: Nikkei +0.7% to 57,919, Kospi +2.2% to 4,813, Hang Seng +0.4%, ASX +0.4%. Shanghai −0.1%."
+  ],
+  [
+   "Thu 9:18pm",
+   "OIL",
+   "dn",
+   "WTI +2.1% to $85.43 as it catches up after the holiday. Brent $96.29, −0.3%. Yen at 159.25 per dollar."
+  ],
+  [
+   "Thu 6:00pm",
+   "FUT",
+   "",
+   "CME equity futures reopen after the 1:00pm holiday halt."
+  ],
+  [
+   "Thu",
+   "OIL",
+   "dn",
+   "Brent settles $96.57, +1.2%, third straight gain and about 8% in 3 sessions. Saudi says air defenses intercepted drones aimed at Ras Tanura."
+  ],
+  [
+   "Thu AM",
+   "OIL",
+   "dn",
+   "Iran says mines struck ships in the Strait of Hormuz, reviving supply fears."
+  ],
+  [
+   "Thu AM",
+   "MACRO",
+   "up",
+   "Europe rallies: DAX +1.9%, CAC +1.8%, FTSE +1.6%."
+  ],
+  [
+   "Thu early",
+   "AI",
+   "dn",
+   "FT: Nvidia tells Dell and Supermicro to stop server shipments to Malaysia, Singapore, Thailand and Indonesia under new US export curbs."
+  ],
+  [
+   "Thu Asia",
+   "ASIA",
+   "up",
+   "Asia rebounds: Nikkei +0.9%, SoftBank +7.3%, Kioxia +12.6% on an Nvidia memory demo, Taiex +2.5%. Kospi +0.3% after −6.2%."
+  ],
+  [
+   "Thu",
+   "AI",
+   "dn",
+   "Huang faces a closed door House interview Dec 1, then public Senate Banking testimony Dec 3."
+  ],
+  [
+   "Wed 4:00pm",
+   "MACRO",
+   "",
+   "Wed close: S&P 7,182.78 (−0.25%) after a 3.2% intraday drop. See the Wed recap tab."
+  ]
+ ],
+ "planTitle": "FRIDAY GAME PLAN",
+ "means": [
+  "Perps near <b>7,300</b> put the implied open about 100 points above <b>7,201</b>, Wednesday's bull trigger. Chips leading is the confirmation that was missing.",
+  "A gap this size on a half day can fade. Holding above 7,201 after 9:30am keeps the bounce; back under it puts the 7,060 to 7,200 range back in play.",
+  "Oil is the risk. Brent near $96 with mines in Hormuz feeds inflation fears and a Dec 9 hike that is already priced at 97.8%.",
+  "Thin books. Moves can be exaggerated both ways, like Wednesday."
+ ],
+ "calTitle": "FRIDAY CALENDAR · ET",
+ "calendar": [
+  [
+   "Overnight",
+   "Europe opens 3:00am. Watch if Asia's chip bid carries"
+  ],
+  [
+   "8:30am",
+   "Advance goods trade, retail and wholesale inventories"
+  ],
+  [
+   "9:30am",
+   "Cash open vs 7,201 trigger"
+  ],
+  [
+   "All day",
+   "Black Friday reads. Adobe forecast: $12.9B online, +9.2%"
+  ],
+  [
+   "1:00pm",
+   "Stocks close. Bonds close 2:00pm"
+  ],
+  [
+   "Mon to Wed",
+   "Huang before House Dec 1, Senate Banking Dec 3"
+  ]
+ ],
+ "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can run ahead of CME futures in thin holiday hours. CME ES and NQ reopened 6:00pm ET. Options levels are from Wednesday, the last session.",
+ "base": {
+  "label": "Wed close",
+  "spx": 7182.78,
+  "closes": {
+   "xyz:SP500": 7182.78,
+   "xyz:XYZ100": 26046.9,
+   "xyz:NVDA": 149.3,
+   "xyz:LRCX": 185.01
+  }
+ },
+ "anchor": {
+  "label": "Since 4pm",
+  "prices": {
+   "xyz:SP500": 7231.4,
+   "xyz:XYZ100": 26227.0,
+   "xyz:NVDA": 151.59,
+   "xyz:MU": 610.9,
+   "xyz:SKHX": 777.93,
+   "xyz:SMH": 428.73,
+   "xyz:GOLD": 3575.3,
+   "xyz:BRENTOIL": 91.568,
+   "xyz:CL": 84.779,
+   "xyz:JP225": 57683.0,
+   "xyz:KR200": 730.43,
+   "xyz:AMD": 408.66,
+   "xyz:ORCL": 105.99,
+   "xyz:TSM": 348.71,
+   "BTC": 60742.0
+  }
+ },
+ "ladder": {
+  "bull": 7201.09,
+  "floor": 7060.33,
+  "marks": [
+   [
+    6970.11,
+    "Low 6,970",
+    0
+   ],
+   [
+    7060.33,
+    "Open 7,060",
+    1
+   ],
+   [
+    7182.78,
+    "Close 7,183",
+    0
+   ],
+   [
+    7201.09,
+    "Trigger 7,201",
+    1
+   ],
+   [
+    7300,
+    "Perps 7,300",
+    0
+   ]
+  ],
+  "bullText": "Above the 7,201 trigger. Perps near 7,300; needs to hold through the 9:30am open with chips leading.",
+  "rangeText": "Between 7,060 and 7,201. Rotation without confirmation.",
+  "riskText": "Below Wednesday's open. 7,000 and 6,970 are next."
+ },
+ "chart": {
+  "title": "OVERNIGHT PATH · WED 4PM TO NOW",
+  "start": "2026-11-25T16:00:00-05:00",
+  "startLabel": "Wed 4pm",
+  "marker": [
+   "2026-11-26T19:00:00-05:00",
+   "Asia opens 7pm"
+  ]
+ },
+ "opt": {
+  "asof": "Wed close",
+  "base": 7182.78,
+  "em": [
+   [
+    "Friday, half day",
+    1.2162,
+    "Nov 27 expiry"
+   ],
+   [
+    "Through next Friday",
+    2.7927,
+    "Dec 4 expiry"
+   ]
+  ],
+  "vix": {
+   "idx": [
+    [
+     "9D",
+     9,
+     29.6
+    ],
+    [
+     "VIX",
+     30,
+     28.29
+    ],
+    [
+     "3M",
+     91,
+     26.3
+    ]
+   ],
+   "fut": [
+    [
+     "Dec",
+     21,
+     25.03
+    ],
+    [
+     "Jan",
+     56,
+     24.29
+    ],
+    [
+     "Feb",
+     84,
+     24.0
+    ],
+    [
+     "Mar",
+     112,
+     23.6
+    ],
+    [
+     "Apr",
+     147,
+     23.4
+    ],
+    [
+     "May",
+     175,
+     23.1
+    ],
+    [
+     "Jun",
+     203,
+     23.1
+    ]
+   ]
+  },
+  "levels": [
+   [
+    "Magnet",
+    7000,
+    "a"
+   ],
+   [
+    "Put wall",
+    7095,
+    "r"
+   ],
+   [
+    "Gamma flip",
+    7186.58,
+    "b"
+   ],
+   [
+    "Flow put wall",
+    7175,
+    "r"
+   ],
+   [
+    "Flow call wall",
+    7200,
+    "g"
+   ],
+   [
+    "Dec max pain",
+    7400,
+    "b"
+   ]
+  ],
+  "gex": [
+   [
+    7000,
+    64763,
+    -73722
+   ],
+   [
+    7100,
+    2707,
+    -8295
+   ],
+   [
+    7150,
+    3254,
+    -8662
+   ],
+   [
+    7175,
+    1934,
+    -9078
+   ],
+   [
+    7180,
+    2843,
+    -7518
+   ],
+   [
+    7200,
+    10315,
+    -12899
+   ],
+   [
+    7250,
+    5215,
+    -11962
+   ],
+   [
+    7300,
+    4678,
+    -11913
+   ],
+   [
+    7350,
+    4516,
+    -6945
+   ],
+   [
+    7400,
+    8873,
+    -11337
+   ]
+  ]
+ },
+ "recapLabel": "Wed recap",
+ "sources": [
+  [
+   "AP via News4JAX: Asian shares mostly rise ahead of Wall Street's reopening",
+   "https://www.news4jax.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-the-thanksgiving-holiday/"
+  ],
+  [
+   "Al Jazeera: Asian stock markets rise after earlier tech rout",
+   "https://www.aljazeera.com/economy/2026/11/27/asian-stock-markets-rise-after-earlier-tech-rout"
+  ],
+  [
+   "Investing.com via Yahoo: US stock futures rise sharply",
+   "https://uk.finance.yahoo.com/news/u-stock-futures-rise-sharply-003408206.html"
+  ],
+  [
+   "RTTNews via finanzen.ch: Japanese market notably higher",
+   "https://www.finanzen.ch/nachrichten/aktien/japanese-market-notably-higher-1036804056"
+  ],
+  [
+   "investingLive: S&P puts Nvidia's AA rating on watch",
+   "https://investinglive.com/stocks/s-p-puts-nvidia-s-aa-rating-on-watch-for-a-possible-cut-as-moody-s-holds-steady/"
+  ],
+  [
+   "Hyperliquid perps (tools/prices.py)",
+   "https://app.hyperliquid.xyz/"
+  ]
+ ]
+};
+var B=DEF,BRIEF_V='',LAST=null,live=false,hist={},grp='key',basis='base',chartCoin='xyz:SP500',VIXL=null;
+var NEWS=B.picks||[];
+var ROWS=[
+['xyz:SP500','S&P 500','idx'],['xyz:XYZ100','Nasdaq 100','idx'],['xyz:JP225','Nikkei 225','idx'],['xyz:KR200','Kospi 200','idx'],
+['xyz:NVDA','Nvidia','chip'],['xyz:AMD','AMD','chip'],['xyz:MU','Micron','chip'],['xyz:SKHX','SK Hynix','chip'],['xyz:SMH','Semis ETF','chip'],['xyz:AVGO','Broadcom','chip'],['xyz:TSM','TSMC','chip'],['xyz:LRCX','Lam Research','chip'],['xyz:SNDK','SanDisk','chip'],['xyz:ORCL','Oracle','chip'],['xyz:ANT','Anthropic','chip'],
+['xyz:AAPL','Apple','mega'],['xyz:MSFT','Microsoft','mega'],['xyz:GOOGL','Alphabet','mega'],['xyz:AMZN','Amazon','mega'],['xyz:META','Meta','mega'],['xyz:TSLA','Tesla','mega'],
+['xyz:GOLD','Gold','macro'],['xyz:SILVER','Silver','macro'],['xyz:BRENTOIL','Brent oil','macro'],['xyz:CL','WTI oil','macro'],['xyz:COPPER','Copper','macro'],['xyz:JPY','USD/JPY','macro'],['xyz:EUR','EUR/USD','macro'],
+['BTC','Bitcoin','cry'],['ETH','Ether','cry'],['SOL','Solana','cry']];
+var KEY=['xyz:SP500','xyz:XYZ100','xyz:JP225','xyz:KR200','xyz:NVDA','xyz:MU','xyz:SMH','xyz:GOLD','xyz:BRENTOIL','BTC'];
+var SNAP={'xyz:SP500':[7283.6,7222.2],'xyz:XYZ100':[26616,26247],'xyz:JP225':[58251,57995],'xyz:KR200':[749.34,738.3],'xyz:NVDA':[154.24,151.75],'xyz:AMD':[424.6,412.55],'xyz:MU':[633,612.43],'xyz:SKHX':[805.91,781.22],'xyz:SMH':[439.1,429],'xyz:AVGO':[311.45,304.48],'xyz:TSM':[352.99,346.43],'xyz:LRCX':[195.51,190.07],'xyz:SNDK':[78.903,75.177],'xyz:ORCL':[108.18,105.95],'xyz:ANT':[85.727,84.362],'xyz:AAPL':[358.1,355.85],'xyz:MSFT':[498.98,493.54],'xyz:GOOGL':[279.04,276.38],'xyz:AMZN':[250.17,247.47],'xyz:META':[620.64,614.47],'xyz:TSLA':[388.03,383.29],'xyz:GOLD':[3624.3,3590.1],'xyz:SILVER':[43.382,41.972],'xyz:BRENTOIL':[92.269,90.661],'xyz:CL':[85.771,83.981],'xyz:COPPER':[5.6597,5.5462],'xyz:JPY':[159.1,159.09],'xyz:EUR':[1.0985,1.097],'BTC':[61309,60701],'ETH':[1721.9,1698],'SOL':[72.351,71.135]};
+var $=function(i){return document.getElementById(i)};
+function f(n,d){return Number(n).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function dp(v){v=Math.abs(+v);return v>=1000?1:v>=10?2:v>=1?3:4}
+function sg(v){return (v>=0?'+':'−')+Math.abs(v).toFixed(2)+'%'}
+function chg(v){if(v==null||!isFinite(v))return '<span class="chg">n/a</span>';return '<span class="chg '+(v>=0?'u':'d')+'">'+sg(v)+'</span>'}
+function lite(s){return esc(s).replace(/&lt;(\/?)b&gt;/g,'<$1b>')}
+function post(b){return fetch('https://api.hyperliquid.xyz/info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)}).then(function(r){if(!r.ok)throw 0;return r.json()})}
+function spark(a,up){if(!a||a.length<3)return '<svg class="spark"></svg>';var mn=Math.min.apply(0,a),mx=Math.max.apply(0,a),r=mx-mn||1;var p=a.map(function(v,i){return (i/(a.length-1)*62+1).toFixed(1)+','+(26-(v-mn)/r*24).toFixed(1)}).join(' ');return '<svg class="spark" viewBox="0 0 64 28"><polyline fill="none" stroke="'+(up?'var(--gfill)':'var(--rfill)')+'" stroke-width="1.6" stroke-linejoin="round" points="'+p+'"/></svg>'}
+function cmp(c,m,pv){var base=(B.base&&B.base.closes)||{},anc=(B.anchor&&B.anchor.prices)||{};cmp.fb=false;if(basis==='base'){if(base[c])return (m/base[c]-1)*100;cmp.fb=true;return (m/pv-1)*100}if(basis==='anchor')return anc[c]?(m/anc[c]-1)*100:null;return (m/pv-1)*100}
+function vis(c,g){return grp==='all'||grp===g||(grp==='key'&&KEY.indexOf(c)>=0)}
+
+var WIRE={items:[],cat:'all',timer:null,imp:{}};
+var RULES={
+noise:/(zacks|motley fool|stocks? to buy|should you buy|is it time to|top \d+ |best \d+|dividend|penny|shareholder alert|class action|investor alert|law firm|investigation on behalf|rosen|pomerantz|hagens|levi & korsinsky|reminds investors|price target raised to|price target lowered to|reiterates|maintains|initiates coverage|webinar|to present at|conference call|announces date|declares quarterly|etf flows? into|options activity|unusual options|short interest)/i,
+macro:/(\bfed\b|fomc|powell|rate (hike|cut)|hikes rates|cuts rates|\bcpi\b|\bppi\b|\bpce\b|inflation|payrolls|jobs report|jobless claims|unemployment|\bgdp\b|retail sales|ism |treasury|yields?\b|bond market|tariff|section 301|section 232|export (control|curb|ban)|sanction|trade (deal|war|truce)|shutdown|debt ceiling|recession|ecb|boj|bank of japan|pboc|bank of korea|bank of england)/i,
+geo:/(opec|crude|oil|brent|\bwti\b|hormuz|iran|israel|saudi|houthi|ukraine|russia|china|taiwan|missile|attack|strike on|drone|war\b|ceasefire)/i,
+mkt:/(s&p|nasdaq|dow\b|futures|wall street|stocks? (fall|rise|slide|jump|rally|tumble|surge)|selloff|sell-off|rally|\bvix\b|volatility|circuit breaker|halted)/i,
+big:/(plunge|surge|soar|tumble|crash|record|halt|ban|suspend|resign|ousted|probe|subpoena|guidance|outlook|cuts forecast|raises forecast|misses|beats|warns|downgrade|bankrupt|default)/i,
+chips:/(nvidia|\bnvda\b|amd|micron|broadcom|tsmc|semiconductor|chip|\bai\b|artificial intelligence|openai|anthropic|data center|hyperscaler|sk hynix|samsung|asml)/i,
+earn:/(earnings|quarterly results|revenue|eps|guidance|beats estimates|misses estimates)/i,
+asia:/(nikkei|kospi|hang seng|shanghai|taiex|asia|japan|korea|china stocks)/i,
+srcGood:/(reuters|bloomberg|wsj|wall street journal|cnbc|associated press|\bap\b|financial times|dow jones|marketwatch|deltaone|first squawk|walter bloomberg)/i};
+var MEGA=['NVDA','AAPL','MSFT','AMZN','GOOGL','GOOG','META','TSLA','AVGO','ORCL','AMD','MU','TSM','NFLX','LLY','JPM','PLTR','SPY','QQQ','SPX'];
+var PERP={SPY:'xyz:SP500',SPX:'xyz:SP500',QQQ:'xyz:XYZ100',NVDA:'xyz:NVDA',AAPL:'xyz:AAPL',MSFT:'xyz:MSFT',AMZN:'xyz:AMZN',GOOGL:'xyz:GOOGL',GOOG:'xyz:GOOGL',META:'xyz:META',TSLA:'xyz:TSLA',AVGO:'xyz:AVGO',ORCL:'xyz:ORCL',AMD:'xyz:AMD',MU:'xyz:MU',TSM:'xyz:TSM',NFLX:'xyz:NFLX',LLY:'xyz:LLY',PLTR:'xyz:PLTR',INTC:'xyz:INTC',COIN:'xyz:COIN',SNDK:'xyz:SNDK',LRCX:'xyz:LRCX',AMAT:'xyz:AMAT',DELL:'xyz:DELL',HOOD:'xyz:HOOD',MSTR:'xyz:MSTR',CRWV:'xyz:CRWV',SMCI:'xyz:SMCI',ARM:'xyz:ARM',QCOM:'xyz:QCOM',MRVL:'xyz:MRVL',BTC:'BTC'};
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function scoreNews(n){var h=n.h,s=0;if(RULES.noise.test(h))return -9;if(/(cointelegraph|coindesk|decrypt|the block|bitcoinist|cryptoslate)/i.test(n.src)&&!/(bitcoin|btc|ether).{0,40}(falls|drops|plunge|surge|jumps|record|below|above|\$\d)/i.test(h))return -9;if(n.major)s+=3;if(RULES.macro.test(h))s+=3;if(RULES.geo.test(h))s+=2;if(RULES.mkt.test(h))s+=2;if(RULES.big.test(h))s+=1;if(RULES.chips.test(h))s+=1;
+var mt=n.t.filter(function(x){return MEGA.indexOf(x)>=0});if(mt.length)s+=2;if(n.t.length>4)s-=1;if(RULES.srcGood.test(n.src))s+=1;return s}
+function catOf(h){if(/(\bfed\b|fomc|powell|cpi|ppi|pce|inflation|payrolls|jobs|claims|gdp|retail sales|ism |treasury|yield)/i.test(h))return 'FED';if(/(opec|crude|oil|brent|wti|hormuz|iran|israel|saudi|houthi|ukraine|russia|missile|attack|drone|war\b)/i.test(h))return 'OIL';if(RULES.chips.test(h))return 'AI';if(RULES.earn.test(h))return 'EARN';if(RULES.asia.test(h))return 'ASIA';if(RULES.mkt.test(h))return 'FUT';return 'MACRO'}
+function perpFor(n){for(var i=0;i<n.t.length;i++){if(PERP[n.t[i]])return [PERP[n.t[i]],n.t[i]]}var h=n.h;if(/(brent|crude|oil|opec|hormuz)/i.test(h))return ['xyz:BRENTOIL','Brent'];if(/(gold)/i.test(h))return ['xyz:GOLD','Gold'];if(/(nasdaq)/i.test(h))return ['xyz:XYZ100','NDX'];if(/(bitcoin)/i.test(h))return ['BTC','BTC'];return ['xyz:SP500','S&P']}
+function words(h){return h.toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(function(w){return w.length>3})}
+function similar(a,b){var A=words(a),B=words(b);if(!A.length||!B.length)return false;var hit=A.filter(function(w){return B.indexOf(w)>=0}).length;return hit/Math.min(A.length,B.length)>0.6}
+function normNews(r){var h=String(r.headline||r.title||r.text||'').replace(/\s*(https?:\/\/|www\.)\S*/gi,'').replace(/\s*[a-z0-9.-]+\.(com|gov|org|net|sa|co)(\.[a-z]{2})?\/\S*/gi,'').replace(/\s*(\u2013|\u2014|-)\s*(BBG|FT|TSL|WSJ|RTRS)\s*$/i,'').trim();var ts=r.created_at||r.published_at||r.timestamp||r.date||r.time;var t=new Date(typeof ts==='number'&&ts<1e12?ts*1000:ts).getTime();var tk=r.tickers||r.symbols||r.ticker||[];if(typeof tk==='string')tk=tk.split(/[ ,]+/);tk=tk.map(function(x){return String(x).toUpperCase().replace(/^\$/,'')}).filter(Boolean);return {h:String(h),t:tk,src:String(r.source||r.publisher||''),major:!!(r.is_major||r.major),sent:String(r.sentiment||''),ts:t}}
+function getKey(){try{return localStorage.getItem('uw_key')||''}catch(e){return ''}}
+function pullWire(){var k=getKey();if(!k){setWire(false,'LIVE WIRE OFF');return}
+fetch('https://api.unusualwhales.com/api/news/headlines?limit=100',{headers:{Authorization:'Bearer '+k,Accept:'application/json'}}).then(function(r){if(r.status===401||r.status===403)throw 'Token not accepted. Check it under Connect news.';if(r.status===402)throw 'Your Unusual Whales plan does not include the news API.';if(r.status===429)throw 'Rate limited, retrying next minute.';if(!r.ok)throw 'News feed error '+r.status;return r.json()}).then(function(j){var arr=(j&&(j.data||j.headlines||j))||[];if(!Array.isArray(arr))arr=[];var cut=Date.now()-24*3600e3,kept=[];
+arr.map(normNews).filter(function(n){return n.h&&n.ts&&n.ts>cut}).sort(function(a,b){return b.ts-a.ts}).forEach(function(n){n.s=scoreNews(n);if(n.s<4)return;if(kept.some(function(k){return similar(k.h,n.h)}))return;n.c=catOf(n.h);kept.push(n)});
+WIRE.items=kept.slice(0,15);setWire(true,'LIVE WIRE · '+new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})+' ET · '+WIRE.items.length+' of '+arr.length+' kept');drawWire();impacts()}).catch(function(e){setWire(false,typeof e==='string'?e:'News feed unreachable');var m=document.getElementById('keymsg');if(m&&typeof e==='string')m.textContent=e})}
+function fmtT(ts){var d=new Date(ts),now=new Date();var same=d.toDateString()===now.toDateString();return (same?'':d.toLocaleDateString('en-US',{timeZone:'America/New_York',weekday:'short'})+' ')+d.toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'}).toLowerCase().replace(' ','')}
+function drawWire(){var h='',c=WIRE.cat,bk='';WIRE.items.forEach(function(n){if(c!=='all'&&n.c!==c)return;var key=n.ts+'|'+n.h.slice(0,30);var im=WIRE.imp[key];var fresh=Date.now()-n.ts<20*60e3;
+var chip=im?'<span class="ichip '+(im[1]>=0?'u':'d')+'">'+esc(im[0])+' '+(im[1]>=0?'+':'−')+Math.abs(im[1]).toFixed(2)+'% in 30m</span>':'';
+h+='<div class="it'+(fresh?' fresh':'')+'"><span class="tm">'+fmtT(n.ts)+'</span><span><span class="cat">'+n.c+'</span>'+esc(n.h)+chip+'<br><span class="wsrc">'+esc(n.src)+(n.t.length?' · '+esc(n.t.slice(0,4).join(' ')):'')+(n.major?' · major':'')+'</span></span></div>';
+if(fresh&&n.s>=7&&!bk)bk='<div class="bk"><b class="dn">Breaking.</b> '+esc(n.h)+' <span class="wsrc">'+fmtT(n.ts)+'</span></div>'});
+document.getElementById('wire').innerHTML=h||'<div class="note">No market moving headlines in this filter right now.</div>';document.getElementById('breaking').innerHTML=bk}
+function impacts(){WIRE.items.slice(0,10).forEach(function(n){var key=n.ts+'|'+n.h.slice(0,30);var p=perpFor(n);var st=n.ts-5*60e3,en=Math.min(Date.now(),n.ts+30*60e3);post({type:'candleSnapshot',req:{coin:p[0],interval:'5m',startTime:st,endTime:en}}).then(function(k){if(!k||k.length<1)return;var o=+k[0].o,l=+k[k.length-1].c;if(!o)return;WIRE.imp[key]=[p[1],(l/o-1)*100];drawWire()}).catch(function(){})})}
+
+
+function setWire(on,txt){$('wstat').className='st'+(on?' on':'');$('wtxt').textContent=txt}
+
+function render(data){LAST=data;var h='';ROWS.forEach(function(r){var d=data[r[0]];if(!d)return;var m=d[0],pv=d[1];var hh=hist[r[0]]=hist[r[0]]||[];if(hh[hh.length-1]!==m)hh.push(m);if(hh.length>80)hh.shift();
+var v=cmp(r[0],m,pv),fb=cmp.fb;var up=(v==null?m>=pv:v>=0);
+h+='<div class="rowi" data-c="'+r[0]+'" data-g="'+r[2]+'"'+(vis(r[0],r[2])?'':' style="display:none"')+'><div><div class="n">'+esc(r[1])+'</div><div class="t">'+esc(r[0].replace('xyz:',''))+(fb?' \u00B7 24h':'')+'</div></div>'+spark(hh.length>2?hh:null,up)+'<div class="r"><div class="p">'+f(m,dp(m))+'</div>'+chg(v)+'</div></div>'});
+$('tb').innerHTML=h;var s=data['xyz:SP500'];if(s){setSPX(s[0]);renderOpt(s[0])}strip(data)}
+function strip(data){var vx=VIXL||{v:vixClose(),c:null,src:'close'};var T=[['S&P 500','xyz:SP500','perp'],['Nasdaq 100','xyz:XYZ100','perp'],['VIX','VIX',vx.src],['Gold','xyz:GOLD','perp'],['Brent','xyz:BRENTOIL','perp'],['Bitcoin','BTC','24/7']];var h='';
+T.forEach(function(t){var v,c;if(t[1]==='VIX'){v=vx.v;c=vx.c}else{var d=data[t[1]];if(!d)return;v=d[0];c=cmp(t[1],d[0],d[1])}
+var isV=t[1]==='VIX';h+='<div class="tile"><div class="l"><span>'+t[0]+'</span><em>'+esc(t[2])+'</em></div><div class="v">'+(v?f(v,isV?2:dp(v)):'n/a')+'</div>'+(c==null?'<span class="chg" style="font-size:13px;min-width:0;padding:2px 7px">'+(isV?'last close':'n/a')+'</span>':'<span class="chg '+((isV?c<=0:c>=0)?'u':'d')+'">'+sg(c)+'</span>')+'</div>'});$('strip').innerHTML=h}
+function vixClose(){try{return B.opt.vix.idx.filter(function(x){return x[0]==='VIX'})[0][2]}catch(e){return null}}
+function setSPX(v){var BS=B.base.spx,c=(v/BS-1)*100,e=$('spxchg');$('spx').textContent=f(v,1);e.textContent=sg(c);e.className='chg '+(c>=0?'u':'d');$('spxpts').textContent=(v-BS>=0?'+':'−')+f(Math.abs(v-BS),1)+' pts vs '+B.base.label.toLowerCase();
+var L=B.ladder.marks,LV=L.map(function(m){return m[0]}).concat([v]),lo=Math.min.apply(0,LV),hi=Math.max.apply(0,LV),pd=(hi-lo)*.1||10;lo-=pd;hi+=pd;var P=function(x){return Math.max(0,Math.min(100,(x-lo)/(hi-lo)*100))};
+var h='<div class="rail"></div>';L.forEach(function(l){h+='<div class="tk" style="left:'+P(l[0])+'%"></div><div class="tl'+(l[2]?' up':'')+'" style="left:'+P(l[0])+'%">'+esc(l[1])+'</div>'});$('lad').innerHTML=h+'<div class="dot" style="left:'+P(v)+'%"></div>';
+var z=$('zone');if(v>B.ladder.bull){z.style.background='var(--gtint)';z.innerHTML='<b class="up">Bull zone.</b> '+esc(B.ladder.bullText)}else if(v>=B.ladder.floor){z.style.background='var(--otint)';z.innerHTML='<b class="am">Range zone.</b> '+esc(B.ladder.rangeText)}else{z.style.background='var(--rtint)';z.innerHTML='<b class="dn">Risk zone.</b> '+esc(B.ladder.riskText)}}
+function renderOpt(spx){var O=B.opt,b=O.base,h='',z='',zc='var(--fill)';O.em.forEach(function(e,i){var m=b*e[1]/100,lo=b-m,hi=b+m,dl=lo-m*.7,dh=hi+m*.7,P=function(x){return Math.max(0,Math.min(100,(x-dl)/(dh-dl)*100))};
+h+='<div class="em"><div class="h"><b>'+esc(e[0])+'</b><span class="num"><b>±'+f(m,0)+' pts</b> <span style="color:var(--ink2)">±'+(+e[1]).toFixed(2)+'%</span></span></div><div class="bar2"><div class="rail2"></div><div class="rng" style="left:'+P(lo)+'%;width:'+(P(hi)-P(lo))+'%"></div><div class="ctr" style="left:'+P(b)+'%"></div>'+(spx?'<div class="ldot" style="left:'+P(spx)+'%"></div>':'')+'</div><div class="ends"><span>'+f(lo,0)+'</span><span>'+esc(e[2])+'</span><span>'+f(hi,0)+'</span></div></div>';
+if(i===0&&spx){var u=(spx-b)/m*100;if(spx>hi){zc='var(--gtint)';z='<b class="up">Above the first range.</b> Perps at '+f(spx,0)+' are past the full expected up move.'}else if(spx<lo){zc='var(--rtint)';z='<b class="dn">Below the first range.</b> Perps at '+f(spx,0)+' are past the full expected down move.'}else{zc='var(--otint)';z='<b class="am">Inside the first range.</b> Perps at '+f(spx,0)+' have used '+Math.abs(u).toFixed(0)+'% of the expected '+(u>=0?'up':'down')+' move.'}}});
+$('emrows').innerHTML=h;$('emzone').innerHTML=z;$('emzone').style.background=zc;$('emzone').style.display=z?'':'none';
+var near=null,d=1e9,mx=0;O.gex.forEach(function(g){mx=Math.max(mx,g[1]-g[2]);if(spx&&Math.abs(g[0]-spx)<d){d=Math.abs(g[0]-spx);near=g[0]}});var gh='';
+O.gex.forEach(function(g){var tag=O.levels.filter(function(l){var best=O.gex.reduce(function(a,x){return Math.abs(x[0]-l[1])<Math.abs(a[0]-l[1])?x:a});return best[0]===g[0]&&Math.abs(l[1]-g[0])<15}).map(function(l){return l[0]}).join(', ');gh+='<div class="gx'+(g[0]===near?' near':'')+'"><span class="num"><b>'+f(g[0],0)+'</b></span><span class="gb"><i style="width:'+(g[1]/mx*100)+'%;background:var(--gfill)"></i><i style="width:'+(-g[2]/mx*100)+'%;background:var(--rfill)"></i></span><span class="lb">'+esc(tag)+'</span></div>'});
+$('gxrows').innerHTML=gh;var ch='';O.levels.forEach(function(l){ch+='<span class="pill '+({r:'r',g:'g',a:'a'}[l[2]]||'b')+'">'+esc(l[0])+' '+f(l[1],0)+'</span>'});if(spx)ch+='<span class="pill">Live S&amp;P '+f(spx,0)+'</span>';$('lvchips').innerHTML=ch}
+function renderVix(){var V=B.opt.vix,s=$('vixc'),W=s.clientWidth||340,H=s.clientHeight||200,pl=28,pr=12,pt=18,pb=28,all=V.idx.concat(V.fut),vs=all.map(function(a){return +a[2]});if(VIXL&&VIXL.v)vs.push(VIXL.v);var mn=Math.floor(Math.min.apply(0,vs)-1),mx=Math.ceil(Math.max.apply(0,vs)+1),X=function(dd){return pl+dd/210*(W-pl-pr)},Y=function(v){return pt+(1-(v-mn)/(mx-mn))*(H-pt-pb)};
+var g='',step=(mx-mn)>8?4:2;for(var v=mn;v<=mx;v+=step){g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(v)+'" y2="'+Y(v)+'" stroke="var(--sep)"/><text x="'+(pl-6)+'" y="'+(Y(v)+4)+'" font-size="11" text-anchor="end" fill="var(--ink2)">'+v+'</text>'}
+var ln=function(a,c){return '<path d="'+a.map(function(p,i){return (i?'L':'M')+X(p[1]).toFixed(1)+','+Y(p[2]).toFixed(1)}).join('')+'" fill="none" stroke="'+c+'" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>'};
+g+=ln(V.idx,'var(--rfill)')+ln(V.fut,'var(--bfill)');V.idx.forEach(function(a){g+='<circle cx="'+X(a[1])+'" cy="'+Y(a[2])+'" r="4" fill="var(--rfill)" stroke="var(--card)" stroke-width="2"/><text x="'+X(a[1])+'" y="'+(Y(a[2])-9)+'" font-size="11" font-weight="600" text-anchor="middle" fill="var(--ink)">'+esc(a[0])+' '+a[2]+'</text>'});
+V.fut.forEach(function(a,i){g+='<circle cx="'+X(a[1])+'" cy="'+Y(a[2])+'" r="3.5" fill="var(--bfill)" stroke="var(--card)" stroke-width="1.5"/><text x="'+X(a[1])+'" y="'+(H-8)+'" font-size="11" text-anchor="middle" fill="var(--ink2)">'+esc(a[0])+'</text>'});
+if(VIXL&&VIXL.v){g+='<circle cx="'+X(30)+'" cy="'+Y(VIXL.v)+'" r="6" fill="none" stroke="var(--ofill)" stroke-width="2"/><text x="'+(X(30)+10)+'" y="'+(Y(VIXL.v)+4)+'" font-size="11" font-weight="700" fill="var(--orange)">live '+VIXL.v.toFixed(2)+'</text>'}
+s.innerHTML=g;var r=V.idx[1][2]/V.idx[2][2],back=r>1,t=$('vixtag');t.textContent=back?'Backwardation':'Contango';t.className='pill '+(back?'r':'g');
+$('vixnote').innerHTML='<span style="color:var(--red)">Red</span> is the VIX indexes (9 day, 30 day, 3 month). <span style="color:var(--blue)">Blue</span> is VIX futures. VIX/VIX3M '+r.toFixed(2)+'. '+(back?'Near term fear is priced above later months, a stress signal.':'Normal upward slope, calm conditions.')}
+function lbl(t){return t}
+function drawChart(pts){var s=$('ovn'),W=s.clientWidth||340,H=s.clientHeight||210,pl=6,pr=54,pt=16,pb=24,v=pts.map(function(p){return p[1]}),base=B.base.closes[chartCoin],vv=v.concat(base?[base]:[]),mn=Math.min.apply(0,vv),mx=Math.max.apply(0,vv),pad=(mx-mn)*.12||1;mn-=pad;mx+=pad;
+var X=function(i){return pl+i/(pts.length-1)*(W-pl-pr)},Y=function(y){return pt+(1-(y-mn)/(mx-mn))*(H-pt-pb)};var lv=v[v.length-1],up=base?lv>=base:lv>=v[0],col=up?'var(--gfill)':'var(--rfill)';
+var d=pts.map(function(p,i){return (i?'L':'M')+X(i).toFixed(1)+','+Y(p[1]).toFixed(1)}).join('');var g='<defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="'+(up?'#30d158':'#ff453a')+'" stop-opacity=".28"/><stop offset="1" stop-color="'+(up?'#30d158':'#ff453a')+'" stop-opacity="0"/></linearGradient></defs>';
+g+='<path d="'+d+'L'+X(pts.length-1)+','+(H-pb)+'L'+X(0)+','+(H-pb)+'Z" fill="url(#gf)"/>';
+if(base)g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+Y(base)+'" y2="'+Y(base)+'" stroke="var(--ink3)" stroke-dasharray="3 4"/><text x="'+(W-pr+6)+'" y="'+(Y(base)+4)+'" font-size="11" fill="var(--ink2)">'+f(base,base>1000?0:2)+'</text>';
+var ai=-1,bd=1e15;if(B.chart.marker){var mt=new Date(B.chart.marker[0]).getTime();pts.forEach(function(p,i){var dd=Math.abs(p[2]-mt);if(p[2]&&dd<bd){bd=dd;ai=i}})}
+if(ai>0&&bd<7200e3)g+='<line x1="'+X(ai)+'" x2="'+X(ai)+'" y1="'+pt+'" y2="'+(H-pb)+'" stroke="var(--bfill)" stroke-dasharray="2 3" opacity=".8"/><text x="'+(X(ai)-5)+'" y="'+(pt+2)+'" text-anchor="end" font-size="11" fill="var(--blue)">'+esc(B.chart.marker[1])+'</text>';
+g+='<path d="'+d+'" fill="none" stroke="'+col+'" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="'+X(pts.length-1)+'" cy="'+Y(lv)+'" r="4.5" fill="'+col+'" stroke="var(--card)" stroke-width="2"/><text x="'+(W-pr+6)+'" y="'+(Y(lv)+4)+'" font-size="12" font-weight="700" fill="var(--ink)">'+f(lv,lv>1000?0:2)+'</text>';
+g+='<text x="'+pl+'" y="'+(H-6)+'" font-size="11" fill="var(--ink2)">'+esc(B.chart.startLabel)+'</text><text x="'+(W-pr)+'" y="'+(H-6)+'" font-size="11" fill="var(--ink2)" text-anchor="end">Now</text>';s.innerHTML=g;s._pts=pts}
+function loadChart(){var st=new Date(B.chart.start).getTime();post({type:'candleSnapshot',req:{coin:chartCoin,interval:'1h',startTime:st,endTime:Date.now()}}).then(function(k){if(!k.length)throw 0;drawChart(k.map(function(c){return [0,+c.c,c.t]}))}).catch(function(){var s=$('ovn');s.innerHTML='<text x="50%" y="50%" text-anchor="middle" font-size="13" fill="var(--ink2)">Chart loads when online</text>'})}
+function feed(n){var h='';NEWS.forEach(function(x){if(n!=='all'&&x[1]!==n)return;h+='<div class="it"><span class="tm">'+esc(x[0])+'</span><span><span class="cat">'+esc(x[1])+'</span><span class="'+(x[2]==='up'?'imp-u':x[2]==='dn'?'imp-d':'')+'">'+(x[2]==='up'?'▲ ':x[2]==='dn'?'▼ ':'')+'</span>'+lite(x[3])+'</span></div>'});$('feed').innerHTML=h||'<div class="note">Nothing in this filter.</div>'}
+function pull(){Promise.all([post({type:'metaAndAssetCtxs',dex:'xyz'}),post({type:'metaAndAssetCtxs'})]).then(function(res){var data={};res.forEach(function(x){x[0].universe.forEach(function(u,i){var c=x[1][i];if(c&&c.markPx)data[u.name]=[+c.markPx,+c.prevDayPx]})});if(!live)hist={};live=true;render(data);$('status').className='st on';$('stxt').textContent='Live '+new Date().toLocaleTimeString('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit'})}).catch(function(){if(!live)render(SNAP)})}
+function pullVix(){var k=getKey();if(!k){VIXL=null;return}fetch('https://api.unusualwhales.com/api/stock/VIX/stock-state',{headers:{Authorization:'Bearer '+k,Accept:'application/json'}}).then(function(r){if(!r.ok)throw r.status;return r.json()}).then(function(j){var d=(j&&j.data)||j||{};var v=+(d.close||d.price||d.last||d.underlying_price||0),pc=+(d.prev_close||d.previous_close||0);if(!v)throw 0;VIXL={v:v,c:pc?(v/pc-1)*100:null,src:'live'};if(LAST)strip(LAST);renderVix()}).catch(function(){VIXL=null})}
+function applyBrief(nb){if(!nb||!nb.updated)return;B=nb;BRIEF_V=nb.updated;$('kick').textContent=B.kicker||'';$('hl').textContent=B.headline||'';$('lede').textContent=B.lede||'';
+$('pills').innerHTML=(B.pills||[]).map(function(p){return '<span class="pill '+(['g','r','a','b'].indexOf(p[0])>=0?p[0]:'')+'">'+esc(p[1])+'</span>'}).join('');
+$('drivers').innerHTML=(B.drivers||[]).map(function(d){return '<div class="k"><h4 class="'+(d[0]==='g'?'up':d[0]==='r'?'dn':'am')+'">'+esc(d[1])+'</h4><p>'+lite(d[2])+'</p></div>'}).join('');
+NEWS=B.picks||[];feed(WIRE.cat||'all');$('plantitle').textContent=(B.planTitle||'Game Plan').toLowerCase().replace(/\b\w/g,function(c){return c.toUpperCase()});
+$('means').innerHTML=(B.means||[]).map(function(m){return '<li>'+lite(m)+'</li>'}).join('');$('caltitle').textContent=B.calTitle||'CALENDAR';$('cal').innerHTML=(B.calendar||[]).map(function(c){return '<div class="r"><span>'+esc(c[0])+'</span><span>'+lite(c[1])+'</span></div>'}).join('');
+$('impnote').textContent=B.impNote||'';$('impsub').textContent='S&P 500 IMPLIED FROM PERPS · VS '+String(B.base.label).toUpperCase()+' '+f(B.base.spx,2);$('emsub').textContent='SPX EXPECTED MOVE · FROM '+String(B.base.label).toUpperCase()+' '+f(B.base.spx,2);
+$('b-base').textContent='vs '+String(B.base.label).replace(/ close$/i,'')+' close';$('b-anc').textContent=(B.anchor&&B.anchor.label)||'Since';$('chtitle').textContent=B.chart.title||'OVERNIGHT PATH';
+$('optasof').textContent='As of '+B.opt.asof+(B.next?' · next update '+B.next:'');$('recaptab').textContent=B.recapLabel||'Recap';$('footupd').textContent='Brief updated '+(B.updatedLabel||'')+(B.next?' · next '+B.next:'');
+if(B.sources&&B.sources.length)$('srcbox').innerHTML=B.sources.map(function(s){return /^https:\/\//.test(s[1])?'<a href="'+esc(s[1])+'">'+esc(s[0])+'</a>':esc(s[0])}).join(' · ');
+if(!live)$('stxt').textContent='Snapshot '+(B.updatedLabel||'');renderVix();render(LAST||SNAP);loadChart()}
+function pullBrief(){fetch('brief.json?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(nb){if(nb.updated!==BRIEF_V)applyBrief(nb)}).catch(function(){});
+fetch('recap.html?t='+Date.now(),{cache:'no-store'}).then(function(r){if(!r.ok)throw 0;return r.text()}).then(function(h){if(h&&h.length>200&&h.indexOf('<script')<0){$('recapbox').innerHTML=h;sectors()}}).catch(function(){})}
+function sectors(){var el=$('sectors');if(!el)return;var a=[["Materials",2.07],["Real Estate",0.92],["Comm Services",0.89],["Industrials",0.83],["Energy",0.74],["Financials",0.71],["Utilities",0.48],["Staples",0.46],["Discretionary",-0.20],["Health Care",-0.56],["Technology",-0.83]];var raw=el.getAttribute('data-sectors');if(raw){try{a=JSON.parse(raw)}catch(e){}}var m=Math.max.apply(0,a.map(function(r){return Math.abs(r[1])}))*1.05||1;el.innerHTML=a.map(function(r){var v=r[1],w=Math.abs(v)/m*50,p=v>=0;return '<div class="hb"><span>'+esc(r[0])+'</span><span class="t"><i style="'+(p?'left:50%;width:'+w+'%;background:var(--gfill)':'right:50%;width:'+w+'%;background:var(--rfill)')+'"></i></span><span class="p '+(p?'up':'dn')+'">'+sg(v)+'</span></div>'}).join('')}
+function refreshAll(){pull();pullBrief();pullWire();pullVix();loadChart()}
+document.querySelectorAll('.navin .seg button').forEach(function(b){b.onclick=function(){document.querySelectorAll('.navin .seg button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('on')});$('p-'+b.dataset.p).classList.add('on');window.scrollTo({top:0,behavior:'smooth'})}});
+document.querySelectorAll('#basis button').forEach(function(b){b.onclick=function(){document.querySelectorAll('#basis button').forEach(function(x){x.classList.remove('on')});b.classList.add('on');basis=b.dataset.b;if(LAST)render(LAST)}});
+$('tb').addEventListener('click',function(e){if(e.target.classList.contains('chg')){var o=['base','anchor','24h'],nb=o[(o.indexOf(basis)+1)%3];document.querySelector('#basis button[data-b="'+nb+'"]').click()}});
+document.querySelectorAll('#filt .chipb').forEach(function(b){b.onclick=function(){document.querySelectorAll('#filt .chipb').forEach(function(x){x.classList.remove('on')});b.classList.add('on');grp=b.dataset.g;document.querySelectorAll('#tb .rowi').forEach(function(r){r.style.display=vis(r.dataset.c,r.dataset.g)?'':'none'})}});
+document.querySelectorAll('#nfilt .chipb').forEach(function(b){b.onclick=function(){document.querySelectorAll('#nfilt .chipb').forEach(function(x){x.classList.remove('on')});b.classList.add('on');feed(b.dataset.n);WIRE.cat=b.dataset.n;drawWire()}});
+document.querySelectorAll('.sw .chipb').forEach(function(b){b.onclick=function(){document.querySelectorAll('.sw .chipb').forEach(function(x){x.classList.remove('on')});b.classList.add('on');chartCoin=b.dataset.c;loadChart()}});
+$('keybtn').onclick=function(){var p=$('keypanel');p.style.display=p.style.display==='none'?'block':'none'};
+$('keysave').onclick=function(){var v=$('keyin').value.trim(),m=$('keymsg');if(!/^[0-9a-f-]{30,}$/i.test(v)){m.textContent='That does not look like an Unusual Whales token. It is a long code with dashes.';return}try{localStorage.setItem('uw_key',v);m.textContent='Saved on this device. Loading...';$('keyin').value='';pullWire();pullVix();setTimeout(function(){$('keypanel').style.display='none'},1500)}catch(e){m.textContent='This browser blocked saving. Turn off Private Browsing and try again.'}};
+$('keydel').onclick=function(){try{localStorage.removeItem('uw_key')}catch(e){}WIRE.items=[];VIXL=null;$('wire').innerHTML='<div class="note">Token removed from this device.</div>';setWire(false,'Live wire off');$('keymsg').textContent='Removed.';if(LAST)strip(LAST);renderVix()};
+$('qbtn').onclick=function(){document.body.classList.toggle('quick');this.style.background=document.body.classList.contains('quick')?'var(--btint)':''};
+$('refresh').onclick=function(){var b=this;b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin');refreshAll()};
+document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')refreshAll()});
+var ro=new ResizeObserver(function(){var s=$('ovn');if(s._pts)drawChart(s._pts);renderVix()});ro.observe($('ovn'));ro.observe($('vixc'));
+sectors();applyBrief(DEF);BRIEF_V='';pull();pullBrief();pullWire();pullVix();
+setInterval(pull,15000);setInterval(pullWire,60000);setInterval(pullVix,30000);setInterval(pullBrief,300000);setInterval(loadChart,300000);
+}
+</script>
+</body>
+</html>

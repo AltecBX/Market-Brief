@@ -170,6 +170,8 @@ html.m30 .x30h{display:none!important}
 .hp input,.hp select{font-size:16px;padding:5px 8px;border-radius:8px;border:0;background:var(--fill);width:100%;text-align:right}
 .hauto{cursor:pointer;font-size:13px}
 .uhide{display:none!important}
+#outlook .r:not(.full){display:grid;grid-template-columns:92px minmax(0,1fr);gap:8px;align-items:baseline}#outlook .r:not(.full)>span:first-child{color:var(--ink2);font-size:13px}#outlook .r:not(.full)>b{font-weight:500;text-align:left}
+.sbar{display:inline-block;height:7px;border-radius:2px;margin-right:2px;vertical-align:1px;min-width:1px}
 .sdl{margin:6px 0 4px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:3px 8px;font-size:13px}.sdl dt{color:var(--ink2)}.sdl dd{margin:0}
 #askout .r{font-size:14px}
 .ev .r.full{display:block}
@@ -217,25 +219,24 @@ html.m30 .x30h{display:none!important}
 
 <div class="kick" id="sess"></div>
 <h1 id="hl"></h1>
-<p class="lede x2" id="lede"></p>
+<p class="lede xd" id="lede"></p>
 <div class="k xd" id="kick2" style="margin-top:4px"></div>
 <div class="regime" id="regime"></div>
-<div class="sec x30h" id="secAsk"><input class="search" id="askin" placeholder="Ask: why is Nvidia down, what is happening in Korea" autocomplete="off" enterkeyhint="search">
-<div class="chips" id="askchips" style="margin-top:2px"><button class="chipb" data-q="why did the market move">Why the move</button><button class="chipb" data-q="what changed since yesterday">What changed</button><button class="chipb" data-q="Fed rates yields">Fed and yields</button><button class="chipb" data-q="memory chips Korea">Memory and Korea</button><button class="chipb" data-q="biggest risks this week">Risks this week</button><button class="chipb" data-q="what do options imply">Options</button></div>
-<div class="grp" id="askout"></div></div>
+<div class="pills" id="healthSec" style="display:none;margin-top:6px"><span class="k" style="align-self:center">Data as of</span><span id="health" style="display:contents"></span></div>
+
 
 <div class="sec since" id="sinceSec" style="display:none">
-<div class="sh"><h2>Since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
+<div class="sh"><h2>What changed since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
 <div class="grp" id="since"></div>
 </div>
 
-<div class="sec x2" id="autoSec" style="display:none"><div class="sh"><h2>Comparable history</h2><span>Tap for detail</span></div><div class="grp" id="autohist"></div></div>
-<div class="sec top3" id="secTop3"><div class="sh"><h2>What matters most</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
+<div class="sec xd" id="autoSec" style="display:none"><div class="sh"><h2>Comparable history</h2><span>Tap for detail</span></div><div class="grp" id="autohist"></div></div>
+<div class="sec top3" id="secTop3"><div class="sh"><h2>Why it matters</h2><span id="top3asof"></span></div><div class="grp" id="top3"></div></div>
 
 <div class="sec x2" id="secRev" style="display:none"><div class="sh"><h2>Reversal watch</h2><span id="revasof"></span></div><div class="grp ev" id="rev"></div></div>
 <div class="sec" id="secRead"><div class="sh"><h2>Readings</h2><span id="stripbasis"></span></div>
 <div class="strip" id="strip"></div>
-<div class="grp pad" style="margin-top:8px">
+<div class="grp pad xd" style="margin-top:8px">
 <div class="k" id="impsub">S&amp;P 500 PERP VS LAST CASH CLOSE</div>
 <div class="imp"><span class="big" id="spx">n/a</span><span class="chg" id="spxchg">n/a</span><span class="k num" id="spxpts"></span></div>
 <div class="lad" id="lad"></div>
@@ -243,16 +244,17 @@ html.m30 .x30h{display:none!important}
 <div class="note xd" id="impnote"></div>
 </div></div>
 
-<div class="sec drv x2" id="secDrv"><div class="sh"><h2 id="drvtitle">What is driving it</h2></div><div class="grp" id="drivers"></div></div>
+<div class="sec" id="secOutlook"><div class="sh"><h2>Outlook and what would change it</h2><span id="outasof"></span></div><div class="grp ev" id="outlook"></div></div>
+<div class="sec drv xd" id="secDrv"><div class="sh"><h2 id="drvtitle">What is driving it</h2></div><div class="grp" id="drivers"></div></div>
 
-<div class="sec x2" id="secRisk"><div class="sh"><h2>Risks and catalysts</h2><span id="caltitle"></span></div><div class="grp cal" id="risks"></div></div>
+<div class="sec xd" id="secRisk"><div class="sh"><h2>Risks and catalysts</h2><span id="caltitle"></span></div><div class="grp cal" id="risks"></div></div>
 
 <div class="sec cal x2" id="secCal7"><div class="sh"><h2>Next 7 trading days</h2><span>Ranked for chips and the Fed</span></div><div class="grp cal" id="cal7"></div><div class="note" id="cal7note"></div></div>
 <div class="sec cal x2" id="secPriced" style="display:none"><div class="sh"><h2>What is priced in</h2><span id="pricedasof"></span></div><div class="grp cal" id="priced"></div></div>
-<div class="sec scen x2" id="secScen"><div class="sh"><h2>Scenarios</h2><span>No probabilities until validated</span></div><div class="grp" id="scen"></div>
+<div class="sec scen xd" id="secScen"><div class="sh"><h2>Scenarios</h2><span>No probabilities until validated</span></div><div class="grp" id="scen"></div>
 <div class="note" id="optrisk"></div></div>
 
-<div class="sec lvl x2" id="secLvl"><div class="sh"><h2>Levels from the live S&amp;P perp</h2><span id="lvlasof"></span></div><div class="grp" id="levels"></div>
+<div class="sec lvl xd" id="secLvl"><div class="sh"><h2>Levels from the live S&amp;P perp</h2><span id="lvlasof"></span></div><div class="grp" id="levels"></div>
 <div class="note"><span id="lvlnote"></span> Distance is from the live S&amp;P perp. Options levels are estimates from open interest, not verified dealer positions.</div></div>
 
 <div class="sec ev xd"><div class="sh"><h2>Regime evidence</h2><span id="regasof"></span></div><div class="grp" id="regev"></div>
@@ -260,6 +262,9 @@ html.m30 .x30h{display:none!important}
 
 <div class="sec xd"><div class="sh"><h2 id="plantitle">Game plan</h2></div><div class="grp"><div class="r" id="means"></div></div></div>
 
+<div class="sec x2" id="secAsk"><input class="search" id="askin" placeholder="Ask: why is Nvidia down, what is happening in Korea" autocomplete="off" enterkeyhint="search">
+<div class="chips" id="askchips" style="margin-top:2px"><button class="chipb" data-q="why did the market move">Why the move</button><button class="chipb" data-q="what changed since yesterday">What changed</button><button class="chipb" data-q="Fed rates yields">Fed and yields</button><button class="chipb" data-q="memory chips Korea">Memory and Korea</button><button class="chipb" data-q="biggest risks this week">Risks this week</button><button class="chipb" data-q="what do options imply">Options</button></div>
+<div class="grp" id="askout"></div></div>
 <details class="d sec" id="secCustom" style="margin-top:22px"><summary><div class="sh"><h2>Customize</h2><span>Saved on this device</span></div></summary><div class="grp pad" id="custom"></div></details>
 </div>
 <!-- BOARD -->
@@ -312,6 +317,9 @@ html.m30 .x30h{display:none!important}
 <div class="sec"><div class="sh"><h2>Results</h2><span>95% ranges in brackets</span></div><div class="grp hist" id="hres"></div>
 <div class="note">Point in time: each event uses only data up to that day; results use later sessions only. Overlapping events are skipped. Probabilities are shown only with 10 or more events. History describes the past and is not a forecast.</div></div>
 <div class="sec"><div class="sh"><h2>Comparable dates</h2><span>Tap a date</span></div><div class="grp hist" id="hlist"></div></div>
+<div class="sec"><div class="sh"><h2>Market fingerprint</h2><span>Closest past environments</span></div><div class="grp hist" id="rfp"><div class="r mut">Loading</div></div></div>
+<div class="sec"><div class="sh"><h2>Intraday timing</h2><span>When highs and lows form</span></div><div class="grp hist" id="rseas"></div></div>
+<div class="sec"><div class="sh"><h2>Asia to US chips</h2><span>Does the Asian session add anything</span></div><div class="grp hist" id="rsemis"></div></div>
 </div>
 
 <!-- RECAP -->
@@ -501,10 +509,186 @@ html.m30 .x30h{display:none!important}
 </main>
 
 <script>
+/* Core calculations. No page or network code here, so the same functions run in the page and in tests/core.test.js. */
+var CORE = (function () {
+  function isNum(x) { return typeof x === 'number' && isFinite(x) }
+  function median(a) { if (!a.length) return null; var s = a.slice().sort(function (x, y) { return x - y }), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2 }
+  function mean(a) { return a.length ? a.reduce(function (s, x) { return s + x }, 0) / a.length : null }
+  function sd(a) { if (a.length < 2) return null; var m = mean(a); return Math.sqrt(a.reduce(function (s, x) { return s + (x - m) * (x - m) }, 0) / (a.length - 1)) }
+  function tcrit(df) { var t = [12.71, 4.30, 3.18, 2.78, 2.57, 2.45, 2.36, 2.31, 2.26, 2.23, 2.20, 2.18, 2.16, 2.14, 2.13, 2.12, 2.11, 2.10, 2.09, 2.09]; return df < 1 ? NaN : df <= 20 ? t[df - 1] : df <= 30 ? 2.05 : df <= 60 ? 2.0 : 1.96 }
+  function ncdf(z) { var t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p }
+  function stats(a) { var n = a.length; if (!n) return { n: 0 }; var m = mean(a), s = sd(a) || 0, h = n > 1 ? tcrit(n - 1) * s / Math.sqrt(n) : NaN; return { n: n, mean: m, med: median(a), sd: s, lo: m - h, hi: m + h, up: a.filter(function (x) { return x > 0 }).length / n } }
+  function wilson(k, n) { if (!n) return [NaN, NaN]; var z = 1.96, p = k / n, d = 1 + z * z / n, c = p + z * z / (2 * n), w = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)); return [(c - w) / d, (c + w) / d] }
+  function pMean(a, mu) { var n = a.length, s = sd(a); if (n < 3 || !s) return null; return 2 * (1 - ncdf(Math.abs((mean(a) - mu) / (s / Math.sqrt(n))))) }
+  function pProp(k, n, p0) { if (n < 3 || !(p0 > 0 && p0 < 1)) return null; return 2 * (1 - ncdf(Math.abs((k - n * p0) / Math.sqrt(n * p0 * (1 - p0))))) }
+  function pearson(a, b) { var n = a.length; if (n < 10) return null; var ma = mean(a), mb = mean(b), sab = 0, sa = 0, sb = 0; for (var i = 0; i < n; i++) { sab += (a[i] - ma) * (b[i] - mb); sa += (a[i] - ma) * (a[i] - ma); sb += (b[i] - mb) * (b[i] - mb) } return sa && sb ? sab / Math.sqrt(sa * sb) : null }
+
+  /* Series: {d:[YYYYMMDD], c:[], o?, h?, l?, ix:{d:i}, breaks?:[YYYYMMDD]} */
+  function crossesBreak(T, i0, i1) { if (!T.breaks) return false; for (var b = 0; b < T.breaks.length; b++) { var x = T.breaks[b]; if (T.d[i0] < x && T.d[i1] >= x) return true } return false }
+  var HZ = [1, 2, 3, 5, 10, 20];
+  /* Entry rules, identical for events and for the all days baseline:
+     close: buy the event day close.  open: buy the event day open.  next: buy the close one session after the event (for signals known only after the close, like the VIX close at 4:15pm).
+     Exit is the close k sessions after the entry session. */
+  function entryIdx(st, ti) { return st.entry === 'next' ? ti + 1 : ti }
+  function entryPx(st, T, ei) { return st.entry === 'open' ? T.o[ei] : T.c[ei] }
+  function fwd(st, T, ei, k) { var j = ei + k; if (j >= T.c.length || crossesBreak(T, ei, j)) return null; if (st.entry === 'open' && k === 0) return (T.c[ei] / T.o[ei] - 1) * 100; return (T.c[j] / entryPx(st, T, ei) - 1) * 100 }
+  function runStudy(st, P, opt, H) {
+    var Tsym = st.tgt === 'pick' ? opt.pick : st.tgt, T = H[Tsym], base = st.tgt === 'pick' ? T : H[st.data[0]], S = {};
+    st.data.forEach(function (s) { S[s] = H[s] }); if (st.tgt === 'pick') S[Tsym] = T;
+    var from = Math.max(opt.from || 0, st.from || 0) * 10000, to = (opt.to || 9999) * 10000 + 9999, gap = Math.max(1, opt.gap || 1), ev = [];
+    for (var i = 1; i < base.d.length; i++) {
+      var d = base.d[i]; if (d < from || d > to) continue;
+      var e = st.ev(S, i, P, T); if (!e) continue;
+      var ti = T.ix[d]; if (ti == null) continue; var ei = entryIdx(st, ti); if (ei >= T.c.length) { ev.push({ d: d, ti: ti, ei: ei, e: e, r: {}, open: true }); continue }
+      if (ti > 0 && crossesBreak(T, ti - 1, ti)) continue;
+      var r = {}; HZ.forEach(function (k) { r[k] = fwd(st, T, ei, k) }); if (st.entry === 'open') r[0] = fwd(st, T, ei, 0);
+      var x = { d: d, ti: ti, ei: ei, e: e, r: r };
+      var j1 = ei + 20; if (j1 < T.c.length && !crossesBreak(T, ei, j1)) { var hi = -1e18, lo = 1e18; for (var j = ei + 1; j <= j1; j++) { hi = Math.max(hi, T.h ? T.h[j] : T.c[j]); lo = Math.min(lo, T.l ? T.l[j] : T.c[j]) } var p0 = entryPx(st, T, ei), evLow = T.l ? T.l[ti] : T.c[ti]; x.mfe = (hi / p0 - 1) * 100; x.mae = (lo / p0 - 1) * 100; x.retest = lo <= evLow * 1.005; x.newlow = lo < evLow }
+      var ref = e.ref != null ? e.ref : (ti > 0 ? T.c[ti - 1] : null); if (ref) { x.rec = null; var lim = Math.min(T.c.length - 1, ei + 60); for (var j2 = ei + 1; j2 <= lim; j2++) { if (T.c[j2] >= ref) { x.rec = j2 - ei; break } } x.recOpen = ei + 60 > T.c.length - 1 && x.rec == null }
+      if (e.gap && T.h) { var pc = T.c[ti - 1], up = T.o[ti] > pc; x.fill0 = up ? T.l[ti] <= pc : T.h[ti] >= pc; if (ti + 4 < T.c.length) { var f5 = false; for (var j3 = ti; j3 <= ti + 4; j3++) if (up ? T.l[j3] <= pc : T.h[j3] >= pc) f5 = true; x.fill5 = f5 } }
+      ev.push(x);
+    }
+    /* Clusters: the user's minimum gap thins repeated signals. Then, per horizon, only events whose holding windows do not overlap are counted, so no day's return is used twice. */
+    var lastC = -1e9; ev.forEach(function (x) { if (x.open) return; if (x.ti - lastC < gap) x.cluster = true; else lastC = x.ti });
+    var sets = {}; HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var last = -1e9, a = []; ev.forEach(function (x) { if (x.cluster || x.open || !isNum(x.r[k])) return; if (x.ei - last < Math.max(k, 1)) return; last = x.ei; a.push(x) }); sets[k] = a });
+    /* Baseline: every eligible day in the same window and data span, same entry and exit rule */
+    var bfrom = Math.max(from, base.d[1], T.d[1]), bl = {};
+    HZ.concat(st.entry === 'open' ? [0] : []).forEach(function (k) { var a = []; for (var i2 = 1; i2 < T.c.length; i2++) { var d2 = T.d[i2]; if (d2 < bfrom || d2 > to) continue; if (base !== T && base.ix[d2] == null) continue; var e2 = entryIdx(st, i2); if (e2 >= T.c.length) continue; var v = fwd(st, T, e2, k); if (isNum(v)) a.push(v) } bl[k] = stats(a) });
+    /* Untouched test period: the last 25% of the target's dates in range are held out and reported separately */
+    var span = T.d.filter(function (d3) { return d3 >= bfrom && d3 <= to }), cut = span.length ? span[Math.floor(span.length * 0.75)] : 0;
+    return { st: st, T: Tsym, all: ev, sets: sets, base: bl, cut: cut, hasHL: !!T.h, src: T.src, asof: T.asof, start: Math.max(bfrom, T.d[0]) };
+  }
+  function summarize(R, k, part) {
+    var a = (R.sets[k] || []).filter(function (x) { return part === 'train' ? x.d < R.cut : part === 'test' ? x.d >= R.cut : true }).map(function (x) { return x.r[k] });
+    var b = R.base[k], s = stats(a), up = a.filter(function (v) { return v > 0 }).length;
+    return { n: a.length, s: s, up: up, pUp: b && b.n ? pProp(up, a.length, b.up) : null, pMean: b && b.n ? pMean(a, b.mean) : null, excess: s.n ? s.mean - (b ? b.mean : 0) : null };
+  }
+  /* Walk forward: for each event in time order, use only earlier events to decide long or short (sign of their mean excess), then score the event. */
+  function walkForward(R, k, minPrior) {
+    var a = R.sets[k] || [], b = R.base[k] ? R.base[k].mean : 0, done = [], hits = 0, n = 0, pnl = [];
+    a.forEach(function (x) { if (done.length >= (minPrior || 10)) { var m = mean(done) || 0, ex = x.r[k] - b; if (m !== 0) { n++; if ((m > 0) === (ex > 0)) hits++; pnl.push(m > 0 ? ex : -ex) } } done.push(x.r[k] - b) });
+    return { n: n, hits: hits, avg: pnl.length ? mean(pnl) : null, ci: n ? wilson(hits, n) : [NaN, NaN] };
+  }
+
+  /* ---------- Intraday structure: completed candles only ---------- */
+  function completed(K, now, ms) { return K.filter(function (c) { return +c.t + ms <= now }) }
+  function pivots(K, kind) { var p = []; for (var i = 1; i < K.length - 1; i++) { if (kind === 'low' ? (+K[i].l < +K[i - 1].l && +K[i].l <= +K[i + 1].l) : (+K[i].h > +K[i - 1].h && +K[i].h >= +K[i + 1].h)) p.push(i) } return p }
+  function vwap(K) { var pv = 0, vv = 0; K.forEach(function (c) { var tp = (+c.h + +c.l + +c.c) / 3; pv += tp * +c.v; vv += +c.v }); return vv ? pv / vv : null }
+  /* Down swing then recovery when dir = 1. Peak must be in an earlier candle than the trough: a high and low inside one candle have unknown order. */
+  function swing(K, dir) {
+    if (K.length < 3) return null; var tr = 0;
+    for (var i = 1; i < K.length; i++) if (dir > 0 ? +K[i].l < +K[tr].l : +K[i].h > +K[tr].h) tr = i;
+    if (tr === 0) return { ambiguous: true };
+    var pk = 0; for (var j = 1; j < tr; j++) if (dir > 0 ? +K[j].h > +K[pk].h : +K[j].l < +K[pk].l) pk = j;
+    var peak = dir > 0 ? +K[pk].h : +K[pk].l, ext = dir > 0 ? +K[tr].l : +K[tr].h, last = +K[K.length - 1].c;
+    return { dir: dir, pk: pk, tr: tr, peak: peak, ext: ext, last: last, move: (ext / peak - 1) * 100, rec: (last - ext) / (peak - ext), pt: +K[pk].t, et: +K[tr].t };
+  }
+  function structure(K, s) {
+    var after = K.slice(s.tr), before = K.slice(s.pk, s.tr + 1), down = s.dir > 0, out = {};
+    var pl = pivots(after, down ? 'low' : 'high').map(function (i) { return down ? +after[i].l : +after[i].h });
+    out.higherLows = 0; for (var i = 1; i < pl.length; i++) if (down ? pl[i] > pl[i - 1] : pl[i] < pl[i - 1]) out.higherLows++;
+    if (pl.length && (down ? pl[0] > s.ext : pl[0] < s.ext)) out.higherLows++;
+    var ph = pivots(before, down ? 'high' : 'low'); var lh = ph.length ? (down ? +before[ph[ph.length - 1]].h : +before[ph[ph.length - 1]].l) : null;
+    out.lastLowerHigh = lh; out.structureBreak = lh != null && after.some(function (c) { return down ? +c.c > lh : +c.c < lh });
+    var vw = vwap(K); out.vwap = vw; var run = 0, best = 0; after.forEach(function (c) { if (vw && (down ? +c.c > vw : +c.c < vw)) { run++; best = Math.max(best, run) } else run = 0 });
+    out.vwapHeld = best >= 2; out.vwapNow = vw ? (down ? s.last > vw : s.last < vw) : null;
+    var dv = before.filter(function (c) { return down ? +c.c < +c.o : +c.c > +c.o }).map(function (c) { return +c.v }), uv = after.filter(function (c) { return down ? +c.c > +c.o : +c.c < +c.o }).map(function (c) { return +c.v });
+    out.volRatio = dv.length && uv.length ? mean(uv) / mean(dv) : null;
+    return out;
+  }
+  function classify(s, st, ctx) {
+    var down = s.dir > 0, conf = 0, why = [];
+    if (st.higherLows >= 1) { conf++; why.push(down ? 'higher low' : 'lower high') }
+    if (st.structureBreak) { conf++; why.push(down ? 'closed above the last lower high' : 'closed below the last higher low') }
+    if (st.vwapHeld && st.vwapNow) { conf++; why.push('VWAP reclaimed and held 2 candles') }
+    if (ctx.semiRec != null && ctx.semiRec >= 0.5) { conf++; why.push('semis at least half back') }
+    if (ctx.breadthPct != null && (down ? ctx.breadthPct >= 60 : ctx.breadthPct <= 40)) { conf++; why.push('perp sample breadth agrees') }
+    var l;
+    if (s.rec < 0.15) l = down ? 'No reversal yet, near the low' : 'No reversal yet, near the high';
+    else if (s.rec < 0.382) l = down ? 'Temporary bounce so far' : 'Pullback so far';
+    else if (s.rec < 0.618) l = down ? 'Partial recovery' : 'Partial fade';
+    else if (conf >= 4 && ctx.mins >= 30) l = down ? 'Potential sustainable reversal' : 'Potential sustainable reversal lower';
+    else if (conf >= 3) l = down ? 'Broad recovery' : 'Broad fade';
+    else if (ctx.groupSpread > 1.5) l = 'Sector rotation';
+    else l = down ? 'Recovery without confirmation' : 'Fade without confirmation';
+    return { label: l, conf: conf, why: why };
+  }
+  /* Exhaustion: signs that a decline is losing force before any reversal is confirmed. Each sign is measured, none proves a turn. */
+  function exhaustion(K, s, peers) {
+    var down = s.dir > 0, out = [], n = K.length; if (n < 12) return out;
+    var last6 = K.slice(-6), prev6 = K.slice(-12, -6), sl = function (a) { return (+a[a.length - 1].c - +a[0].o) / +a[0].o * 100 };
+    if (Math.abs(sl(last6)) < 0.5 * Math.abs(sl(prev6)) && (down ? sl(prev6) < 0 : sl(prev6) > 0)) out.push('Momentum slowing: the last 30 minutes moved under half as much as the 30 before');
+    var pl = pivots(K, down ? 'low' : 'high'); if (pl.length >= 2) { var a = pl[pl.length - 2], b = pl[pl.length - 1], newer = down ? +K[b].l < +K[a].l : +K[b].h > +K[a].h; if (newer && +K[b].v < +K[a].v) out.push('The latest ' + (down ? 'low' : 'high') + ' came on lower volume than the one before') }
+    var tails = K.slice(-4).filter(function (c) { var r = +c.h - +c.l; return r > 0 && (down ? (+c.c - +c.l) / r >= 0.6 : (+c.h - +c.c) / r >= 0.6) }).length; if (tails >= 2) out.push(tails + ' of the last 4 candles closed well off their ' + (down ? 'lows' : 'highs'));
+    var rng = function (a) { return mean(a.map(function (c) { return +c.h - +c.l })) }, dec = K.slice(s.pk, s.tr + 1); if (dec.length >= 4 && rng(K.slice(-4)) < 0.6 * rng(dec)) out.push('Candle ranges have narrowed to under 60% of the decline\'s average');
+    (peers || []).forEach(function (p) { if (!p.K || p.K.length < 12) return; var ps = swing(p.K, s.dir); if (!ps || ps.ambiguous) return; var t1 = +K[s.tr].t, i1 = p.K.findIndex(function (c) { return +c.t === t1 }); if (i1 < 0) return; var before = p.K.slice(0, i1).reduce(function (m, c) { return down ? Math.min(m, +c.l) : Math.max(m, +c.h) }, down ? 1e18 : -1e18); if (down ? +p.K[i1].l > before : +p.K[i1].h < before) out.push(p.name + ' did not make a new ' + (down ? 'low' : 'high') + ' with the S&P') });
+    if (n - 1 - s.tr >= 4) out.push('No new ' + (down ? 'low' : 'high') + ' for ' + (n - 1 - s.tr) * 5 + ' minutes');
+    return out;
+  }
+
+  /* ---------- Options and news ---------- */
+  function emRange(base, pct) { var m = base * pct / 100; return { m: m, lo: base - m, hi: base + m } }
+  function emUsed(base, pct, px) { var r = emRange(base, pct); return { used: (px - base) / r.m * 100, toTop: r.hi - px, toBottom: px - r.lo } }
+  /* Reaction to a headline at ts: base is the close of the last completed 1m candle before the headline minute. Windows count only once complete. */
+  function impactCalc(cands, ts, now) {
+    var t0 = ts - ts % 60e3, by = {}; (cands || []).forEach(function (c) { by[+c.t] = c }); var b0 = by[t0 - 60e3]; if (!b0) return null;
+    var base = +b0.c, pre0 = by[t0 - 15 * 60e3], o = { base: base, pre: pre0 ? (base / +pre0.o - 1) * 100 : null, w: {} };
+    [5, 15, 30, 60].forEach(function (w) { var c = by[t0 + (w - 1) * 60e3]; if (c && t0 + w * 60e3 <= now - 5e3) o.w[w] = (+c.c / base - 1) * 100 }); return o;
+  }
+
+  /* ---------- Forecast scoring: one prediction per target. Later briefs about the same target are revisions. ---------- */
+  function scoreForecasts(docs, S, etClose) {
+    var tg = {}, em = {};
+    docs.forEach(function (d) {
+      var u = new Date(d.updated).getTime();
+      if (d.forecast && d.forecast.dir && d.forecast.date && isNum(d.forecast.ref)) { var key = d.forecast.date; var tclose = etClose(d.forecast.date); if (u < tclose) { tg[key] = tg[key] || []; tg[key].push({ u: u, f: d.forecast }) } }
+      (d.opt && d.opt.em || []).forEach(function (e) { if (!e[4]) return; var k2 = e[4] + '|' + e[3] + '|' + (d.opt.asof || ''); em[k2] = em[k2] || { exp: e[4], pct: e[1], base: d.opt.base, label: e[0], n: 0 }; em[k2].n++ });
+    });
+    var dir = { n: 0, hit: 0, revisions: 0, pend: 0, up: 0, rows: [] };
+    Object.keys(tg).forEach(function (k) { var L = tg[k].sort(function (a, b) { return a.u - b.u }), last = L[L.length - 1].f, j = S.ix[+k.replace(/-/g, '')]; dir.revisions += L.length - 1; if (j == null) { dir.pend++; return } var up = S.c[j] > last.ref; dir.n++; if ((last.dir === 'up') === up) dir.hit++; if (up) dir.up++; dir.rows.push({ date: k, dir: last.dir, ref: last.ref, close: S.c[j], hit: (last.dir === 'up') === up, regime: last.regime || null, versions: L.length }) });
+    var cov = { n: 0, hit: 0, pend: 0, dup: 0 };
+    Object.keys(em).forEach(function (k) { var e = em[k], j = S.ix[+String(e.exp).replace(/-/g, '')]; cov.dup += e.n - 1; if (j == null) { cov.pend++; return } var r = emRange(e.base, e.pct); cov.n++; if (S.c[j] >= r.lo && S.c[j] <= r.hi) cov.hit++ });
+    return { dir: dir, cov: cov };
+  }
+
+  /* ---------- Market fingerprint: features use data up to each date only ---------- */
+  var FEAT = [['dd', 'Drawdown from 1 year high', '%'], ['r5', 'S&P 5 day return', '%'], ['r20', 'S&P 20 day return', '%'], ['vix', 'VIX close', ''], ['dvix', 'VIX 5 day change', ' pts'], ['tech', 'Nasdaq 100 vs S&P, 20 days', '%'], ['y20', '10 year yield, 20 day change', ' bps'], ['rv', 'S&P realized vol, 20 days', '%'], ['ma', 'S&P vs 200 day average', '%'], ['brd', 'Equal weight vs S&P, 20 days', '%'], ['semi', 'Semis vs Nasdaq 100, 20 days', '%']];
+  function features(H) {
+    var S = H.SPX, V = H.VIX, N = H.NDX, Y = H.US10Y, out = [];
+    for (var i = 252; i < S.c.length; i++) {
+      var d = S.d[i], vi = V.ix[d], ni = N ? N.ix[d] : null, yi = Y ? Y.ix[d] : null; if (vi == null || vi < 5) continue;
+      var hi = 0; for (var j = i - 251; j <= i; j++) hi = Math.max(hi, S.c[j]);
+      var lr = []; for (j = i - 19; j <= i; j++) lr.push(Math.log(S.c[j] / S.c[j - 1]));
+      var ma = 0; for (j = i - 199; j <= i; j++) ma += S.c[j]; ma /= 200;
+      var f = { d: d, i: i, dd: (S.c[i] / hi - 1) * 100, r5: (S.c[i] / S.c[i - 5] - 1) * 100, r20: (S.c[i] / S.c[i - 20] - 1) * 100, vix: V.c[vi], dvix: V.c[vi] - V.c[vi - 5], rv: sd(lr) * Math.sqrt(252) * 100, ma: (S.c[i] / ma - 1) * 100 };
+      f.tech = ni != null && ni >= 20 ? ((N.c[ni] / N.c[ni - 20]) - (S.c[i] / S.c[i - 20])) * 100 : null;
+      var rel = function (A, Bs) { if (!A || !Bs) return null; var a = A.ix[d], b = Bs.ix[d]; if (a == null || b == null || a < 20 || b < 20) return null; return ((A.c[a] / A.c[a - 20]) - (Bs.c[b] / Bs.c[b - 20])) * 100 };
+      f.brd = rel(H.RSP10, H.SPY10); f.semi = rel(H.SMH10, H.QQQ10);
+      if (yi != null) { var yb = null; for (var k = yi - 20; k >= yi - 26 && k >= 0; k--) { if (Y.d[k] <= S.d[i - 20]) { yb = Y.c[k]; break } } f.y20 = yb != null ? (Y.c[yi] - yb) * 100 : null } else f.y20 = null;
+      out.push(f);
+    }
+    /* expanding mean and sd, so each date is scaled with information known then */
+    var acc = {}; FEAT.forEach(function (x) { acc[x[0]] = { n: 0, s: 0, q: 0 } });
+    out.forEach(function (f) { FEAT.forEach(function (x) { var k = x[0], v = f[k], a = acc[k]; if (isNum(v)) { a.n++; a.s += v; a.q += v * v } var m = a.n ? a.s / a.n : 0, s = a.n > 30 ? Math.sqrt(Math.max(1e-9, a.q / a.n - m * m)) : null; f['z' + k] = isNum(v) && s ? (v - m) / s : null }) });
+    return out;
+  }
+  function neighbors(F, ti, keys, K, sep, horizon) {
+    var t = F[ti], c = [];
+    for (var i = 0; i < ti - horizon; i++) { var f = F[i], s = 0, m = 0; keys.forEach(function (k) { var a = t['z' + k], b = f['z' + k]; if (isNum(a) && isNum(b)) { s += (a - b) * (a - b); m++ } }); if (m >= Math.max(1, keys.length - 2)) c.push([Math.sqrt(s / m), i]) }
+    c.sort(function (a, b) { return a[0] - b[0] }); var pick = [];
+    for (var j = 0; j < c.length && pick.length < K; j++) { var ok = true; for (var q = 0; q < pick.length; q++) if (Math.abs(F[pick[q][1]].i - F[c[j][1]].i) < sep) { ok = false; break } if (ok) pick.push(c[j]) }
+    return pick;
+  }
+  function fwdRet(S, i, k) { return i + k < S.c.length ? (S.c[i + k] / S.c[i] - 1) * 100 : null }
+
+  return { isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+})();
+if (typeof module !== 'undefined') module.exports = CORE;
+
 'use strict';
 /* Market Brief. Live data: Hyperliquid (perps, websocket plus REST), Unusual Whales (news, with a token kept on the device).
    Scheduled data: brief.json. Every number on screen has a source, a time and a comparison basis. */
-var DEF = {"updated":"2026-11-26T23:15:00-05:00","updatedLabel":"Thu 11:15pm ET","next":"7:30am","kicker":"THANKSGIVING NIGHT · MARKETS CLOSED THU · FRIDAY HALF DAY, STOCKS CLOSE 1:00PM","headline":"S&P perps near 7,300. Chips keep pulling the bounce higher.","lede":"S&P perps are up about 1.7% vs Wednesday's close and about 1% since 4pm, led by memory and chip names. Nasdaq 100 perps are up about 2.5%.","pills":[["g","S&P perps 7,306 · +1.7% vs Wed"],["g","SK Hynix +6.1% · MU +4.5% since 4pm"],["g","Kospi +2.2% · Nikkei +0.7%"],["r","Brent $96.29 · Hormuz mines"],["r","NVDA export curbs · S&P credit watch"],["a","Half day · thin liquidity"]],"drivers":[["g","CHIPS LEAD THE REBOUND","Since 4pm: SK Hynix perp +6.1%, MU +4.5%, AMD +4.3%, SMH +2.7%, NVDA +2.1%. In Tokyo, Kioxia and Socionext up 5% to 6%."],["g","ASIA FOLLOWS THROUGH","Kospi +2.2% to 4,813 and Nikkei +0.7% to 57,919 in Friday morning trade. Korea 200 perp +3.7% since 4pm."],["r","OIL AND HORMUZ","Iran says mines hit ships in the Strait of Hormuz. Brent $96.29, WTI $85.43, up 2.1%. Keeps inflation and Fed hike fears alive."],["r","NVIDIA OVERHANG","Server shipments to four SE Asian countries halted under new curbs. S&P has its AA rating on watch for a cut. Huang hearings Dec 1 and Dec 3."]],"picks":[["Thu 11:15pm","FUT","up","S&P perps at 7,306, +1.7% vs Wed close and +1.0% since 4pm. Nasdaq 100 perps +2.5% vs Wed. SK Hynix +6.1%, MU +4.5%, AMD +4.3% since 4pm."],["Fri Asia","ASIA","up","Tokyo chip and power names lead: Socionext +6%, Kioxia +5%, IHI and Resonac near +6%. SoftBank and Tokyo Electron down about 3%."],["Thu 9:18pm","FUT","up","CME futures: S&P +1.27% to 7,287.25, Nasdaq 100 +1.8% to 26,571, Dow +0.82% to 50,638."],["Thu 9:18pm","ASIA","up","Friday morning in Asia: Nikkei +0.7% to 57,919, Kospi +2.2% to 4,813, Hang Seng +0.4%, ASX +0.4%. Shanghai −0.1%."],["Thu 9:18pm","OIL","dn","WTI +2.1% to $85.43 as it catches up after the holiday. Brent $96.29, −0.3%. Yen at 159.25 per dollar."],["Thu 6:00pm","FUT","","CME equity futures reopen after the 1:00pm holiday halt."],["Thu","OIL","dn","Brent settles $96.57, +1.2%, third straight gain and about 8% in 3 sessions. Saudi says air defenses intercepted drones aimed at Ras Tanura."],["Thu AM","OIL","dn","Iran says mines struck ships in the Strait of Hormuz, reviving supply fears."],["Thu AM","MACRO","up","Europe rallies: DAX +1.9%, CAC +1.8%, FTSE +1.6%."],["Thu early","AI","dn","FT: Nvidia tells Dell and Supermicro to stop server shipments to Malaysia, Singapore, Thailand and Indonesia under new US export curbs."],["Thu Asia","ASIA","up","Asia rebounds: Nikkei +0.9%, SoftBank +7.3%, Kioxia +12.6% on an Nvidia memory demo, Taiex +2.5%. Kospi +0.3% after −6.2%."],["Thu","AI","dn","Huang faces a closed door House interview Dec 1, then public Senate Banking testimony Dec 3."],["Wed 4:00pm","MACRO","","Wed close: S&P 7,182.78 (−0.25%) after a 3.2% intraday drop. See the Wed recap tab."]],"planTitle":"FRIDAY GAME PLAN","means":["Perps near <b>7,300</b> put the implied open about 100 points above <b>7,201</b>, Wednesday's bull trigger. Chips leading is the confirmation that was missing.","A gap this size on a half day can fade. Holding above 7,201 after 9:30am keeps the bounce; back under it puts the 7,060 to 7,200 range back in play.","Oil is the risk. Brent near $96 with mines in Hormuz feeds inflation fears and a Dec 9 hike that is already priced at 97.8%.","Thin books. Moves can be exaggerated both ways, like Wednesday."],"calTitle":"FRIDAY CALENDAR · ET","calendar":[["Overnight","Europe opens 3:00am. Watch if Asia's chip bid carries"],["8:30am","Advance goods trade, retail and wholesale inventories"],["9:30am","Cash open vs 7,201 trigger"],["All day","Black Friday reads. Adobe forecast: $12.9B online, +9.2%"],["1:00pm","Stocks close. Bonds close 2:00pm"],["Mon to Wed","Huang before House Dec 1, Senate Banking Dec 3"]],"impNote":"Perps (the xyz market on Liquid) trade 24/7 and can run ahead of CME futures in thin holiday hours. CME ES and NQ reopened 6:00pm ET. Options levels are from Wednesday, the last session.","base":{"label":"Wed close","spx":7182.78,"closes":{"xyz:SP500":7182.78,"xyz:XYZ100":26046.9,"xyz:NVDA":149.3,"xyz:AMD":406.03,"xyz:MU":601.25,"xyz:SMH":422.46,"xyz:AVGO":300.86,"xyz:TSM":342.34,"xyz:LRCX":185.01,"xyz:SNDK":73.61,"xyz:ORCL":103.88,"xyz:AAPL":355.58,"xyz:MSFT":489.93,"xyz:GOOGL":273.1,"xyz:AMZN":244.43,"xyz:META":609.89,"xyz:TSLA":380.14},"ts":"2026-11-25T16:00:00-05:00","perp":{"xyz:SP500":7184.1,"xyz:XYZ100":26057.0,"xyz:JP225":57226.0,"xyz:KR200":731.09,"xyz:NVDA":149.4,"xyz:AMD":406.98,"xyz:MU":604.62,"xyz:SNDK":73.607,"xyz:WDC":272.05,"xyz:AVGO":301.14,"xyz:TSM":342.23,"xyz:ASML":1304.2,"xyz:LRCX":184.58,"xyz:AMAT":311.08,"xyz:SMH":422.8,"xyz:SKHX":780.43,"xyz:SMSN":127.94,"xyz:KIOXIA":44.353,"xyz:ORCL":103.82,"xyz:AAPL":355.49,"xyz:MSFT":490.03,"xyz:GOOGL":273.18,"xyz:AMZN":244.46,"xyz:META":609.23,"xyz:TSLA":380.31,"xyz:GOLD":3578.5,"xyz:SILVER":41.137,"xyz:BRENTOIL":90.72,"xyz:CL":84.12,"xyz:COPPER":5.479,"xyz:JPY":159.13,"xyz:EUR":1.0978,"BTC":60266.0,"ETH":1689.4,"SOL":70.592,"xyz:HOOD":65.801,"xyz:INTC":54.473,"xyz:PLTR":163.56,"xyz:COIN":103.77,"xyz:MSTR":80.06,"xyz:CRCL":48.272,"xyz:NFLX":59.333,"xyz:COST":1087.0,"xyz:LLY":1393.2,"xyz:RIVN":11.718,"xyz:BABA":86.28,"xyz:CRWV":42.58,"xyz:GME":26.894,"xyz:HIMS":14.67,"xyz:DKNG":17.666,"xyz:LITE":476.55,"xyz:BX":119.12,"xyz:MRVL":130.98,"xyz:RKLB":47.093,"xyz:ZM":88.394,"xyz:EBAY":115.78,"xyz:ARM":161.51,"xyz:DELL":297.29,"xyz:IBM":243.29,"xyz:NOW":92.027,"xyz:NBIS":85.09,"xyz:NOK":7.3159,"xyz:BE":152.86,"xyz:QCOM":168.6,"xyz:GEV":715.15,"xyz:IREN":12.853,"xyz:NET":283.35,"xyz:CRWD":209.72,"xyz:RDDT":91.707,"xyz:AAOI":36.97,"xyz:MRNA":220.72,"xyz:CVX":211.2,"xyz:UMC":13.216,"xyz:GLW":100.02,"xyz:TTWO":227.58,"xyz:ICE":178.58,"xyz:PANW":355.29},"closesSrc":"Cash closes Wed Nov 25: Cboe and Nasdaq for indexes, Unusual Whales daily bars for stocks. Index perps track the cash index; stock perps track the stock."},"anchor":{"label":"Since 4pm","prices":{"xyz:SP500":7231.4,"xyz:XYZ100":26227.0,"xyz:JP225":57683.0,"xyz:KR200":730.43,"xyz:NVDA":151.59,"xyz:AMD":408.66,"xyz:MU":610.9,"xyz:SNDK":75.502,"xyz:WDC":277.05,"xyz:AVGO":303.91,"xyz:TSM":348.71,"xyz:ASML":1297.5,"xyz:LRCX":188.22,"xyz:AMAT":314.7,"xyz:SMH":428.73,"xyz:SKHX":777.93,"xyz:SMSN":128.12,"xyz:KIOXIA":50.335,"xyz:ORCL":105.99,"xyz:AAPL":356.0,"xyz:MSFT":493.66,"xyz:GOOGL":276.08,"xyz:AMZN":246.88,"xyz:META":613.09,"xyz:TSLA":382.29,"xyz:GOLD":3575.3,"xyz:SILVER":41.715,"xyz:BRENTOIL":91.568,"xyz:CL":84.779,"xyz:COPPER":5.4319,"xyz:JPY":159.23,"xyz:EUR":1.0973,"BTC":60742.0,"ETH":1704.1,"SOL":71.26,"xyz:HOOD":67.371,"xyz:INTC":55.144,"xyz:PLTR":164.44,"xyz:COIN":106.41,"xyz:MSTR":82.211,"xyz:CRCL":48.888,"xyz:NFLX":59.296,"xyz:COST":1090.1,"xyz:LLY":1405.8,"xyz:RIVN":11.704,"xyz:BABA":85.272,"xyz:CRWV":43.396,"xyz:GME":26.849,"xyz:HIMS":14.971,"xyz:DKNG":17.633,"xyz:LITE":487.71,"xyz:BX":119.52,"xyz:MRVL":133.57,"xyz:RKLB":48.513,"xyz:ZM":88.83,"xyz:EBAY":115.48,"xyz:ARM":165.61,"xyz:DELL":303.55,"xyz:IBM":244.03,"xyz:NOW":92.758,"xyz:NBIS":88.677,"xyz:NOK":7.3094,"xyz:BE":156.14,"xyz:QCOM":170.36,"xyz:GEV":725.03,"xyz:IREN":13.479,"xyz:NET":286.8,"xyz:CRWD":210.66,"xyz:RDDT":91.979,"xyz:AAOI":38.169,"xyz:MRNA":223.11,"xyz:CVX":209.82,"xyz:UMC":13.462,"xyz:GLW":101.75,"xyz:TTWO":223.55,"xyz:PANW":346.07},"ts":"2026-11-26T16:00:00-05:00"},"ladder":{"bull":7201.09,"floor":7060.33,"marks":[[6970.11,"Low 6,970",0],[7060.33,"Open 7,060",1],[7182.78,"Close 7,183",0],[7201.09,"Trigger 7,201",1],[7300,"Perps 7,300",0]],"bullText":"Above the 7,201 trigger. Perps near 7,300; needs to hold through the 9:30am open with chips leading.","rangeText":"Between 7,060 and 7,201. Rotation without confirmation.","riskText":"Below Wednesday's open. 7,000 and 6,970 are next."},"chart":{"title":"OVERNIGHT PATH · WED 4PM TO NOW","start":"2026-11-25T16:00:00-05:00","startLabel":"Wed 4pm","marker":["2026-11-26T19:00:00-05:00","Asia opens 7pm"]},"opt":{"asof":"Wed close","base":7182.78,"em":[["Friday, half day",1.1731,"Nov 27 expiry","SPXW"],["Through next Friday",2.7342,"Dec 4 expiry","SPXW"],["December monthly",4.0254,"Dec 18 expiry","SPX"]],"vix":{"idx":[["9D",9,29.6],["VIX",30,28.29],["3M",91,26.3]],"fut":[["Dec",21,25.03],["Jan",56,24.29],["Feb",84,24.0],["Mar",112,23.6],["Apr",147,23.4],["May",175,23.1],["Jun",203,23.1]],"asof":"Wed close"},"levels":[["Magnet",7000,"a"],["Put wall",7095,"r"],["Gamma flip",7186.58,"b"],["Flow put wall",7175,"r"],["Flow call wall",7200,"g"],["Dec max pain",7400,"b"]],"gex":[[7000,64763,-73722],[7100,2707,-8295],[7150,3254,-8662],[7175,1934,-9078],[7180,2843,-7518],[7200,10315,-12899],[7250,5215,-11962],[7300,4678,-11913],[7350,4516,-6945],[7400,8873,-11337]],"emSpy":[["Friday, half day",1.2162,"Nov 27 expiry"],["Through next Friday",2.7927,"Dec 4 expiry"],["December monthly",4.1614,"Dec 18 expiry"]],"spyBase":716.7,"emSrc":"Unusual Whales implied move from the Wed Nov 25 close. SPX rows use SPX and SPXW options, SPY rows use SPY options."},"recapLabel":"Wed recap","sources":[["AP via News4JAX: Asian shares mostly rise ahead of Wall Street's reopening","https://www.news4jax.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-the-thanksgiving-holiday/"],["Al Jazeera: Asian stock markets rise after earlier tech rout","https://www.aljazeera.com/economy/2026/11/27/asian-stock-markets-rise-after-earlier-tech-rout"],["Investing.com via Yahoo: US stock futures rise sharply","https://uk.finance.yahoo.com/news/u-stock-futures-rise-sharply-003408206.html"],["RTTNews via finanzen.ch: Japanese market notably higher","https://www.finanzen.ch/nachrichten/aktien/japanese-market-notably-higher-1036804056"],["investingLive: S&P puts Nvidia's AA rating on watch","https://investinglive.com/stocks/s-p-puts-nvidia-s-aa-rating-on-watch-for-a-possible-cut-as-moody-s-holds-steady/"],["Hyperliquid perps (tools/prices.py)","https://app.hyperliquid.xyz/"]]};
+var DEF = {"updated":"2026-11-26T23:15:00-05:00","updatedLabel":"Thu 11:15pm ET","next":"7:30am","kicker":"THANKSGIVING NIGHT · MARKETS CLOSED THU · FRIDAY HALF DAY, STOCKS CLOSE 1:00PM","headline":"S&P perps near 7,300. Chips keep pulling the bounce higher.","lede":"S&P perps are up about 1.7% vs Wednesday's close and about 1% since 4pm, led by memory and chip names. Nasdaq 100 perps are up about 2.5%.","pills":[["g","S&P perps 7,306 · +1.7% vs Wed"],["g","SK Hynix +6.1% · MU +4.5% since 4pm"],["g","Kospi +2.2% · Nikkei +0.7%"],["r","Brent $96.29 · Hormuz mines"],["r","NVDA export curbs · S&P credit watch"],["a","Half day · thin liquidity"]],"drivers":[["g","CHIPS LEAD THE REBOUND","Since 4pm: SK Hynix perp +6.1%, MU +4.5%, AMD +4.3%, SMH +2.7%, NVDA +2.1%. In Tokyo, Kioxia and Socionext up 5% to 6%."],["g","ASIA FOLLOWS THROUGH","Kospi +2.2% to 4,813 and Nikkei +0.7% to 57,919 in Friday morning trade. Korea 200 perp +3.7% since 4pm."],["r","OIL AND HORMUZ","Iran says mines hit ships in the Strait of Hormuz. Brent $96.29, WTI $85.43, up 2.1%. Keeps inflation and Fed hike fears alive."],["r","NVIDIA OVERHANG","Server shipments to four SE Asian countries halted under new curbs. S&P has its AA rating on watch for a cut. Huang hearings Dec 1 and Dec 3."]],"picks":[["Thu 11:15pm","FUT","up","S&P perps at 7,306, +1.7% vs Wed close and +1.0% since 4pm. Nasdaq 100 perps +2.5% vs Wed. SK Hynix +6.1%, MU +4.5%, AMD +4.3% since 4pm."],["Fri Asia","ASIA","up","Tokyo chip and power names lead: Socionext +6%, Kioxia +5%, IHI and Resonac near +6%. SoftBank and Tokyo Electron down about 3%."],["Thu 9:18pm","FUT","up","CME futures: S&P +1.27% to 7,287.25, Nasdaq 100 +1.8% to 26,571, Dow +0.82% to 50,638."],["Thu 9:18pm","ASIA","up","Friday morning in Asia: Nikkei +0.7% to 57,919, Kospi +2.2% to 4,813, Hang Seng +0.4%, ASX +0.4%. Shanghai −0.1%."],["Thu 9:18pm","OIL","dn","WTI +2.1% to $85.43 as it catches up after the holiday. Brent $96.29, −0.3%. Yen at 159.25 per dollar."],["Thu 6:00pm","FUT","","CME equity futures reopen after the 1:00pm holiday halt."],["Thu","OIL","dn","Brent settles $96.57, +1.2%, third straight gain and about 8% in 3 sessions. Saudi says air defenses intercepted drones aimed at Ras Tanura."],["Thu AM","OIL","dn","Iran says mines struck ships in the Strait of Hormuz, reviving supply fears."],["Thu AM","MACRO","up","Europe rallies: DAX +1.9%, CAC +1.8%, FTSE +1.6%."],["Thu early","AI","dn","FT: Nvidia tells Dell and Supermicro to stop server shipments to Malaysia, Singapore, Thailand and Indonesia under new US export curbs."],["Thu Asia","ASIA","up","Asia rebounds: Nikkei +0.9%, SoftBank +7.3%, Kioxia +12.6% on an Nvidia memory demo, Taiex +2.5%. Kospi +0.3% after −6.2%."],["Thu","AI","dn","Huang faces a closed door House interview Dec 1, then public Senate Banking testimony Dec 3."],["Wed 4:00pm","MACRO","","Wed close: S&P 7,182.78 (−0.25%) after a 3.2% intraday drop. See the Wed recap tab."]],"planTitle":"FRIDAY GAME PLAN","means":["Perps near <b>7,300</b> put the implied open about 100 points above <b>7,201</b>, Wednesday's bull trigger. Chips leading is the confirmation that was missing.","A gap this size on a half day can fade. Holding above 7,201 after 9:30am keeps the bounce; back under it puts the 7,060 to 7,200 range back in play.","Oil is the risk. Brent near $96 with mines in Hormuz feeds inflation fears and a Dec 9 hike that is already priced at 97.8%.","Thin books. Moves can be exaggerated both ways, like Wednesday."],"calTitle":"FRIDAY CALENDAR · ET","calendar":[["Overnight","Europe opens 3:00am. Watch if Asia's chip bid carries"],["8:30am","Advance goods trade, retail and wholesale inventories"],["9:30am","Cash open vs 7,201 trigger"],["All day","Black Friday reads. Adobe forecast: $12.9B online, +9.2%"],["1:00pm","Stocks close. Bonds close 2:00pm"],["Mon to Wed","Huang before House Dec 1, Senate Banking Dec 3"]],"impNote":"Perps (the xyz market on Liquid) trade 24/7 and can run ahead of CME futures in thin holiday hours. CME ES and NQ reopened 6:00pm ET. Options levels are from Wednesday, the last session.","base":{"label":"Wed close","spx":7182.78,"closes":{"xyz:SP500":7182.78,"xyz:XYZ100":26046.9,"xyz:NVDA":149.3,"xyz:AMD":406.03,"xyz:MU":601.25,"xyz:SMH":422.46,"xyz:AVGO":300.86,"xyz:TSM":342.34,"xyz:LRCX":185.01,"xyz:SNDK":73.61,"xyz:ORCL":103.88,"xyz:AAPL":355.58,"xyz:MSFT":489.93,"xyz:GOOGL":273.1,"xyz:AMZN":244.43,"xyz:META":609.89,"xyz:TSLA":380.14},"ts":"2026-11-25T16:00:00-05:00","perp":{"xyz:SP500":7184.1,"xyz:XYZ100":26057.0,"xyz:JP225":57226.0,"xyz:KR200":731.09,"xyz:NVDA":149.4,"xyz:AMD":406.98,"xyz:MU":604.62,"xyz:SNDK":73.607,"xyz:WDC":272.05,"xyz:AVGO":301.14,"xyz:TSM":342.23,"xyz:ASML":1304.2,"xyz:LRCX":184.58,"xyz:AMAT":311.08,"xyz:SMH":422.8,"xyz:SKHX":780.43,"xyz:SMSN":127.94,"xyz:KIOXIA":44.353,"xyz:ORCL":103.82,"xyz:AAPL":355.49,"xyz:MSFT":490.03,"xyz:GOOGL":273.18,"xyz:AMZN":244.46,"xyz:META":609.23,"xyz:TSLA":380.31,"xyz:GOLD":3578.5,"xyz:SILVER":41.137,"xyz:BRENTOIL":90.72,"xyz:CL":84.12,"xyz:COPPER":5.479,"xyz:JPY":159.13,"xyz:EUR":1.0978,"BTC":60266.0,"ETH":1689.4,"SOL":70.592,"xyz:HOOD":65.801,"xyz:INTC":54.473,"xyz:PLTR":163.56,"xyz:COIN":103.77,"xyz:MSTR":80.06,"xyz:CRCL":48.272,"xyz:NFLX":59.333,"xyz:COST":1087.0,"xyz:LLY":1393.2,"xyz:RIVN":11.718,"xyz:BABA":86.28,"xyz:CRWV":42.58,"xyz:GME":26.894,"xyz:HIMS":14.67,"xyz:DKNG":17.666,"xyz:LITE":476.55,"xyz:BX":119.12,"xyz:MRVL":130.98,"xyz:RKLB":47.093,"xyz:ZM":88.394,"xyz:EBAY":115.78,"xyz:ARM":161.51,"xyz:DELL":297.29,"xyz:IBM":243.29,"xyz:NOW":92.027,"xyz:NBIS":85.09,"xyz:NOK":7.3159,"xyz:BE":152.86,"xyz:QCOM":168.6,"xyz:GEV":715.15,"xyz:IREN":12.853,"xyz:NET":283.35,"xyz:CRWD":209.72,"xyz:RDDT":91.707,"xyz:AAOI":36.97,"xyz:MRNA":220.72,"xyz:CVX":211.2,"xyz:UMC":13.216,"xyz:GLW":100.02,"xyz:TTWO":227.58,"xyz:ICE":178.58,"xyz:PANW":355.29},"closesSrc":"Cash closes Wed Nov 25: Cboe and Nasdaq for indexes, Unusual Whales daily bars for stocks. Index perps track the cash index; stock perps track the stock."},"anchor":{"label":"Since 4pm","prices":{"xyz:SP500":7231.4,"xyz:XYZ100":26227.0,"xyz:JP225":57683.0,"xyz:KR200":730.43,"xyz:NVDA":151.59,"xyz:AMD":408.66,"xyz:MU":610.9,"xyz:SNDK":75.502,"xyz:WDC":277.05,"xyz:AVGO":303.91,"xyz:TSM":348.71,"xyz:ASML":1297.5,"xyz:LRCX":188.22,"xyz:AMAT":314.7,"xyz:SMH":428.73,"xyz:SKHX":777.93,"xyz:SMSN":128.12,"xyz:KIOXIA":50.335,"xyz:ORCL":105.99,"xyz:AAPL":356.0,"xyz:MSFT":493.66,"xyz:GOOGL":276.08,"xyz:AMZN":246.88,"xyz:META":613.09,"xyz:TSLA":382.29,"xyz:GOLD":3575.3,"xyz:SILVER":41.715,"xyz:BRENTOIL":91.568,"xyz:CL":84.779,"xyz:COPPER":5.4319,"xyz:JPY":159.23,"xyz:EUR":1.0973,"BTC":60742.0,"ETH":1704.1,"SOL":71.26,"xyz:HOOD":67.371,"xyz:INTC":55.144,"xyz:PLTR":164.44,"xyz:COIN":106.41,"xyz:MSTR":82.211,"xyz:CRCL":48.888,"xyz:NFLX":59.296,"xyz:COST":1090.1,"xyz:LLY":1405.8,"xyz:RIVN":11.704,"xyz:BABA":85.272,"xyz:CRWV":43.396,"xyz:GME":26.849,"xyz:HIMS":14.971,"xyz:DKNG":17.633,"xyz:LITE":487.71,"xyz:BX":119.52,"xyz:MRVL":133.57,"xyz:RKLB":48.513,"xyz:ZM":88.83,"xyz:EBAY":115.48,"xyz:ARM":165.61,"xyz:DELL":303.55,"xyz:IBM":244.03,"xyz:NOW":92.758,"xyz:NBIS":88.677,"xyz:NOK":7.3094,"xyz:BE":156.14,"xyz:QCOM":170.36,"xyz:GEV":725.03,"xyz:IREN":13.479,"xyz:NET":286.8,"xyz:CRWD":210.66,"xyz:RDDT":91.979,"xyz:AAOI":38.169,"xyz:MRNA":223.11,"xyz:CVX":209.82,"xyz:UMC":13.462,"xyz:GLW":101.75,"xyz:TTWO":223.55,"xyz:PANW":346.07},"ts":"2026-11-26T16:00:00-05:00"},"ladder":{"bull":7201.09,"floor":7060.33,"marks":[[6970.11,"Low 6,970",0],[7060.33,"Open 7,060",1],[7182.78,"Close 7,183",0],[7201.09,"Trigger 7,201",1],[7300,"Perps 7,300",0]],"bullText":"Above the 7,201 trigger. Perps near 7,300; needs to hold through the 9:30am open with chips leading.","rangeText":"Between 7,060 and 7,201. Rotation without confirmation.","riskText":"Below Wednesday's open. 7,000 and 6,970 are next."},"chart":{"title":"OVERNIGHT PATH · WED 4PM TO NOW","start":"2026-11-25T16:00:00-05:00","startLabel":"Wed 4pm","marker":["2026-11-26T19:00:00-05:00","Asia opens 7pm"]},"opt":{"asof":"Wed close","base":7182.78,"em":[["Friday, half day",1.1731,"Nov 27 expiry","SPXW","2026-11-27"],["Through next Friday",2.7342,"Dec 4 expiry","SPXW","2026-12-04"],["December monthly",4.0254,"Dec 18 expiry","SPX","2026-12-18"]],"vix":{"idx":[["9D",9,29.6],["VIX",30,28.29],["3M",91,26.3]],"fut":[["Dec",21,25.03],["Jan",56,24.29],["Feb",84,24.0],["Mar",112,23.6],["Apr",147,23.4],["May",175,23.1],["Jun",203,23.1]],"asof":"Wed close","asofTs":"2026-11-25T16:15:00-05:00"},"levels":[["Magnet",7000,"a"],["Put wall",7095,"r"],["Gamma flip",7186.58,"b"],["Flow put wall",7175,"r"],["Flow call wall",7200,"g"],["Dec max pain",7400,"b"]],"gex":[[7000,64763,-73722],[7100,2707,-8295],[7150,3254,-8662],[7175,1934,-9078],[7180,2843,-7518],[7200,10315,-12899],[7250,5215,-11962],[7300,4678,-11913],[7350,4516,-6945],[7400,8873,-11337]],"emSpy":[["Friday, half day",1.2162,"Nov 27 expiry"],["Through next Friday",2.7927,"Dec 4 expiry"],["December monthly",4.1614,"Dec 18 expiry"]],"spyBase":716.7,"emSrc":"Unusual Whales implied move from the Wed Nov 25 close. SPX rows use SPX and SPXW options, SPY rows use SPY options.","asofTs":"2026-11-25T16:15:00-05:00"},"recapLabel":"Wed recap","sources":[["AP via News4JAX: Asian shares mostly rise ahead of Wall Street's reopening","https://www.news4jax.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-the-thanksgiving-holiday/"],["Al Jazeera: Asian stock markets rise after earlier tech rout","https://www.aljazeera.com/economy/2026/11/27/asian-stock-markets-rise-after-earlier-tech-rout"],["Investing.com via Yahoo: US stock futures rise sharply","https://uk.finance.yahoo.com/news/u-stock-futures-rise-sharply-003408206.html"],["RTTNews via finanzen.ch: Japanese market notably higher","https://www.finanzen.ch/nachrichten/aktien/japanese-market-notably-higher-1036804056"],["investingLive: S&P puts Nvidia's AA rating on watch","https://investinglive.com/stocks/s-p-puts-nvidia-s-aa-rating-on-watch-for-a-possible-cut-as-moody-s-holds-steady/"],["Hyperliquid perps (tools/prices.py)","https://app.hyperliquid.xyz/"]]};
 var B = DEF, BRIEF_V = '';
 var $ = function (i) { return document.getElementById(i) };
 function LS(k, v) { try { if (v === undefined) { var s = localStorage.getItem(k); return s ? JSON.parse(s) : null } localStorage.setItem(k, JSON.stringify(v)) } catch (e) { return null } }
@@ -668,6 +852,14 @@ function renderStatus() {
   else { el.className = 'st'; t.textContent = 'Loading' }
   $('sess').textContent = session(Date.now()).txt;
 }
+function lastCloseMs(ms) { for (var i = 0; i < 10; i++) { var p = et(ms - i * 864e5); if (!isTradingDay(p)) continue; var t = etMs(p.y, p.m, p.d, HALF[p.key] ? 13 : 16, 0); if (t <= ms) return t } return null }
+/* Freshness: 'session' means the data must come from the latest completed cash session. A number means hours. */
+function freshness(ts, rule) {
+  var t = ts ? new Date(ts).getTime() : NaN; if (!isFinite(t)) return { ok: false, txt: 'time unknown' };
+  if (rule === 'session') { var lc = lastCloseMs(Date.now()); return { ok: !lc || t >= lc - 45 * 60e3, txt: tET(t, true) } }
+  return { ok: Date.now() - t <= rule * 36e5, txt: tET(t, true) };
+}
+function freshTag(ts, rule, label) { var fr = freshness(ts, rule); return fr.ok ? esc(label || fr.txt) : '<span class="am">Stale: ' + esc(label || fr.txt) + ', a newer session has closed</span>' }
 function vixClose() { try { return B.opt.vix.idx.filter(function (x) { return x[0] === 'VIX' })[0][2] } catch (e) { return null } }
 function renderStrip() {
   var T = [['S&P 500', 'xyz:SP500'], ['Nasdaq 100', 'xyz:XYZ100'], ['Semis ETF', 'xyz:SMH'], ['VIX', 'VIX'], ['Gold', 'xyz:GOLD'], ['Brent', 'xyz:BRENTOIL'], ['USD/JPY', 'xyz:JPY'], ['Bitcoin', 'BTC']], h = '';
@@ -698,7 +890,7 @@ function renderBoard() {
   $('tb').innerHTML = h;
   var bd = basisDef(BASIS), miss = visibleIds().filter(function (id) { return LISTED[id] === 'ok' && !isNum(chgOf(id)) }).length;
   $('boardnote').innerHTML = 'Change is ' + esc(bd[2]) + '.' + (miss ? ' ' + miss + ' rows show n/a because that basis has no price for them.' : '') + ' Prices are Hyperliquid perps, the feed Liquid uses, not cash prices. Not on the provider: ' + NOT_ON_PROVIDER.join(', ') + '. Tap a row for funding, open interest and spread.';
-  var b = breadth('perp'); $('breadth').textContent = b.n ? b.up + ' of ' + b.n + ' stock perps up' : '';
+  var b = breadth('perp'); $('breadth').textContent = b.n ? 'Perp sample: ' + b.up + ' of ' + b.n + ' up' : '';
 }
 function setSPX(v) {
   var BS = B.base.spx, c = (v / BS - 1) * 100, e = $('spxchg');
@@ -732,8 +924,8 @@ function regime() {
   var bl = basisDef(k)[1].toLowerCase();
   ev.push(['S&P 500 perp', sg(spx), bl]);
   if (isNum(ndx)) ev.push(['Nasdaq 100 perp', sg(ndx), bl]);
-  if (br.n) ev.push(['Stock perps up', br.up + ' of ' + br.n + ' (' + br.pct.toFixed(0) + '%)', bl]);
-  if (isNum(br.med)) ev.push(['Median stock perp', sg(br.med), bl]);
+  if (br.n) ev.push(['Perp sample up', br.up + ' of ' + br.n + ' (' + br.pct.toFixed(0) + '%)', bl + ', ' + br.n + ' stock perps, not exchange breadth']);
+  if (isNum(br.med)) ev.push(['Perp sample median', sg(br.med), bl]);
   var gs = Object.keys(br.groups).map(function (n) { return [n, br.groups[n]] }).sort(function (a, b) { return b[1] - a[1] });
   gs.forEach(function (g) { ev.push([g[0] + ' median', sg(g[1]), bl]) });
   if (isNum(smh) && isNum(ndx)) ev.push(['Semis ETF vs Nasdaq 100', sg(smh - ndx), 'relative, ' + bl]);
@@ -748,12 +940,12 @@ function regime() {
   if (!conf) label = spx >= 0 ? 'Index up, breadth unmeasured' : 'Index down, breadth unmeasured';
   else if (spx <= -2 && P < 15) { label = 'Capitulation risk'; tone = 'r' }
   else if (spx <= -0.5 && P < 40 && ((isNum(gold) && gold > 0) || (isNum(jpy) && jpy < 0))) { label = 'Risk off'; tone = 'r' }
-  else if (spx >= 0.3 && P >= 65 && isNum(M) && M >= 0.5 * spx) { label = 'Broad rally'; tone = 'g' }
-  else if (spx >= 0.3 && (P < 50 || (isNum(mega) && isNum(M) && mega - M > 1))) { label = 'Narrow megacap rally'; tone = 'a' }
+  else if (spx >= 0.3 && P >= 65 && isNum(M) && M >= 0.5 * spx) { label = 'Broad rally in the perp sample'; tone = 'g' }
+  else if (spx >= 0.3 && (P < 50 || (isNum(mega) && isNum(M) && mega - M > 1))) { label = 'Narrow rally in the perp sample'; tone = 'a' }
   else if (spx >= 0.5 && isNum(B.base.prevChg) && B.base.prevChg <= -1) { label = 'Relief rally'; tone = 'g' }
   else if (spx >= 0.5 && P >= 55) { label = 'Risk on'; tone = 'g' }
   else if (Math.abs(spx) < 0.4 && spread > 1.5) { label = 'Sector rotation'; tone = 'b' }
-  else if (spx <= -0.3 && P < 45) { label = 'Broad selling'; tone = 'r' }
+  else if (spx <= -0.3 && P < 45) { label = 'Broad selling in the perp sample'; tone = 'r' }
   else if (Math.abs(spx) < 0.3) { label = 'Consolidation'; tone = 'b' }
   else conf = false;
   var tags = [];
@@ -770,7 +962,7 @@ function renderRegime() {
   if (ref && isNum(r.score)) { var d = r.score - ref.s; trend = (d > 0.15 ? '<span class="pill g">Improving</span>' : d < -0.15 ? '<span class="pill r">Deteriorating</span>' : '<span class="pill">Steady</span>') + '<span class="k">vs ' + tET(ref.t, true) + (ref.l !== r.label ? ', was ' + esc(ref.l) : '') + '</span>' }
   $('regime').innerHTML = '<span class="pill ' + (r.tone || '') + '">' + esc(r.label) + (r.conf || r.label === 'Unconfirmed' ? '' : ', unconfirmed') + '</span>' + (r.tags || []).map(function (t) { return '<span class="pill ' + t[1] + '">' + esc(t[0]) + '</span>' }).join('') + trend;
   $('regev').innerHTML = (r.ev || []).map(function (e) { return '<div class="r"><span>' + esc(e[0]) + ' <span class="k">' + esc(e[2]) + '</span></span><b class="num">' + esc(e[1]) + '</b></div>' }).join('') || '<div class="r mut">' + esc(r.why || 'Waiting for data') + '</div>';
-  $('regnot').textContent = 'Rules are fixed and shown here so the label can be checked. Breadth uses ' + BREADTH.length + ' US listed stocks that trade as perps, not the full exchange. Not measured yet: ' + r.miss.join(', ') + '.';
+  $('regnot').textContent = 'Rules are fixed and shown here so the label can be checked. Breadth here is a sample of up to ' + BREADTH.length + ' US listed stocks that trade as perps. It is not exchange breadth and does not represent the whole market. Not measured yet: ' + r.miss.join(', ') + '.';
   $('regasof').textContent = LASTOK ? tET(LASTOK) : '';
 }
 
@@ -813,6 +1005,7 @@ function renderSince() {
   if (nw.length) { h += '<div class="r full">' + nw.length + ' new market moving headline' + (nw.length > 1 ? 's' : '') + '<div class="k">' + nw.slice(0, 3).map(function (n) { return fmtT(n.ts) + ' ' + esc(n.h) }).join('<br>') + '</div></div>'; items++ }
   else if (!getKey()) h += '<div class="r full k">Headlines since then need the live wire. Connect it in News.</div>';
   if (!items) h += '<div class="r full">Nothing material changed.</div>';
+  if (MODE !== 'deep') { var parts = h.split('<div class="r'); if (parts.length > 9) h = parts.slice(0, 9).join('<div class="r') + '<div class="r full k">' + (parts.length - 9) + ' more in Deep.</div>' }
   $('since').innerHTML = h;
 }
 
@@ -841,10 +1034,15 @@ function applyBrief(nb) {
   $('impnote').textContent = B.impNote || '';
   $('impsub').textContent = 'S&P 500 PERP VS ' + String(B.base.label).toUpperCase();
   $('chtitle').textContent = (B.chart && B.chart.title) || 'Overnight path';
-  $('optasof').textContent = 'From ' + (B.opt.asof || '') + (B.next ? ', next update ' + B.next : '');
+  $('optasof').innerHTML = 'From ' + freshTag(B.opt.asofTs, 'session', B.opt.asof || '');
   $('recaptab').textContent = B.recapLabel || 'Recap';
   $('picksasof').textContent = B.updatedLabel || '';
   $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (B.next ? ', next ' + esc(B.next) : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
+  var hl = [['Brief', B.updated, 6], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
+  if (B.semis) hl.push(['Chip notes', B.semis.asofTs, 72]); if (B.priced) hl.push(['Priced in', B.priced.asofTs, 24]);
+  var bad = hl.filter(function (x) { return !freshness(x[1], x[2]).ok });
+  $('health').innerHTML = hl.map(function (x) { var fr = freshness(x[1], x[2]); return '<span class="pill ' + (fr.ok ? '' : 'a') + '">' + esc(x[0]) + ' ' + esc(fr.txt) + (fr.ok ? '' : ', stale') + '</span>' }).join('');
+  $('healthSec').style.display = bad.length || MODE === 'deep' ? '' : 'none';
   if (B.sources && B.sources.length) $('srcbox').innerHTML = B.sources.map(function (s) { return /^https:\/\//.test(s[1]) ? '<a href="' + esc(s[1]) + '" rel="noopener noreferrer" target="_blank">' + esc(s[0]) + '</a>' : esc(s[0]) }).join(' · ');
   NEWS = B.picks || []; feed(WIRE.cat || 'all'); basisChips(); renderVix(); render(); loadChart(); ensureBases();
 }
@@ -923,7 +1121,7 @@ function renderVix() {
   if (V.fut && V.fut.length > 1) { var f1 = V.fut[0][2], f2 = V.fut[1][2]; tags += '<span class="pill ' + (f1 > f2 ? 'r' : 'g') + '">Futures ' + (f1 > f2 ? 'backwardation' : 'contango') + '</span>'; tags += '<span class="pill ' + (i30 > f1 ? 'r' : 'g') + '">Spot ' + (i30 > f1 ? 'above' : 'below') + ' front future</span>'; note = 'Futures: ' + esc(V.fut[0][0]) + ' ' + f1 + ' vs ' + esc(V.fut[1][0]) + ' ' + f2 + ' (' + (f1 > f2 ? 'front above second is backwardation' : 'front below second is contango') + '). ' }
   $('vixtags').innerHTML = tags;
   $('vixnote').innerHTML = '<span class="dn">Red</span> is the VIX index term structure (9 day, 30 day, 3 month): VIX/VIX3M ' + (i30 / i3m).toFixed(2) + '. <span class="bl">Blue</span> is VIX futures settlements, a separate market. ' + note + 'These are ' + esc(V.asof || B.opt.asof) + ' readings. A live VIX is not available on this page.';
-  $('vixasof').textContent = V.asof || B.opt.asof || '';
+  $('vixasof').innerHTML = freshTag(V.asofTs || B.opt.asofTs, 'session', V.asof || B.opt.asof || '');
 }
 
 /* ---------- Overnight chart and session levels ---------- */
@@ -1022,8 +1220,7 @@ function impacts() {
       var want = [post({ type: 'candleSnapshot', req: { coin: p[0], interval: '1m', startTime: st, endTime: en } })];
       if (p[0] !== 'xyz:SP500') want.push(post({ type: 'candleSnapshot', req: { coin: 'xyz:SP500', interval: '1m', startTime: st, endTime: en } }));
       Promise.all(want).then(function (rs) {
-        var calc = function (k) { var by = {}; (k || []).forEach(function (c) { by[+c.t] = c }); var b0 = by[t0 - 60e3]; if (!b0) return null; var base = +b0.c, pre0 = by[t0 - 15 * 60e3], o = { base: base, pre: pre0 ? (base / +pre0.o - 1) * 100 : null, w: {} };
-          [5, 15, 30, 60].forEach(function (w) { var c = by[t0 + (w - 1) * 60e3]; if (c && t0 + w * 60e3 <= Date.now() - 5e3) o.w[w] = (+c.c / base - 1) * 100 }); return o };
+        var calc = function (k) { return CORE.impactCalc(k, n.ts, Date.now()) };
         var a = calc(rs[0]); if (!a) return; var res = { lbl: p[1], pre: a.pre, w: a.w, final: isNum(a.w[60]) };
         if (rs[1]) { var s = calc(rs[1]); if (s) { var lw = [60, 30, 15, 5].filter(function (w) { return isNum(a.w[w]) && isNum(s.w[w]) })[0]; if (lw) { res.rel = a.w[lw] - s.w[lw]; res.relw = lw } } }
         WIRE.imp[key] = res; var ks = Object.keys(WIRE.imp); if (ks.length > 60) ks.sort().slice(0, ks.length - 60).forEach(function (x) { delete WIRE.imp[x] }); LS('mb_imp', WIRE.imp); drawWire();
@@ -1104,7 +1301,7 @@ function loadHist(syms) {
   return Promise.all(syms.map(function (s) {
     if (HIST[s]) return HIST[s]; if (HPEND[s]) return HPEND[s];
     return HPEND[s] = fetch('data/hist/' + s + '.json', { cache: 'default' }).then(function (r) { if (!r.ok) throw new Error(s); return r.json() }).then(function (j) {
-      var F = j.fields, o = { sym: s, src: j.src, asof: j.asof, d: [], o: null, h: null, l: null, c: [], ix: {} }, hasO = F.length === 5;
+      var F = j.fields, o = { sym: s, src: j.src, asof: j.asof, breaks: j.breaks || null, d: [], o: null, h: null, l: null, c: [], ix: {} }, hasO = F.length === 5;
       if (hasO) { o.o = []; o.h = []; o.l = [] }
       j.rows.forEach(function (r, i) { o.d.push(r[0]); o.ix[r[0]] = i; if (hasO) { o.o.push(r[1]); o.h.push(r[2]); o.l.push(r[3]); o.c.push(r[4]) } else o.c.push(r[1]) });
       HIST[s] = o; return o;
@@ -1114,134 +1311,130 @@ function loadHist(syms) {
 function dstr(d) { var s = String(d); return s.slice(0, 4) + '-' + s.slice(4, 6) + '-' + s.slice(6) }
 function dlab(d) { var s = String(d); return ['', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+s.slice(4, 6)] + ' ' + (+s.slice(6)) + ' ' + s.slice(0, 4) }
 var STUDIES = [
-  { id: 'spxdown', name: 'S&P down day', data: ['SPX'], tgt: 'SPX', p: [['x', 'S&P closes down at least', 3, '%', 0.5]], desc: 'S&P 500 close to close decline, Cboe closes since 1975.',
+  { id: 'spxdown', name: 'S&P down day', data: ['SPX'], tgt: 'SPX', p: [['x', 'S&P closes down at least', 3, '%', 0.5]], desc: 'S&P 500 close to close decline. Cboe closes since 1975. Entry at the event close.',
     ev: function (S, i, P) { var c = S.SPX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
-  { id: 'streak', name: 'S&P losing streak', data: ['SPX'], tgt: 'SPX', p: [['n', 'Down closes in a row', 4, '', 1]], desc: 'The day a streak of lower S&P closes reaches the length you set.',
+  { id: 'streak', name: 'S&P losing streak', data: ['SPX'], tgt: 'SPX', p: [['n', 'Down closes in a row', 4, '', 1]], desc: 'The day a streak of lower S&P closes reaches the length set. Entry at that close.',
     ev: function (S, i, P) { var c = S.SPX.c, n = P.n; if (i < n + 1) return null; for (var k = 0; k < n; k++) if (!(c[i - k] < c[i - k - 1])) return null; if (c[i - n] < c[i - n - 1]) return null; return { v: (c[i] / c[i - n] - 1) * 100, ref: c[i - n] } } },
-  { id: 'ndxdown', name: 'Nasdaq 100 down day', data: ['NDX'], tgt: 'NDX', p: [['x', 'Nasdaq 100 closes down at least', 4, '%', 0.5]], desc: 'Nasdaq 100 close to close decline, FRED closes since 1986.',
+  { id: 'ndxdown', name: 'Nasdaq 100 down day', data: ['NDX'], tgt: 'NDX', p: [['x', 'Nasdaq 100 closes down at least', 4, '%', 0.5]], desc: 'Nasdaq 100 close to close decline. FRED closes since 1986.',
     ev: function (S, i, P) { var c = S.NDX.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
-  { id: 'vixlevel', name: 'VIX above a level', data: ['VIX', 'SPX'], tgt: 'SPX', p: [['L', 'VIX closes at or above', 30, '', 1], ['cross', 'Only the first close above (1 = yes)', 1, '', 1]], desc: 'VIX close since 1990. Outcomes are the S&P 500.',
+  { id: 'vixlevel', name: 'VIX above a level', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['L', 'VIX closes at or above', 30, '', 1], ['cross', 'Only the first close above (1 = yes)', 1, '', 1]], desc: 'The VIX closes at 4:15pm, after the S&P close, so entry is the next S&P close to avoid using information early. VIX since 1990.',
     ev: function (S, i, P) { var v = S.VIX.c; if (i < 1 || v[i] < P.L || (P.cross && v[i - 1] >= P.L)) return null; return { v: v[i], lab: 'VIX ' + v[i].toFixed(2) } } },
-  { id: 'vixspike', name: 'VIX one day spike', data: ['VIX', 'SPX'], tgt: 'SPX', p: [['x', 'VIX closes up at least', 25, '%', 5]], desc: 'VIX close to close jump since 1990. Outcomes are the S&P 500.',
+  { id: 'vixspike', name: 'VIX one day spike', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', p: [['x', 'VIX closes up at least', 25, '%', 5]], desc: 'VIX close to close jump. Entry is the next S&P close.',
     ev: function (S, i, P) { var v = S.VIX.c; return i > 0 && (v[i] / v[i - 1] - 1) * 100 >= P.x ? { v: (v[i] / v[i - 1] - 1) * 100, lab: 'VIX ' + sg((v[i] / v[i - 1] - 1) * 100, 0) } : null } },
-  { id: 'vixrev', name: 'VIX spike then reversal', data: ['VIX', 'SPX'], tgt: 'SPX', from: 1992, p: [['x', 'VIX intraday high above prior close by', 20, '%', 5], ['y', 'VIX closes no more than this above prior close', 5, '%', 1]], desc: 'Fear spikes intraday and fades by the close. VIX highs and lows since 1992. Outcomes are the S&P 500.',
+  { id: 'vixrev', name: 'VIX spike then reversal', data: ['VIX', 'SPX'], tgt: 'SPX', entry: 'next', from: 1992, p: [['x', 'VIX intraday high above prior close by', 20, '%', 5], ['y', 'VIX closes no more than this above prior close', 5, '%', 1]], desc: 'Fear spikes intraday and fades by the close. VIX highs and lows since 1992. Entry is the next S&P close.',
     ev: function (S, i, P) { var V = S.VIX; if (i < 1 || !V.h) return null; var pc = V.c[i - 1]; if ((V.h[i] / pc - 1) * 100 >= P.x && (V.c[i] / pc - 1) * 100 <= P.y) return { v: (V.h[i] / pc - 1) * 100, lab: 'VIX high ' + sg((V.h[i] / pc - 1) * 100, 0) + ', close ' + sg((V.c[i] / pc - 1) * 100, 0) }; return null } },
-  { id: 'recover', name: 'Intraday drop recovered', data: ['SPY'], tgt: 'SPY', p: [['x', 'SPY low below prior close by at least', 2, '%', 0.5], ['y', 'Share of the drop recovered by the close', 70, '%', 5]], desc: 'SPY daily bars, about 2 years from Unusual Whales. Small sample by design.',
+  { id: 'recover', name: 'Intraday drop recovered', data: ['SPY'], tgt: 'SPY', p: [['x', 'SPY low below prior close by at least', 2, '%', 0.5], ['y', 'Share of the drop recovered by the close', 70, '%', 5]], desc: 'SPY daily highs and lows, about 2 years. Intraday data is only this long, so samples are small.',
     ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100; if (dd > -P.x) return null; var rec = (T.c[i] - T.l[i]) / (pc - T.l[i]) * 100; return rec >= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', ' + rec.toFixed(0) + '% recovered', ref: pc } : null } },
-  { id: 'qqqhigh', name: 'Nasdaq drop, close near high', data: ['QQQ'], tgt: 'QQQ', p: [['x', 'QQQ low below prior close by at least', 3, '%', 0.5], ['y', 'Close in the top part of the range', 25, '%', 5]], desc: 'QQQ daily bars, about 2 years.',
+  { id: 'qqqhigh', name: 'Nasdaq drop, close near high', data: ['QQQ'], tgt: 'QQQ', p: [['x', 'QQQ low below prior close by at least', 3, '%', 0.5], ['y', 'Close in the top part of the range', 25, '%', 5]], desc: 'QQQ daily highs and lows, about 2 years.',
     ev: function (S, i, P) { var T = S.QQQ; if (i < 1) return null; var pc = T.c[i - 1], dd = (T.l[i] / pc - 1) * 100, rg = T.h[i] - T.l[i]; if (dd > -P.x || !rg) return null; return (T.h[i] - T.c[i]) / rg * 100 <= P.y ? { v: dd, lab: 'low ' + sg(dd) + ', close ' + sg((T.c[i] / pc - 1) * 100), ref: pc } : null } },
-  { id: 'stock', name: 'Big stock drop', data: ['NVDA', 'MU', 'SNDK', 'SMH'], tgt: 'pick', p: [['x', 'Closes down at least', 8, '%', 1]], pick: ['NVDA', 'MU', 'SNDK', 'SMH'], desc: 'Daily bars, about 2 years from Unusual Whales.',
+  { id: 'stock', name: 'Big chip stock drop', data: [], tgt: 'pick', pick: ['NVDA10', 'MU10', 'AMD10', 'WDC10', 'SMH10', 'SOXX10'], p: [['x', 'Closes down at least', 8, '%', 1]], desc: '10 years of split adjusted daily closes from Unusual Whales. Corporate actions (the SanDisk spin off from WDC, a bad SOXX stretch in 2022) are excluded.',
     ev: function (S, i, P, T) { var c = T.c; return i > 0 && (c[i] / c[i - 1] - 1) * 100 <= -P.x ? { v: (c[i] / c[i - 1] - 1) * 100, ref: c[i - 1] } : null } },
-  { id: 'gap', name: 'SPY opening gap', data: ['SPY'], tgt: 'SPY', entry: 'open', p: [['x', 'Gap size at least', 1, '%', 0.25], ['dir', 'Direction (1 = up, 0 = down)', 0, '', 1]], desc: 'SPY open vs prior close, about 2 years. Returns are measured from the open, the moment the gap is known.',
+  { id: 'gap', name: 'SPY opening gap', data: ['SPY'], tgt: 'SPY', entry: 'open', p: [['x', 'Gap size at least', 1, '%', 0.25], ['dir', 'Direction (1 = up, 0 = down)', 0, '', 1]], desc: 'SPY open vs prior close, about 2 years. Entry at the open, when the gap is known.',
     ev: function (S, i, P) { var T = S.SPY; if (i < 1) return null; var g = (T.o[i] / T.c[i - 1] - 1) * 100; return (P.dir ? g >= P.x : g <= -P.x) ? { v: g, ref: T.c[i - 1], gap: 1 } : null } },
-  { id: 'asia', name: 'Nikkei move, then US', data: ['N225', 'NDX', 'USDJPY'], tgt: 'NDX', entry: 'prev', corr: 1, p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1], ['ctrl', 'Prior US session move no bigger than (0 = off)', 0.5, '%', 0.25], ['fx', 'Measure Nikkei in dollars (1 = yes)', 0, '', 1]],
-    desc: 'Tokyo closes at 1:00am ET, before the US session of the same date. The 1 session result is that US session, measured from the prior US close, so part of it happened before Tokyo closed. Nikkei from FRED since 1986, Nasdaq 100 from FRED. Dollar conversion uses the FRED noon New York yen rate, an approximation. A correlation is not a prediction.',
-    ev: function (S, i, P) { var N = S.N225, d = N.d[i], X = S.NDX, j = X.ix[d]; if (i < 1 || j == null || j < 2) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; if (P.fx) { var F = S.USDJPY, a = F.ix[d], b = F.ix[N.d[i - 1]]; if (a == null || b == null) return null; r = ((1 + r / 100) * F.c[b] / F.c[a] - 1) * 100 } var u = (X.c[j - 1] / X.c[j - 2] - 1) * 100; if (P.ctrl > 0 && Math.abs(u) > P.ctrl) return null; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) + (P.fx ? ' in dollars' : '') + ', prior US day ' + sg(u) } : null } },
-  { id: 'asiasmh', name: 'Nikkei move, then US semis', data: ['N225', 'SMH', 'QQQ'], tgt: 'SMH', entry: 'open', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1]],
-    desc: 'Same date: Tokyo closes before the US open, so the SMH open to close result is information that was available. About 2 years of SMH bars. A correlation is not a prediction.',
-    ev: function (S, i, P) { var N = S.N225, d = N.d[i]; if (i < 1 || S.SMH.ix[d] == null) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) } : null } },
-  { id: 'breadth', name: 'Breadth up, index down', data: ['SPY', 'RSP'], tgt: 'SPY', p: [['x', 'SPY closes down at least', 0.5, '%', 0.25], ['y', 'Equal weight RSP beats SPY by at least', 0.3, '%', 0.1]], desc: 'Equal weight vs cap weight, about 2 years. A breadth proxy, not exchange breadth.',
-    ev: function (S, i, P) { var A = S.SPY, R = S.RSP, d = A.d[i], j = R.ix[d]; if (i < 1 || j == null || j < 1) return null; var a = (A.c[i] / A.c[i - 1] - 1) * 100, r = (R.c[j] / R.c[j - 1] - 1) * 100; return a <= -P.x && r - a >= P.y ? { v: a, lab: 'SPY ' + sg(a) + ', RSP ' + sg(r) } : null } }
+  { id: 'breadth', name: 'Equal weight up, S&P down', data: ['SPY10', 'RSP10'], tgt: 'SPY10', p: [['x', 'SPY closes down at least', 0.5, '%', 0.25], ['y', 'RSP beats SPY by at least', 0.3, '%', 0.1]], desc: 'Equal weight (RSP) vs cap weight (SPY), 10 years of closes. A breadth proxy, not exchange breadth.',
+    ev: function (S, i, P) { var A = S.SPY10, R = S.RSP10, d = A.d[i], j = R.ix[d]; if (i < 1 || j == null || j < 1) return null; var a = (A.c[i] / A.c[i - 1] - 1) * 100, r = (R.c[j] / R.c[j - 1] - 1) * 100; return a <= -P.x && r - a >= P.y ? { v: a, lab: 'SPY ' + sg(a) + ', RSP ' + sg(r) } : null } },
+  { id: 'asia', name: 'Nikkei move, then Nasdaq', data: ['N225', 'NDX'], tgt: 'NDX', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1], ['ctrl', 'Prior US session move no bigger than (0 = off)', 0.5, '%', 0.25]], corr: 1,
+    desc: 'Tokyo closes before the US session of the same date. Daily closes only exist for the Nasdaq 100, so entry is that date\'s US close, after the information is known; the same day reaction is not measurable here without lookahead. The dollar conversion was removed because the only yen rate available is published after Tokyo closes.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i], X = S.NDX, j = X.ix[d]; if (i < 1 || j == null || j < 2) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100, u = (X.c[j - 1] / X.c[j - 2] - 1) * 100; if (P.ctrl > 0 && Math.abs(u) > P.ctrl) return null; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) + ', prior US day ' + sg(u) } : null } },
+  { id: 'asiasmh', name: 'Nikkei move, then US semis', data: ['N225', 'SMH'], tgt: 'SMH', entry: 'open', p: [['x', 'Nikkei session move at least', 1.5, '%', 0.5], ['dir', 'Direction (1 = up, 0 = down)', 1, '', 1]], desc: 'Entry at the SMH open of the same date, which comes after Tokyo has closed. About 2 years of SMH bars.',
+    ev: function (S, i, P) { var N = S.N225, d = N.d[i]; if (i < 1 || S.SMH.ix[d] == null) return null; var r = (N.c[i] / N.c[i - 1] - 1) * 100; return (P.dir ? r >= P.x : r <= -P.x) ? { v: r, lab: 'Nikkei ' + sg(r) } : null } }
 ];
-var HS = { id: 'spxdown', P: {}, from: 0, to: 9999, gap: 10, pick: 'NVDA', open: null };
-function tcrit(df) { var t = [12.71, 4.30, 3.18, 2.78, 2.57, 2.45, 2.36, 2.31, 2.26, 2.23, 2.20, 2.18, 2.16, 2.14, 2.13, 2.12, 2.11, 2.10, 2.09, 2.09]; return df < 1 ? NaN : df <= 20 ? t[df - 1] : df <= 30 ? 2.05 : df <= 60 ? 2.0 : 1.96 }
-function stats(a) { var n = a.length; if (!n) return { n: 0 }; var m = a.reduce(function (s, x) { return s + x }, 0) / n, sd = n > 1 ? Math.sqrt(a.reduce(function (s, x) { return s + (x - m) * (x - m) }, 0) / (n - 1)) : 0, h = n > 1 ? tcrit(n - 1) * sd / Math.sqrt(n) : NaN; return { n: n, mean: m, med: median(a), lo: m - h, hi: m + h, up: a.filter(function (x) { return x > 0 }).length / n } }
-function wilson(k, n) { if (!n) return [NaN, NaN]; var z = 1.96, p = k / n, d = 1 + z * z / n, c = p + z * z / (2 * n), w = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)); return [(c - w) / d, (c + w) / d] }
-var HZ = [1, 2, 3, 5, 10, 20];
-function runStudy(st, P, opt) {
-  var S = {}; st.data.forEach(function (s) { S[s] = HIST[s] });
-  var Tsym = st.tgt === 'pick' ? opt.pick : st.tgt, T = HIST[Tsym], base = st.tgt === 'pick' ? T : HIST[st.data[0]];
-  var from = Math.max(opt.from || 0, st.from || 0) * 10000, to = (opt.to || 9999) * 10000 + 9999, ev = [], last = -1e9;
-  for (var i = 1; i < base.d.length; i++) {
-    var d = base.d[i]; if (d < from || d > to) continue;
-    var e = st.ev(S, i, P, T); if (!e) continue;
-    var ti = T.ix[d]; if (ti == null) continue;
-    var raw = { d: d, ti: ti, e: e };
-    if (ti - last < opt.gap) { ev.push(raw); raw.skip = true; continue } last = ti; ev.push(raw);
-  }
-  var hasHL = !!T.h, entry = function (ti) { return st.entry === 'open' ? T.o[ti] : st.entry === 'prev' ? T.c[ti - 1] : T.c[ti] };
-  ev.forEach(function (x) {
-    var ti0 = x.ti, e0 = entry(ti0), ti = st.entry === 'prev' ? ti0 - 1 : ti0, out = { r: {} };
-    HZ.forEach(function (k) { var j = ti + k; if (j < T.c.length) out.r[k] = (T.c[j] / e0 - 1) * 100 });
-    if (st.entry === 'open') out.r[0] = (T.c[ti0] / e0 - 1) * 100;
-    var j0 = ti + 1, j1 = Math.min(T.c.length - 1, ti + 20);
-    if (j1 >= ti + 20) {
-      var hi = -1e18, lo = 1e18; for (var j = j0; j <= j1; j++) { hi = Math.max(hi, hasHL ? T.h[j] : T.c[j]); lo = Math.min(lo, hasHL ? T.l[j] : T.c[j]) }
-      out.mfe = (hi / e0 - 1) * 100; out.mae = (lo / e0 - 1) * 100;
-      var evLow = hasHL ? T.l[ti] : T.c[ti]; out.retest = lo <= evLow * 1.005; out.newlow = lo < evLow;
-    }
-    var ref = x.e.ref || (ti > 0 ? T.c[ti - 1] : null); if (ref && st.tgt !== 'SPX' && x.e.ref == null) ref = T.c[ti - 1];
-    if (ref) { out.rec = null; for (var j2 = ti + 1; j2 <= Math.min(T.c.length - 1, ti + 60); j2++) { if (T.c[j2] >= ref) { out.rec = j2 - ti; break } } out.recOpen = ti + 60 > T.c.length - 1 && out.rec == null }
-    if (x.e.gap && hasHL) { var pc = T.c[ti - 1], up = T.o[ti] > pc; out.fill0 = up ? T.l[ti] <= pc : T.h[ti] >= pc; if (ti + 4 < T.c.length) { var f5 = false; for (var j3 = ti; j3 <= ti + 4; j3++) if (up ? T.l[j3] <= pc : T.h[j3] >= pc) f5 = true; out.fill5 = f5 } }
-    x.out = out;
-  });
-  var use = ev.filter(function (x) { return !x.skip });
-  var bfrom = Math.max(from, base.d[1], (st.from || 0) * 10000); var bl = { r: {} }; HZ.forEach(function (k) { var a = []; for (var i2 = 1; i2 + k < T.c.length; i2++) { if (T.d[i2] < bfrom || T.d[i2] > to) continue; a.push((T.c[i2 + k] / T.c[i2] - 1) * 100) } bl.r[k] = stats(a) });
-  return { st: st, T: Tsym, all: ev, use: use, base: bl, hasHL: hasHL, src: T.src, asof: T.asof, start: Math.max(bfrom, T.d[0]) };
-}
-function pctTxt(k, n) { if (n < 10) return 'n/a'; var w = wilson(k, n); return (k / n * 100).toFixed(0) + '% <span class="k">(' + (w[0] * 100).toFixed(0) + ' to ' + (w[1] * 100).toFixed(0) + ')</span>' }
-function mTxt(s) { if (!s || s.n < 10) return 'n/a'; return sg(s.mean) + ' <span class="k">(' + (isNum(s.lo) ? sg(s.lo, 1) + ' to ' + sg(s.hi, 1) : 'n/a') + ')</span>' }
+var HS = { id: 'spxdown', P: {}, from: 0, to: 9999, gap: 5, pick: 'NVDA10', open: null }, HR = null;
+var TRIED = (function () { var t = LS('mb_tried'), day = new Date().toISOString().slice(0, 10); return t && t.day === day ? t : { day: day, k: [] } })();
+function noteTried(key) { if (TRIED.k.indexOf(key) < 0) { TRIED.k.push(key); LS('mb_tried', TRIED) } }
+function pTxt(p, mult) { if (p == null) return 'n/a'; var a = Math.min(1, p * mult); return (p < 0.001 ? '<0.001' : p.toFixed(3)) + (a < 0.05 ? ' <b class="up">holds after adjustment</b>' : p < 0.05 ? ' <span class="am">not after adjustment</span>' : '') }
+function cell(sm, pct) { if (!sm || sm.n < 10) return '<span class="k">' + (sm ? sm.n : 0) + ' events, too few</span>'; return sg(sm.s.mean) + ' <span class="k">(' + sg(sm.s.lo, 1) + ' to ' + sg(sm.s.hi, 1) + ') n ' + sm.n + '</span>' }
 function renderStudy(R) {
-  var u = R.use, n = u.length, h = '', st = R.st, tname = R.T === 'SPX' ? 'S&P 500' : R.T === 'NDX' ? 'Nasdaq 100' : R.T;
-  h += '<div class="r"><b>' + n + ' independent events</b> <span class="k">(' + R.all.length + ' raw, at least ' + HS.gap + ' sessions apart). Outcomes on ' + esc(tname) + ', ' + esc(R.src) + ' from ' + dlab(R.start) + ' to ' + dlab(R.asof) + '.</span>' + (n < 10 ? '<div class="dn" style="margin-top:4px">Too few events to estimate probabilities. Dates are listed below for inspection.</div>' : n < 30 ? '<div class="am" style="margin-top:4px">Small sample. Treat every number as rough.</div>' : '') + '</div>';
-  if (n >= 10) {
-    var r1 = u.map(function (x) { return x.out.r[1] }).filter(isNum), up1 = r1.filter(function (x) { return x > 0 }).length;
-    h += '<div class="r hrow head"><span></span><b>Events</b><b>All days</b></div>';
-    h += '<div class="r hrow"><span>' + (st.entry === 'prev' ? 'Same date US session up' : st.entry === 'open' ? 'Up by the next close, from the open' : 'Next session up') + '</span><span>' + pctTxt(up1, r1.length) + '</span><span>' + (R.base.r[1].up * 100).toFixed(0) + '%</span></div>';
-    if (st.entry === 'open') { var r0 = u.map(function (x) { return x.out.r[0] }).filter(isNum); h += '<div class="r hrow"><span>Same day, open to close</span><span>' + mTxt(stats(r0)) + '</span><span></span></div>' }
-    HZ.forEach(function (k) { var a = u.map(function (x) { return x.out.r[k] }).filter(isNum), s = stats(a); h += '<div class="r hrow"><span>' + k + ' session' + (k > 1 ? 's' : '') + (st.entry === 'prev' ? ' from the prior US close' : st.entry === 'open' ? ' from the open' : '') + ' mean <span class="k">median, n</span></span><span>' + mTxt(s) + '<div class="k">' + (s.n ? sg(s.med) + ', ' + s.n : '') + '</div></span><span>' + sg(R.base.r[k].mean) + '<div class="k">' + sg(R.base.r[k].med) + '</div></span></div>' });
-    var w = u.filter(function (x) { return isNum(x.out.mfe) });
-    if (w.length >= 10) {
-      h += '<div class="r hrow"><span>Best gain within 20 <span class="k">median</span></span><span>' + sg(median(w.map(function (x) { return x.out.mfe }))) + '</span><span></span></div>';
-      h += '<div class="r hrow"><span>Worst drop within 20 <span class="k">median</span></span><span>' + sg(median(w.map(function (x) { return x.out.mae }))) + '</span><span></span></div>';
-      h += '<div class="r hrow"><span>Retests the event ' + (R.hasHL ? 'low' : 'close') + ' within 20</span><span>' + pctTxt(w.filter(function (x) { return x.out.retest }).length, w.length) + '</span><span></span></div>';
-      h += '<div class="r hrow"><span>Closes or trades below it within 20' + (R.hasHL ? '' : ' <span class="k">closes only</span>') + '</span><span>' + pctTxt(w.filter(function (x) { return x.out.newlow }).length, w.length) + '</span><span></span></div>';
-    }
-    var rc = u.filter(function (x) { return x.out.rec !== undefined && !x.out.recOpen });
-    if (rc.length >= 10) { var got = rc.filter(function (x) { return x.out.rec != null }); h += '<div class="r hrow"><span>Back to the prior close within 60</span><span>' + pctTxt(got.length, rc.length) + '<div class="k">median ' + (got.length ? median(got.map(function (x) { return x.out.rec })) + ' sessions' : 'n/a') + '</div></span><span></span></div>' }
-    var g0 = u.filter(function (x) { return x.out.fill0 !== undefined }); if (g0.length >= 10) { h += '<div class="r hrow"><span>Gap fills the same day</span><span>' + pctTxt(g0.filter(function (x) { return x.out.fill0 }).length, g0.length) + '</span><span></span></div>'; var g5 = u.filter(function (x) { return x.out.fill5 !== undefined }); h += '<div class="r hrow"><span>Gap fills within 5 sessions</span><span>' + pctTxt(g5.filter(function (x) { return x.out.fill5 }).length, g5.length) + '</span><span></span></div>' }
-    var b20 = u.filter(function (x) { return isNum(x.out.r[20]) }).sort(function (a, b) { return a.out.r[20] - b.out.r[20] });
-    if (b20.length) h += '<div class="r hrow"><span>Best and worst 20 session result</span><span>' + sg(b20[b20.length - 1].out.r[20]) + ' <span class="k">' + dlab(b20[b20.length - 1].d) + '</span><br>' + sg(b20[0].out.r[20]) + ' <span class="k">' + dlab(b20[0].d) + '</span></span><span></span></div>';
-    var cut = Math.floor(n * 0.7), A = u.slice(0, cut), Bo = u.slice(cut), part = function (a) { var r = a.map(function (x) { return x.out.r[1] }).filter(isNum), f = a.map(function (x) { return x.out.r[5] }).filter(isNum), t = a.map(function (x) { return x.out.r[20] }).filter(isNum); return 'n ' + a.length + ', up next ' + (r.length ? (r.filter(function (x) { return x > 0 }).length / r.length * 100).toFixed(0) + '%' : 'n/a') + ', 5 day mean ' + (f.length ? sg(stats(f).mean) : 'n/a') + ', 20 day mean ' + (t.length ? sg(stats(t).mean) : 'n/a') };
-    if (A.length && Bo.length) h += '<div class="r"><b>Stability check</b><div class="k">Earlier 70% of events (' + dlab(A[0].d) + ' to ' + dlab(A[A.length - 1].d) + '): ' + part(A) + '<br>Later 30% (' + dlab(Bo[0].d) + ' to ' + dlab(Bo[Bo.length - 1].d) + '): ' + part(Bo) + '<br>Thresholds are set by you, not fitted to results. If the two halves disagree, the pattern is not stable.</div></div>';
+  var st = R.st, h = '', mult = Math.max(1, TRIED.k.length) * 6, tname = R.T === 'SPX' ? 'S&P 500' : R.T === 'NDX' ? 'Nasdaq 100' : R.T.replace(/10$/, '');
+  var raw = R.all.length, cl = R.all.filter(function (x) { return !x.cluster && !x.open }).length;
+  h += '<div class="r"><b>' + raw + ' raw events, ' + cl + ' after the ' + HS.gap + ' session cluster rule</b><div class="k">Outcomes on ' + esc(tname) + ', ' + esc(R.src) + ', ' + dlab(R.start) + ' to ' + dlab(R.asof) + '. Each horizon counts only events whose holding windows do not overlap, so n shrinks as the horizon grows. Entry: ' + (st.entry === 'open' ? 'event day open' : st.entry === 'next' ? 'next session close' : 'event day close') + '; the all days column uses the same entry and exit rule over the same dates.</div></div>';
+  h += '<div class="r hrow head"><span>Horizon</span><b>Events: mean (95% range)</b><b>All days</b></div>';
+  [0].concat(CORE.HZ).forEach(function (k) {
+    if (!R.sets[k]) return; var sm = CORE.summarize(R, k), b = R.base[k];
+    h += '<div class="r hrow"><span>' + (k === 0 ? 'Same day, open to close' : k + ' session' + (k > 1 ? 's' : '')) + (sm.n >= 10 ? '<div class="k">up ' + (sm.up / sm.n * 100).toFixed(0) + '% vs ' + (b.up * 100).toFixed(0) + '%. Mean vs all days p ' + pTxt(sm.pMean, mult) + '</div>' : '') + '</span><span>' + cell(sm) + '</span><span>' + (b && b.n ? sg(b.mean) + '<div class="k">' + (b.up * 100).toFixed(0) + '% up</div>' : 'n/a') + '</span></div>';
+  });
+  var tr1 = CORE.summarize(R, 5, 'train'), te1 = CORE.summarize(R, 5, 'test');
+  h += '<div class="r"><b>Untouched test period</b><div class="k">Dates from ' + dlab(R.cut) + ' were held out. 5 session mean: research period ' + (tr1.n ? sg(tr1.s.mean) + ' (n ' + tr1.n + ')' : 'n/a') + ', test period ' + (te1.n ? sg(te1.s.mean) + ' (n ' + te1.n + ')' : 'n/a') + ' vs all days ' + sg(R.base[5].mean) + '. ' + (te1.n < 10 ? 'Too few test events to judge.' : (tr1.excess > 0) === (te1.excess > 0) ? 'Same direction in both periods.' : 'The test period went the other way, so the pattern did not hold.') + '</div></div>';
+  [1, 5].forEach(function (k) { var w = CORE.walkForward(R, k, 10); h += '<div class="r"><b>Walk forward, ' + k + ' session' + (k > 1 ? 's' : '') + '</b><div class="k">' + (w.n >= 10 ? 'Using only earlier events to pick a side each time: right ' + w.hits + ' of ' + w.n + ' (' + (w.hits / w.n * 100).toFixed(0) + '%, range ' + (w.ci[0] * 100).toFixed(0) + ' to ' + (w.ci[1] * 100).toFixed(0) + '%), average result vs all days ' + sg(w.avg) + '. Around 50% means no usable edge.' : 'Not enough events to walk forward.') + '</div></div>' });
+  var p20 = (R.sets[20] || []).filter(function (x) { return CORE.isNum(x.mfe) });
+  if (p20.length >= 10) {
+    h += '<div class="r hrow"><span>Within 20 sessions <span class="k">non overlapping, n ' + p20.length + '</span></span><span>best ' + sg(CORE.median(p20.map(function (x) { return x.mfe }))) + ', worst ' + sg(CORE.median(p20.map(function (x) { return x.mae }))) + '<div class="k">medians</div></span><span></span></div>';
+    var rt = p20.filter(function (x) { return x.retest }).length, nl = p20.filter(function (x) { return x.newlow }).length, w1 = CORE.wilson(rt, p20.length), w2 = CORE.wilson(nl, p20.length);
+    h += '<div class="r hrow"><span>Back to the event ' + (R.hasHL ? 'low' : 'close') + ', and below it</span><span>' + (rt / p20.length * 100).toFixed(0) + '% <span class="k">(' + (w1[0] * 100).toFixed(0) + ' to ' + (w1[1] * 100).toFixed(0) + ')</span>, ' + (nl / p20.length * 100).toFixed(0) + '% <span class="k">(' + (w2[0] * 100).toFixed(0) + ' to ' + (w2[1] * 100).toFixed(0) + ')</span></span><span></span></div>';
+    var rc = p20.filter(function (x) { return x.rec !== undefined && !x.recOpen }), got = rc.filter(function (x) { return x.rec != null }); if (rc.length >= 10) h += '<div class="r hrow"><span>Back to the prior close within 60</span><span>' + (got.length / rc.length * 100).toFixed(0) + '%, median ' + (got.length ? CORE.median(got.map(function (x) { return x.rec })) : 'n/a') + ' sessions</span><span></span></div>';
+    var g0 = p20.filter(function (x) { return x.fill0 !== undefined }); if (g0.length >= 10) h += '<div class="r hrow"><span>Gap filled same day, within 5</span><span>' + (g0.filter(function (x) { return x.fill0 }).length / g0.length * 100).toFixed(0) + '%, ' + (g0.filter(function (x) { return x.fill5 }).length / g0.length * 100).toFixed(0) + '%</span><span></span></div>';
   }
+  h += '<div class="r k">Tests tried today: ' + TRIED.k.length + ' settings x 6 horizons. "Holds after adjustment" means p stays under 0.05 after multiplying by that count (Bonferroni), which guards against finding patterns by trying many settings.</div>';
   if (st.corr) h += corrBlock(R);
   $('hres').innerHTML = h;
   var L = '';
-  R.all.slice().reverse().slice(0, 120).forEach(function (x) { var o = x.out, open = HS.open === x.d; L += '<div class="r hev' + (x.skip ? ' mut' : '') + '" data-d="' + x.d + '"><span>' + dlab(x.d) + (x.skip ? ' <span class="k">overlaps</span>' : '') + '<div class="k">' + esc(x.e.lab || sg(x.e.v)) + '</div></span><span class="num">' + (isNum(o.r[1]) ? sg(o.r[1]) : 'n/a') + '</span><span class="num">' + (isNum(o.r[5]) ? sg(o.r[5]) : 'n/a') + '</span><span class="num">' + (isNum(o.r[20]) ? sg(o.r[20]) : 'n/a') + '</span>' + (open ? '<div class="hdet">' + evDetail(R, x) + '</div>' : '') + '</div>' });
+  R.all.slice().reverse().slice(0, 120).forEach(function (x) { var open = HS.open === x.d; L += '<div class="r hev' + (x.cluster ? ' mut' : '') + '" data-d="' + x.d + '"><span>' + dlab(x.d) + (x.cluster ? ' <span class="k">in a cluster</span>' : '') + '<div class="k">' + esc(x.e.lab || sg(x.e.v)) + '</div></span><span class="num">' + (CORE.isNum(x.r[1]) ? sg(x.r[1]) : 'n/a') + '</span><span class="num">' + (CORE.isNum(x.r[5]) ? sg(x.r[5]) : 'n/a') + '</span><span class="num">' + (CORE.isNum(x.r[20]) ? sg(x.r[20]) : 'n/a') + '</span>' + (open ? '<div class="hdet">' + evDetail(R, x) + '</div>' : '') + '</div>' });
   $('hlist').innerHTML = '<div class="r hev head"><span>Date, newest first</span><b>1 day</b><b>5 day</b><b>20 day</b></div>' + (L || '<div class="r mut">No events with these settings.</div>');
 }
-function pearson(a, b) { var n = a.length; if (n < 30) return null; var ma = 0, mb = 0; for (var i = 0; i < n; i++) { ma += a[i]; mb += b[i] } ma /= n; mb /= n; var sab = 0, sa = 0, sb = 0; for (i = 0; i < n; i++) { sab += (a[i] - ma) * (b[i] - mb); sa += (a[i] - ma) * (a[i] - ma); sb += (b[i] - mb) * (b[i] - mb) } return sab / Math.sqrt(sa * sb) }
 function corrBlock(R) {
-  var N = HIST.N225, X = HIST.NDX, from = (+HS.from || 0) * 10000, to = (+HS.to || 9999) * 10000 + 9999, a = [], same = [], prev = [], ah = [], bh = [];
-  for (var i = 1; i < N.d.length; i++) { var d = N.d[i]; if (d < from || d > to) continue; var j = X.ix[d]; if (j == null || j < 2) continue; var r = N.c[i] / N.c[i - 1] - 1; a.push(r); same.push(X.c[j] / X.c[j - 1] - 1); prev.push(X.c[j - 1] / X.c[j - 2] - 1) }
-  var n = a.length, cut = Math.floor(n * 0.7), c1 = pearson(a, same), c2 = pearson(a, prev), c3 = pearson(a.slice(0, cut), same.slice(0, cut)), c4 = pearson(a.slice(cut), same.slice(cut));
-  var fx = function (v) { return v == null ? 'n/a' : v.toFixed(2) };
-  return '<div class="r"><b>Correlation on ' + n + ' shared days</b><div class="k">Nikkei session vs the prior US session: ' + fx(c2) + ' (Asia often follows the US). Nikkei session vs the same date US session: ' + fx(c1) + ', earlier 70% ' + fx(c3) + ', later 30% ' + fx(c4) + '. Close to 0 means little relationship. Even a stable correlation does not prove the next move.</div></div>';
+  var N = HIST.N225, X = HIST.NDX, a = [], nxt = [];
+  for (var i = 1; i < N.d.length; i++) { var j = X.ix[N.d[i]]; if (j == null || j + 1 >= X.c.length) continue; a.push(N.c[i] / N.c[i - 1] - 1); nxt.push(X.c[j + 1] / X.c[j] - 1) }
+  var c = CORE.pearson(a, nxt);
+  return '<div class="r"><b>Correlation, ' + a.length + ' days</b><div class="k">Nikkei session vs the Nasdaq 100 from that US close to the next: ' + (c == null ? 'n/a' : c.toFixed(3)) + '. Near 0 means the completed Tokyo session tells little about the Nasdaq after the US close. Hourly perp research with exact timing is in "Asia to US chips" below.</div></div>';
 }
 function evDetail(R, x) {
-  var T = HIST[R.T], ti = x.ti, a = [], e0 = R.st.entry === 'open' ? T.o[ti] : T.c[ti]; for (var j = Math.max(0, ti - 5); j <= Math.min(T.c.length - 1, ti + 20); j++) a.push(T.c[j]);
-  var o = x.out; return spark(a, (o.r[20] || 0) >= 0).replace('class="spark"', 'class="spark" style="width:100%;height:44px" preserveAspectRatio="none"') + '<div class="k">Entry ' + f(e0, 2) + ' (' + (R.st.entry === 'open' ? 'open' : 'close') + ' of the event day). 5 sessions before to 20 after. Best within 20 ' + (isNum(o.mfe) ? sg(o.mfe) : 'n/a') + ', worst ' + (isNum(o.mae) ? sg(o.mae) : 'n/a') + (o.rec != null && o.rec !== undefined ? ', back to the prior close in ' + o.rec + (o.rec === 1 ? ' session' : ' sessions') : '') + '.</div>';
+  var T = HIST[R.T], a = []; for (var j = Math.max(0, x.ti - 5); j <= Math.min(T.c.length - 1, x.ei + 20); j++) a.push(T.c[j]);
+  return spark(a, (x.r[20] || 0) >= 0).replace('class="spark"', 'class="spark" style="width:100%;height:44px" preserveAspectRatio="none"') + '<div class="k">5 sessions before to 20 after the entry. Best within 20 ' + (CORE.isNum(x.mfe) ? sg(x.mfe) : 'n/a') + ', worst ' + (CORE.isNum(x.mae) ? sg(x.mae) : 'n/a') + (x.rec != null && x.rec !== undefined ? ', back to the prior close in ' + x.rec + (x.rec === 1 ? ' session' : ' sessions') : '') + '.</div>';
 }
-var HR = null;
 function histUI() {
   var st = STUDIES.filter(function (s) { return s.id === HS.id })[0];
   $('hstudies').innerHTML = STUDIES.map(function (s) { return '<button class="chipb' + (s.id === HS.id ? ' on' : '') + '" data-s="' + s.id + '">' + esc(s.name) + '</button>' }).join('');
   var h = '<div class="k" style="margin-bottom:6px">' + esc(st.desc) + '</div>';
   st.p.forEach(function (p) { var v = HS.P[p[0]] != null ? HS.P[p[0]] : p[2]; HS.P[p[0]] = v; h += '<label class="hp"><span>' + esc(p[1]) + '</span><input type="number" inputmode="decimal" data-p="' + p[0] + '" value="' + v + '" step="' + p[4] + '"><span class="k">' + esc(p[3]) + '</span></label>' });
-  if (st.pick) h += '<label class="hp"><span>Stock</span><select id="hpick">' + st.pick.map(function (s) { return '<option' + (s === HS.pick ? ' selected' : '') + '>' + s + '</option>' }).join('') + '</select><span></span></label>';
-  h += '<label class="hp"><span>From year</span><input type="number" inputmode="numeric" data-o="from" value="' + (HS.from || '') + '" placeholder="all"><span></span></label><label class="hp"><span>To year</span><input type="number" inputmode="numeric" data-o="to" value="' + (HS.to < 9999 ? HS.to : '') + '" placeholder="now"><span></span></label><label class="hp"><span>Minimum sessions between events</span><input type="number" inputmode="numeric" data-o="gap" value="' + HS.gap + '"><span></span></label>';
-  $('hparams').innerHTML = h; runHist();
+  if (st.pick) { if (st.pick.indexOf(HS.pick) < 0) HS.pick = st.pick[0]; h += '<label class="hp"><span>Stock or ETF</span><select id="hpick">' + st.pick.map(function (s) { return '<option value="' + s + '"' + (s === HS.pick ? ' selected' : '') + '>' + s.replace(/10$/, '') + '</option>' }).join('') + '</select><span></span></label>' }
+  h += '<label class="hp"><span>From year</span><input type="number" inputmode="numeric" data-o="from" value="' + (HS.from || '') + '" placeholder="all"><span></span></label><label class="hp"><span>To year</span><input type="number" inputmode="numeric" data-o="to" value="' + (HS.to < 9999 ? HS.to : '') + '" placeholder="now"><span></span></label><label class="hp"><span>Cluster rule: sessions between signals</span><input type="number" inputmode="numeric" data-o="gap" value="' + HS.gap + '"><span></span></label>';
+  $('hparams').innerHTML = h; runHist(); renderResearch();
 }
 function runHist() {
   var st = STUDIES.filter(function (s) { return s.id === HS.id })[0], need = st.tgt === 'pick' ? [HS.pick] : st.data;
   $('hres').innerHTML = '<div class="r mut">Loading history</div>';
-  loadHist(need).then(function () { var P = {}; st.p.forEach(function (p) { P[p[0]] = +HS.P[p[0]] }); HR = runStudy(st, P, { from: +HS.from || 0, to: +HS.to || 9999, gap: Math.max(1, +HS.gap || 1), pick: HS.pick }); renderStudy(HR) }).catch(function () { $('hres').innerHTML = '<div class="r mut">History files could not be loaded.</div>' });
+  loadHist(need).then(function () { var P = {}; st.p.forEach(function (p) { P[p[0]] = +HS.P[p[0]] }); noteTried(st.id + JSON.stringify(P) + HS.pick + HS.from + HS.to + HS.gap); HR = CORE.runStudy(st, P, { from: +HS.from || 0, to: +HS.to || 9999, gap: Math.max(1, +HS.gap || 1), pick: HS.pick }, HIST); renderStudy(HR) }).catch(function (e) { $('hres').innerHTML = '<div class="r mut">History files could not be loaded.</div>' });
 }
 $('hstudies').addEventListener('click', function (e) { var b = e.target.closest('[data-s]'); if (!b) return; HS.id = b.dataset.s; HS.P = {}; HS.open = null; histUI() });
 $('hparams').addEventListener('change', function (e) { var t = e.target; if (t.dataset.p) HS.P[t.dataset.p] = t.value; if (t.dataset.o) HS[t.dataset.o] = t.dataset.o === 'to' ? (+t.value || 9999) : t.value; if (t.id === 'hpick') HS.pick = t.value; HS.open = null; runHist() });
 $('hlist').addEventListener('click', function (e) { var r = e.target.closest('[data-d]'); if (!r || !HR) return; HS.open = HS.open === +r.dataset.d ? null : +r.dataset.d; renderStudy(HR) });
-function openStudy(id, P) { HS.id = id; HS.P = P || {}; HS.from = 0; HS.to = 9999; HS.gap = 10; HS.open = null; showTab('hist') }
+function openStudy(id, P) { HS.id = id; HS.P = P || {}; HS.from = 0; HS.to = 9999; HS.gap = 5; HS.open = null; showTab('hist') }
+
+/* Research computed on the close by tools/research.js */
+var RES = {};
+function loadRes(n) { return RES[n] ? Promise.resolve(RES[n]) : fetch('data/research/' + n + '.json', { cache: 'default' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { RES[n] = j; return j }) }
+function renderResearch() {
+  loadRes('semis').then(function (m) {
+    var h = '<div class="r k">' + esc(m.note) + ' ' + m.days + ' days from ' + dlab(m.from) + ' to ' + dlab(m.to) + ', ' + m.dropped + ' Asian holiday days dropped. Computed ' + esc(m.asof.slice(0, 10)) + '.</div><div class="r hrow head"><span>Asia, then US</span><b>Coefficient, adjusted p</b><b>Out of sample</b></div>';
+    m.tests.forEach(function (t) { var gain = t.oosGain; h += '<div class="r hrow"><span>' + esc(t.asia) + ' then ' + esc(t.target) + ' <span class="k">n ' + t.n + '</span></span><span>' + t.beta.toFixed(2) + ', ' + (t.pAdj < 0.05 ? '<b>' + t.pAdj.toFixed(2) + '</b>' : t.pAdj.toFixed(2)) + '</span><span class="' + (gain > 0 ? 'up' : 'dn') + '">' + (gain == null ? 'n/a' : (gain > 0 ? '+' : '−') + Math.abs(gain * 100).toFixed(1) + '%') + '</span></div>' });
+    var any = m.tests.filter(function (t) { return t.oosGain > 0 && t.pAdj < 0.05 });
+    h += '<div class="r"><b>' + (any.length ? any.length + ' pair' + (any.length > 1 ? 's' : '') + ' added value both in and out of sample.' : 'No Asian chip name improved the US forecast out of sample.') + '</b><div class="k">Out of sample above 0 means lower forecast error than using the prior US session and the overnight S&P perp alone.' + (m.tests.some(function (t) { return t.pAdj < 0.05 && !(t.oosGain > 0) }) ? ' A pair that looks significant in the full sample but loses out of sample is likely fitting noise.' : '') + '</div></div>';
+    $('rsemis').innerHTML = h;
+  }).catch(function () { $('rsemis').innerHTML = '<div class="r mut">Not computed yet.</div>' });
+  loadRes('seasonality').then(function (s) {
+    var sel = HS.seas || 0, c = s.conds[sel], h = '<div class="chips" style="margin:8px 0 4px">' + s.conds.map(function (x, i) { return '<button class="chipb' + (i === sel ? ' on' : '') + '" data-seas="' + i + '">' + esc(x.name) + ' (' + x.n + ')</button>' }).join('') + '</div>';
+    var mx = Math.max.apply(0, c.high.concat(c.low).filter(CORE.isNum)) || 1;
+    h += '<div class="r hrow head"><span>Bar, ET</span><b>Day high / low set here</b><b>Avg bar return</b></div>' + s.slots.map(function (sl, i) { var b = c.bar[i]; return '<div class="r hrow"><span>' + sl.replace(/(\d+)(\d\d)$/, '$1:$2') + '</span><span><i class="sbar" style="width:' + (c.high[i] / mx * 45) + '%;background:var(--gfill)"></i><i class="sbar" style="width:' + (c.low[i] / mx * 45) + '%;background:var(--rfill)"></i> <span class="k">' + c.high[i].toFixed(0) + ' / ' + c.low[i].toFixed(0) + '%</span></span><span>' + (CORE.isNum(b.mean) ? sg(b.mean, 3) : 'n/a') + '</span></div>' }).join('');
+    h += '<div class="r k">' + c.n + ' days. Low set in the first hour ' + (c.lowFirstHour || 0).toFixed(0) + '% of days, high in the last hour ' + (c.highLastHour || 0).toFixed(0) + '%. ' + esc(s.note) + ' ' + dlab(s.from) + ' to ' + dlab(s.to) + '.</div>';
+    $('rseas').innerHTML = h;
+  }).catch(function () { $('rseas').innerHTML = '<div class="r mut">Not computed yet.</div>' });
+  renderFingerprint();
+}
+$('rseas').addEventListener('click', function (e) { var b = e.target.closest('[data-seas]'); if (b) { HS.seas = +b.dataset.seas; renderResearch() } });
+function renderFingerprint() {
+  Promise.all([loadHist(['SPX', 'VIX', 'NDX', 'US10Y', 'RSP10', 'SPY10', 'SMH10', 'QQQ10']), loadRes('fingerprint')]).then(function (x) {
+    var V = x[1], F = CORE.features(HIST), S = HIST.SPX, t = F.length - 1, keys = CORE.FEAT.map(function (f) { return f[0] }), nb = CORE.neighbors(F, t, keys, 15, 20, 60), cur = F[t];
+    var o = function (k) { return nb.map(function (m) { return CORE.fwdRet(S, F[m[1]].i, k) }).filter(CORE.isNum) }, h = '';
+    h += '<div class="r k">Today\'s conditions on ' + dlab(cur.d) + ': ' + CORE.FEAT.filter(function (f) { return CORE.isNum(cur[f[0]]) }).map(function (f) { return esc(f[1]) + ' ' + cur[f[0]].toFixed(1) + f[2] }).join(', ') + '.</div>';
+    [5, 20, 60].forEach(function (k) { var a = o(k), s = CORE.stats(a); h += '<div class="r hrow"><span>' + k + ' sessions after the matches</span><span>' + (s.n >= 10 ? sg(s.mean) + ' <span class="k">(' + sg(s.lo, 1) + ' to ' + sg(s.hi, 1) + ') n ' + s.n + ', up ' + (s.up * 100).toFixed(0) + '%</span>' : 'n ' + s.n + ', too few') + '</span><span></span></div>' });
+    var mv = V.models[0], best = V.models.slice(1).sort(function (a, b) { return (b.rate || 0) - (a.rate || 0) })[0];
+    h += '<div class="r"><b>' + (mv.rate > V.alwaysUp.rate ? 'The combined match beat simply calling up in testing.' : 'In testing, these matches did not beat simply calling the market up.') + '</b><div class="k">Walk forward since 2005, ' + mv.n + ' non overlapping 20 session tests: matches called the direction right ' + (mv.rate * 100).toFixed(0) + '% (range ' + (mv.ci[0] * 100).toFixed(0) + ' to ' + (mv.ci[1] * 100).toFixed(0) + '%), calling up every time was right ' + (V.alwaysUp.rate * 100).toFixed(0) + '%. Best single condition: ' + esc(best.name) + ' at ' + (best.rate * 100).toFixed(0) + '%. Use the matches as context for what has happened before, not as a forecast. ' + esc(V.note) + '</div></div>';
+    h += '<div class="r hev head"><span>Closest matches</span><b>5 day</b><b>20 day</b><b>60 day</b></div>';
+    nb.forEach(function (m) { var f = F[m[1]], why = CORE.FEAT.filter(function (q) { return CORE.isNum(f[q[0]]) && CORE.isNum(cur[q[0]]) }).sort(function (a, b) { return Math.abs(f['z' + a[0]] - cur['z' + a[0]]) - Math.abs(f['z' + b[0]] - cur['z' + b[0]]) }).slice(0, 3).map(function (q) { return esc(q[1]) + ' ' + f[q[0]].toFixed(1) + q[2] }).join(', ');
+      var r = function (k) { var v = CORE.fwdRet(S, f.i, k); return CORE.isNum(v) ? sg(v) : 'n/a' }; h += '<div class="r hev"><span>' + dlab(f.d) + '<div class="k">closest on ' + why + '</div></span><span class="num">' + r(5) + '</span><span class="num">' + r(20) + '</span><span class="num">' + r(60) + '</span></div>' });
+    $('rfp').innerHTML = h;
+  }).catch(function () { $('rfp').innerHTML = '<div class="r mut">Not available.</div>' });
+}
 
 /* Automatic matches: today's conditions checked against the presets, shown on the Brief */
 function autoHist() {
@@ -1259,8 +1452,8 @@ function autoHist() {
       if (i >= Math.min(cand.length, 3)) { $('autohist').innerHTML = h; $('autoSec').style.display = ''; return }
       var c = cand[i], st = STUDIES.filter(function (s) { return s.id === c[0] })[0];
       loadHist(st.data).then(function () {
-        var P = {}; st.p.forEach(function (p) { P[p[0]] = c[1][p[0]] != null ? c[1][p[0]] : p[2] }); var R = runStudy(st, P, { gap: 10, pick: 'NVDA' }), u = R.use, r1 = u.map(function (x) { return x.out.r[1] }).filter(isNum), r20 = u.map(function (x) { return x.out.r[20] }).filter(isNum);
-        var line = u.length < 10 ? 'Only ' + u.length + ' comparable events, too few to estimate.' : 'Next session up ' + pctTxt(r1.filter(function (x) { return x > 0 }).length, r1.length) + ', 20 session mean ' + mTxt(stats(r20)) + ' vs ' + sg(R.base.r[20].mean) + ' on all days. n ' + u.length + '.';
+        var P = {}; st.p.forEach(function (p) { P[p[0]] = c[1][p[0]] != null ? c[1][p[0]] : p[2] }); var R = CORE.runStudy(st, P, { gap: 5 }, HIST), s1 = CORE.summarize(R, 1), s20 = CORE.summarize(R, 20), w = CORE.walkForward(R, 5, 10);
+        var line = s1.n < 10 ? 'Only ' + s1.n + ' comparable events, too few to estimate.' : 'Next session up ' + (s1.up / s1.n * 100).toFixed(0) + '% vs ' + (R.base[1].up * 100).toFixed(0) + '% on all days (n ' + s1.n + '). 20 sessions: ' + (s20.n >= 10 ? sg(s20.s.mean) + ' vs ' + sg(R.base[20].mean) + ' (n ' + s20.n + ')' : 'too few') + '. ' + (w.n >= 10 ? 'Walk forward ' + (w.hits / w.n * 100).toFixed(0) + '% right.' : '');
         h += '<div class="r hauto" data-s="' + c[0] + '" data-p=\'' + esc(JSON.stringify(P)) + '\'><b>' + esc(c[2]) + '.</b> <span class="k">' + esc(st.name) + ', ' + esc(R.src) + '.</span><div>' + line + '</div></div>';
         go(i + 1);
       }).catch(function () { go(i + 1) });
@@ -1293,7 +1486,7 @@ function topicRe() { TOPRE = TOPICS.length ? new RegExp('(' + TOPICS.map(functio
 topicRe();
 var _scoreNews = scoreNews;
 scoreNews = function (n) { var s = _scoreNews(n); if (s > -9 && TOPRE && TOPRE.test(n.h)) { s += 3; n.pin = 1 } return s };
-var SECS = [['secRev', 'Reversal watch'], ['sinceSec', 'Since your last visit'], ['autoSec', 'Comparable history'], ['secTop3', 'What matters most'], ['secRead', 'Readings'], ['secDrv', 'What is driving it'], ['secRisk', 'Risks and catalysts'], ['secCal7', 'Next 7 trading days'], ['secPriced', 'What is priced in'], ['secScen', 'Scenarios'], ['secLvl', 'Levels']];
+var SECS = [['secOutlook', 'Outlook'], ['secRev', 'Reversal watch'], ['sinceSec', 'Since your last visit'], ['autoSec', 'Comparable history'], ['secTop3', 'What matters most'], ['secRead', 'Readings'], ['secDrv', 'What is driving it'], ['secRisk', 'Risks and catalysts'], ['secCal7', 'Next 7 trading days'], ['secPriced', 'What is priced in'], ['secScen', 'Scenarios'], ['secLvl', 'Levels']];
 function applyHide() { SECS.forEach(function (s) { var el = $(s[0]); if (el) el.classList.toggle('uhide', HIDE.indexOf(s[0]) >= 0) }) }
 function renderCustom() {
   var h = '<div class="k">Pinned instruments (the Board\'s first filter and the change list)</div><div class="pills" id="cpins">' + INS.map(function (r) { return '<button class="chipb' + (KEY.indexOf(r[0]) >= 0 ? ' on' : '') + '" data-pin="' + r[0] + '">' + esc(r[1]) + '</button>' }).join('') + '</div>';
@@ -1331,9 +1524,9 @@ function cal7() {
   return out.filter(function (e) { return e[0] >= ymdKey(et(t)) });
 }
 function renderCal7() {
-  var ev = cal7(), lim = MODE === 'deep' ? 40 : 6, byRank = ev.slice().sort(function (a, b) { return b.rank - a.rank || (a[0] < b[0] ? -1 : 1) }).slice(0, lim).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0 });
+  var ev = cal7(), lim = MODE === 'deep' ? 40 : 3, byRank = ev.slice().sort(function (a, b) { return b.rank - a.rank || (a[0] < b[0] ? -1 : 1) }).slice(0, lim).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0 });
   $('cal7').innerHTML = byRank.map(function (e) { var nums = (e[7] != null || e[8] != null || e[9] != null) ? '<div class="k">' + (e[9] != null && e[9] !== '' ? 'Actual ' + esc(e[9]) + ' · ' : '') + 'Forecast ' + esc(e[7] == null ? 'n/a' : e[7]) + ' · Prior ' + esc(e[8] == null ? 'n/a' : e[8]) + '</div>' : ''; return '<div class="r"><span>' + esc(e[1]) + '<div class="k">' + esc(e[2]) + '</div></span><span>' + (e[4] >= 3 ? '<b>' : '') + lite(e[3]) + (e[4] >= 3 ? '</b>' : '') + (e[6] ? ' <span class="cat">' + esc(e[6]) + '</span>' : '') + nums + '</span></div>' }).join('') || '<div class="r mut">Nothing scheduled.</div>';
-  $('cal7note').textContent = (MODE === 'deep' ? 'All events.' : 'Top 6 by importance, with chips, the Fed and your pinned names ranked higher.') + ' Holidays, half days and expirations are computed; data releases, Fed events, auctions and earnings come from the brief' + (B.events7 ? ' (' + B.updatedLabel + ').' : ', which has none yet.');
+  $('cal7note').textContent = (MODE === 'deep' ? 'All events.' : 'Top 3 by importance; Deep shows all.') + ' Holidays, half days and expirations are computed; data releases, Fed events, auctions and earnings come from the brief' + (B.events7 ? ' (' + B.updatedLabel + ').' : ', which has none yet.');
 }
 
 /* ---------- What is priced in ---------- */
@@ -1380,7 +1573,7 @@ $('askchips').addEventListener('click', function (e) { var b = e.target.closest(
 function lastRet(S, back) { var n = S.c.length - 1 - (back || 0); return (S.c[n] / S.c[n - 1] - 1) * 100 }
 function renderInternals() {
   var b = breadth('perp'), h = '';
-  if (b.n) h += '<div class="r"><span>Stock perps up <span class="k">vs ' + basisDef('perp')[1].toLowerCase() + ', live</span></span><b class="num">' + b.up + ' of ' + b.n + ' (' + b.pct.toFixed(0) + '%)</b></div><div class="r"><span>Median stock perp vs S&amp;P perp</span><b class="num">' + (isNum(b.med) && isNum(chgOf('xyz:SP500', 'perp')) ? sg(b.med - chgOf('xyz:SP500', 'perp')) : 'n/a') + '</b></div>';
+  if (b.n) h += '<div class="r"><span>Perp sample: stock perps up <span class="k">' + b.n + ' US listed stocks, not exchange breadth, vs ' + basisDef('perp')[1].toLowerCase() + ', live</span></span><b class="num">' + b.up + ' of ' + b.n + ' (' + b.pct.toFixed(0) + '%)</b></div><div class="r"><span>Perp sample median vs S&amp;P perp</span><b class="num">' + (isNum(b.med) && isNum(chgOf('xyz:SP500', 'perp')) ? sg(b.med - chgOf('xyz:SP500', 'perp')) : 'n/a') + '</b></div>';
   (B.internals || []).forEach(function (r) { h += '<div class="r"><span>' + esc(r[0]) + ' <span class="k">' + esc(r[2] || B.updatedLabel) + '</span></span><b class="num">' + esc(r[1]) + '</b></div>' });
   loadHist(['SPY', 'RSP', 'IWM', 'QQQ', 'SMH']).then(function () {
     var S = HIST, pairs = [['Equal weight minus S&P (RSP vs SPY)', 'RSP', 'SPY'], ['Small caps minus S&P (IWM vs SPY)', 'IWM', 'SPY'], ['Semis minus Nasdaq (SMH vs QQQ)', 'SMH', 'QQQ']], x = '', last = S.SPY.d[S.SPY.d.length - 1];
@@ -1392,7 +1585,7 @@ function renderInternals() {
     });
     var verdict = '';
     var spx = chgOf('xyz:SP500', 'perp');
-    if (b.n >= 30 && isNum(spx)) verdict = spx > 0 && b.pct < 50 ? 'Weaker underneath than the index: the S&P perp is up but most stock perps are not.' : spx < 0 && b.pct > 55 ? 'Healthier underneath than the index: most stock perps are up while the S&P perp is down.' : b.pct >= 65 && spx > 0 ? 'Participation is broad, consistent with the index move.' : b.pct <= 35 && spx < 0 ? 'Selling is broad, consistent with the index move.' : 'Underneath roughly matches the index.';
+    if (b.n >= 30 && isNum(spx)) verdict = (spx > 0 && b.pct < 50 ? 'In the perp sample, fewer than half of stocks are up while the S&P perp is up.' : spx < 0 && b.pct > 55 ? 'In the perp sample, most stocks are up while the S&P perp is down.' : b.pct >= 65 && spx > 0 ? 'In the perp sample, participation is broad.' : b.pct <= 35 && spx < 0 ? 'In the perp sample, selling is broad.' : 'The perp sample roughly matches the index.') + (B.internals && B.internals.length ? '' : ' Exchange breadth is not in this brief, so the whole market is not measured here.');
     $('internals').innerHTML = h + x + (verdict ? '<div class="r full"><b>' + verdict + '</b><div class="k">Perp breadth uses ' + b.n + ' US listed stocks that trade as live perps, not the whole exchange; ETF spreads are last session closes. Exchange advance and decline counts appear here when the brief includes them.</div></div>' : '');
   }).catch(function () { $('internals').innerHTML = h });
 }
@@ -1416,28 +1609,17 @@ function renderCross() {
 /* ---------- Forecast accountability ---------- */
 var SC = null;
 function parseExp(note, upd) { var m = String(note).match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2})/); if (!m) return null; var mo = 'JanFebMarAprMayJunJulAugSepOctNovDec'.indexOf(m[1]) / 3 + 1, y = +String(upd).slice(0, 4), um = +String(upd).slice(5, 7); if (mo < um - 6) y++; return y * 10000 + mo * 100 + +m[2] }
+function etCloseMs(iso) { var y = +iso.slice(0, 4), m = +iso.slice(5, 7), d = +iso.slice(8, 10); return etMs(y, m, d, HALF[iso] ? 13 : 16, 0) }
 function scorecard() {
   if (!MEM) return;
-  var briefs = MEM.filter(function (e) { return e.kind === 'brief' }).slice(0, 120);
+  var briefs = MEM.filter(function (e) { return e.kind === 'brief' }).slice(0, 200);
   Promise.all([loadHist(['SPX'])].concat(briefs.map(function (e) { return fetch('archive/' + e.file, { cache: 'force-cache' }).then(function (r) { return r.ok ? r.json() : null }).catch(function () { return null }) }))).then(function (res) {
-    var S = HIST.SPX, docs = res.slice(1).filter(Boolean), em = { done: 0, hit: 0, pend: 0, byH: {} }, dir = { done: 0, hit: 0, pend: 0, base: 0 }, lv = { done: 0, held: 0, pend: 0 };
-    docs.forEach(function (d) {
-      (d.opt && d.opt.em || []).forEach(function (e, i) { var x = e[4] ? +String(e[4]).replace(/-/g, '') : parseExp(e[2], d.updated); if (!x) return; var j = S.ix[x], b = d.opt.base, m = b * e[1] / 100, k = (e[0] || '') + ''; em.byH[k] = em.byH[k] || { done: 0, hit: 0 }; if (j == null) { if (x > S.asof) em.pend++; return } em.done++; em.byH[k].done++; if (S.c[j] >= b - m && S.c[j] <= b + m) { em.hit++; em.byH[k].hit++ } });
-      var F = d.forecast; if (F && F.dir && F.date && isNum(F.ref)) { var fd = +String(F.date).replace(/-/g, ''), j2 = S.ix[fd]; if (j2 == null) { if (fd > S.asof) dir.pend++ } else { dir.done++; var up = S.c[j2] > F.ref; if ((F.dir === 'up') === up) dir.hit++; if (up) dir.base++ } }
-    });
-    var zone = { Bull: 0, Range: 0, Risk: 0, n: 0 }, br = { n: 0, x: 0 }, rg = {};
-    docs.forEach(function (d) { if (!d.ladder || !d.updated) return; var u = new Date(d.updated).getTime(), nx = null, pv = null;
-      for (var i = 0; i < S.d.length; i++) { var s = String(S.d[i]), ct = etMs(+s.slice(0, 4), +s.slice(4, 6), +s.slice(6), HALF[dstr(S.d[i])] ? 13 : 16, 0); if (ct > u) { nx = i; break } pv = i }
-      if (nx == null || pv == null) return; var c = S.c[nx], p = S.c[pv]; zone.n++; zone[c > d.ladder.bull ? 'Bull' : c >= d.ladder.floor ? 'Range' : 'Risk']++;
-      (d.opt && d.opt.levels || []).forEach(function (l) { br.n++; if ((p - l[1]) * (c - l[1]) < 0) br.x++ });
-      if (d.forecast && d.forecast.regime && d.forecast.dir) { var k = d.forecast.regime, j2 = S.ix[+String(d.forecast.date).replace(/-/g, '')]; if (j2 != null) { rg[k] = rg[k] || [0, 0]; rg[k][0]++; if ((d.forecast.dir === 'up') === (S.c[j2] > d.forecast.ref)) rg[k][1]++ } } });
-    var hz = Object.keys(em.byH).filter(function (k) { return em.byH[k].done }).map(function (k) { return esc(k) + ' ' + em.byH[k].hit + ' of ' + em.byH[k].done }).join(', ');
-    var h = '<div class="r"><b>Expected move coverage</b><div class="k">' + (em.done ? em.hit + ' of ' + em.done + ' SPX closes landed inside the implied move (' + (em.hit / em.done * 100).toFixed(0) + '%). About 68% is what a one standard deviation move implies. ' : 'No implied move has reached its expiry yet. ') + (em.pend ? em.pend + ' waiting for their expiry.' : '') + '</div></div>';
-    h += '<div class="r"><b>Directional calls</b><div class="k">' + (dir.done ? dir.hit + ' of ' + dir.done + ' correct (' + (dir.hit / dir.done * 100).toFixed(0) + '%). Baseline of always calling up: ' + (dir.base / dir.done * 100).toFixed(0) + '%. ' : 'None scored yet. Briefs record a forecast from now on; earlier briefs had none. ') + (dir.pend ? dir.pend + ' pending.' : '') + '</div></div>';
-    if (hz) h += '<div class="r k">By horizon: ' + hz + '</div>';
-    h += '<div class="r"><b>Scenario outcomes</b><div class="k">' + (zone.n ? 'Next S&P close after each brief landed in the bull zone ' + zone.Bull + ', range ' + zone.Range + ', risk ' + zone.Risk + ' times (' + zone.n + ' briefs). Option levels crossed by that close: ' + br.x + ' of ' + br.n + '.' : 'No brief has reached its next close yet.') + '</div></div>';
-    var rk = Object.keys(rg); if (rk.length) h += '<div class="r"><b>Directional calls by regime</b><div class="k">' + rk.map(function (k) { return esc(k) + ' ' + rg[k][1] + ' of ' + rg[k][0] }).join(', ') + '</div></div>';
-    h += '<div class="r k">Scores read the archive exactly as published and Cboe S&P closes. Nothing is rescored after the fact. Fewer than 20 scored forecasts says little.</div>';
+    var S = HIST.SPX, docs = res.slice(1).filter(Boolean), sc = CORE.scoreForecasts(docs, S, etCloseMs), dir = sc.dir, cov = sc.cov, h = '';
+    h += '<div class="r"><b>Directional calls</b><div class="k">' + (dir.n ? dir.hit + ' of ' + dir.n + ' sessions called right (' + (dir.hit / dir.n * 100).toFixed(0) + '%, range ' + (CORE.wilson(dir.hit, dir.n)[0] * 100).toFixed(0) + ' to ' + (CORE.wilson(dir.hit, dir.n)[1] * 100).toFixed(0) + '%). Calling up every time: ' + (dir.up / dir.n * 100).toFixed(0) + '%. ' : 'No session scored yet. Briefs record one call per session from now on. ') + (dir.revisions ? dir.revisions + ' later briefs revised a call for the same session; only the last call made before that session closed is scored, so revisions do not inflate the count. ' : '') + (dir.pend ? dir.pend + ' sessions pending.' : '') + '</div></div>';
+    var byR = {}; dir.rows.forEach(function (r) { if (!r.regime) return; byR[r.regime] = byR[r.regime] || [0, 0]; byR[r.regime][0]++; if (r.hit) byR[r.regime][1]++ });
+    if (Object.keys(byR).length) h += '<div class="r k">By regime: ' + Object.keys(byR).map(function (k) { return esc(k) + ' ' + byR[k][1] + ' of ' + byR[k][0] }).join(', ') + '</div>';
+    h += '<div class="r"><b>Implied move coverage</b><div class="k">' + (cov.n ? cov.hit + ' of ' + cov.n + ' expiries closed inside the implied move (' + (cov.hit / cov.n * 100).toFixed(0) + '%); about 68% is what a one standard deviation move implies. ' : 'No expiry has passed yet. ') + (cov.dup ? cov.dup + ' repeat copies of the same option data were collapsed. ' : '') + (cov.pend ? cov.pend + ' expiries pending.' : '') + '</div></div>';
+    h += '<div class="r k">Scores read the archive exactly as published and Cboe S&P closes. Fewer than 20 scored sessions says little.</div>';
     $('score').innerHTML = h;
   });
 }
@@ -1487,62 +1669,57 @@ function renderOptExtra() {
 var _applyBrief2 = applyBrief;
 applyBrief = function (nb) { _applyBrief2(nb); try { renderOptExtra() } catch (e) { } };
 
-/* ---------- Reversal watch: measured from live perp candles ---------- */
+/* ---------- Reversal watch and exhaustion, from completed 5 minute perp candles ---------- */
 var REV = null, PS = {};
 function loadRev() {
   if (document.hidden) return;
   var bt = B.base && B.base.ts ? new Date(B.base.ts).getTime() : Date.now() - 864e5, coins = ['xyz:SP500', 'xyz:XYZ100', 'xyz:SMH'];
-  Promise.all(coins.map(function (c) { return post({ type: 'candleSnapshot', req: { coin: c, interval: '5m', startTime: bt - 8 * 36e5, endTime: Date.now() } }) })).then(function (rs) { REV = analyzeRev(rs, bt); renderRev(); soon() }).catch(function () { });
+  Promise.all(coins.map(function (c) { return post({ type: 'candleSnapshot', req: { coin: c, interval: '5m', startTime: bt - 8 * 36e5, endTime: Date.now() } }) })).then(function (rs) { REV = analyzeRev(rs, bt, Date.now()); renderRev(); soon() }).catch(function () { });
 }
-function vwapOf(K) { var pv = 0, vv = 0; K.forEach(function (c) { var tp = (+c.h + +c.l + +c.c) / 3; pv += tp * +c.v; vv += +c.v }); return vv ? pv / vv : null }
-function swing(K, dir) {
-  /* dir 1: drop then recovery (peak before trough). dir -1: rally then fade */
-  var best = null;
-  K.forEach(function (c, i) { var x = dir > 0 ? +c.l : +c.h; if (!best || (dir > 0 ? x < best.x : x > best.x)) best = { x: x, i: i } });
-  if (!best) return null; var pk = null;
-  for (var j = 0; j <= best.i; j++) { var y = dir > 0 ? +K[j].h : +K[j].l; if (!pk || (dir > 0 ? y > pk.x : y < pk.x)) pk = { x: y, i: j } }
-  var last = +K[K.length - 1].c, move = (best.x / pk.x - 1) * 100, rec = (last - best.x) / (pk.x - best.x);
-  return { dir: dir, peak: pk.x, pt: +K[pk.i].t, ext: best.x, et: +K[best.i].t, last: last, move: move, rec: rec };
-}
-function analyzeRev(rs, bt) {
-  var now = Date.now(), ss = session(now).st, o = lastOpenMs(now), from = (ss === 'open' || ss === 'post') && o > bt ? o : bt;
-  var cut = function (k) { return (k || []).filter(function (c) { return +c.t >= from && +c.t + 3e5 <= now + 3e5 }) };
+function analyzeRev(rs, bt, now) {
+  var ss = session(now).st, o = lastOpenMs(now), from = (ss === 'open' || ss === 'post') && o > bt ? o : bt;
+  var all0 = (rs[0] || []).filter(function (c) { return +c.t >= from }), prov = all0.filter(function (c) { return +c.t + 3e5 > now })[0];
+  var cut = function (k) { return CORE.completed((k || []).filter(function (c) { return +c.t >= from }), now, 3e5) };
   var K = cut(rs[0]), N = cut(rs[1]), M = cut(rs[2]); if (K.length < 12) return null;
-  var bo = (rs[0] || []).filter(function (c) { return +c.t >= bt - 6.5 * 36e5 && +c.t < bt });
-  if (bo.length >= 20) { PS = { hi: Math.max.apply(0, bo.map(function (c) { return +c.h })), lo: Math.min.apply(0, bo.map(function (c) { return +c.l })) } }
+  var bo = CORE.completed((rs[0] || []).filter(function (c) { return +c.t >= bt - 6.5 * 36e5 && +c.t < bt }), now, 3e5);
+  if (bo.length >= 20) PS = { hi: Math.max.apply(0, bo.map(function (c) { return +c.h })), lo: Math.min.apply(0, bo.map(function (c) { return +c.l })) };
   var em = B.opt && B.opt.em && B.opt.em[0] ? B.opt.em[0][1] : 1, need = Math.max(0.8, em * 0.5);
-  var d = swing(K, 1), u = swing(K, -1), s = Math.abs(d.move) >= Math.abs(u.move) ? d : u;
-  var res = { from: from, win: from === bt ? 'since the ' + baseDay() + ' close' : 'since the 9:30am open', s: s, need: need };
-  if (Math.abs(s.move) < need) { res.label = null; return res }
-  if (s.rec < 0.15 && s.dir < 0) { res.label = null; return res }
-  var vw = vwapOf(K), ev = [], down = s.dir > 0;
+  var d = CORE.swing(K, 1), u = CORE.swing(K, -1); if (!d || !u) return null;
+  var cands = [d, u].filter(function (s) { return !s.ambiguous }); if (!cands.length) return { ambiguous: true };
+  var s = cands.sort(function (a, b) { return Math.abs(b.move) - Math.abs(a.move) })[0];
+  var res = { from: from, win: from === bt ? 'since the ' + baseDay() + ' close' : 'since the 9:30am open', s: s, need: need, prov: prov, n: K.length };
+  if (Math.abs(s.move) < need || (s.rec < 0.15 && s.dir < 0)) { res.label = null; return res }
+  var st = CORE.structure(K, s), br = breadth('perp'), gs = Object.keys(br.groups || {}).map(function (k) { return br.groups[k] });
+  var semi = null; if (M.length >= 12) { var sm = CORE.swing(M, s.dir); if (sm && !sm.ambiguous) semi = sm }
+  var nd = null; if (N.length >= 12) { var nn = CORE.swing(N, s.dir); if (nn && !nn.ambiguous) nd = nn }
+  var cl = CORE.classify(s, st, { semiRec: semi ? semi.rec : null, breadthPct: br.n >= 30 ? br.pct : null, mins: (now - s.et) / 60e3, groupSpread: gs.length >= 3 ? Math.max.apply(0, gs) - Math.min.apply(0, gs) : 0 });
+  var down = s.dir > 0, ev = [];
   ev.push([down ? 'Decline from the high' : 'Rally from the low', sg(s.move) + ', ' + f(s.peak, 0) + ' to ' + f(s.ext, 0)]);
-  ev.push([down ? 'Low at' : 'High at', tET(s.et, true) + ', ' + ago(now - s.et) + ' ago']);
+  ev.push([down ? 'Low in the candle at' : 'High in the candle at', tET(s.et, true) + ', ' + ago(now - s.et) + ' ago']);
   ev.push(['Share of the move retraced', (s.rec * 100).toFixed(0) + '%']);
-  if (vw) ev.push(['Perp VWAP ' + res.win, f(vw, 0) + (down ? (s.last > vw ? ', reclaimed' : ', still below') : (s.last < vw ? ', lost' : ', still above'))]);
-  var semi = null; if (M.length >= 12) { var sm = swing(M, s.dir); semi = sm.rec; ev.push(['Semis ETF retraced', (sm.rec * 100).toFixed(0) + '% of its ' + sg(sm.move) + ' move']) }
-  if (N.length >= 12) { var nn = swing(N, s.dir); ev.push(['Nasdaq 100 retraced', (nn.rec * 100).toFixed(0) + '% of its ' + sg(nn.move) + ' move']) }
-  var orr = null; if (from !== bt && K.length >= 6) { var ok = K.slice(0, 6), oh = Math.max.apply(0, ok.map(function (c) { return +c.h })), ol = Math.min.apply(0, ok.map(function (c) { return +c.l })); orr = down ? (s.ext < ol && s.last > ol) : (s.ext > oh && s.last < oh); ev.push(['Opening range', f(ol, 0) + ' to ' + f(oh, 0) + (orr ? (down ? ', broke below then reclaimed' : ', broke above then lost') : '')]) }
+  ev.push([down ? 'Higher lows since' : 'Lower highs since', String(st.higherLows)]);
+  if (st.lastLowerHigh != null) ev.push([down ? 'Last lower high' : 'Last higher low', f(st.lastLowerHigh, 0) + (st.structureBreak ? ', broken' : ', not broken')]);
+  if (st.vwap) ev.push(['Perp VWAP ' + res.win, f(st.vwap, 0) + (st.vwapHeld && st.vwapNow ? ', reclaimed and held' : st.vwapNow ? ', above but not yet held 2 candles' : ', not reclaimed')]);
+  if (st.volRatio != null) ev.push(['Volume, recovery vs decline candles', (st.volRatio * 100).toFixed(0) + '%, perp volume']);
+  if (semi) ev.push(['Semis ETF retraced', (semi.rec * 100).toFixed(0) + '% of ' + sg(semi.move)]);
+  if (nd) ev.push(['Nasdaq 100 retraced', (nd.rec * 100).toFixed(0) + '% of ' + sg(nd.move)]);
   var fl = []; (B.opt.levels || []).concat([['Prior session low', PS.lo], ['Prior session high', PS.hi], ['Bull trigger', B.ladder.bull], ['Range floor', B.ladder.floor]]).forEach(function (l) { if (!isNum(l[1])) return; if (down && s.ext < l[1] && s.last > l[1]) fl.push(l[0] + ' ' + f(l[1], 0)); if (!down && s.ext > l[1] && s.last < l[1]) fl.push(l[0] + ' ' + f(l[1], 0)) });
   if (fl.length) ev.push([down ? 'Failed breakdown below' : 'Failed breakout above', fl.slice(0, 3).join(', ')]);
-  var br = breadth('perp'); if (br.n) ev.push(['Stock perps up now', br.pct.toFixed(0) + '% of ' + br.n]);
-  var gf = gammaFlip(); if (gf && ((s.ext - gf) * (s.last - gf) < 0)) ev.push(['Crossed the gamma flip ' + f(gf, 0), 'dealer hedging effects may change on either side; an estimate from open interest']);
-  var mins = (now - s.et) / 60e3, gs = Object.keys(br.groups || {}).map(function (k) { return br.groups[k] }), spread = gs.length >= 3 ? Math.max.apply(0, gs) - Math.min.apply(0, gs) : 0, l;
-  if (s.rec < 0.15) l = 'No reversal yet, near the low';
-  else if (s.rec < 0.382) l = down ? 'Temporary bounce so far' : 'Pullback so far';
-  else if (s.rec < 0.618) l = 'Partial ' + (down ? 'recovery' : 'fade');
-  else if (down && vw && s.last > vw && (semi == null || semi >= 0.5) && br.pct >= 60 && mins >= 30) l = 'Potential sustainable reversal';
-  else if (!down && vw && s.last < vw && br.pct <= 40 && mins >= 30) l = 'Potential sustainable reversal lower';
-  else if (br.n && (down ? br.pct >= 60 : br.pct <= 40)) l = down ? 'Broad recovery' : 'Broad fade';
-  else if (spread > 1.5) l = 'Sector rotation';
-  else l = down ? 'Narrow recovery' : 'Narrow fade';
-  res.label = l; res.ev = ev; res.mins = mins; return res;
+  if (br.n) ev.push(['Perp sample up now', br.pct.toFixed(0) + '% of ' + br.n + ' stock perps, not exchange breadth']);
+  res.label = cl.label; res.conf = cl.conf; res.why = cl.why; res.ev = ev; res.mins = (now - s.et) / 60e3;
+  res.exh = s.rec < 0.382 ? CORE.exhaustion(K, s, [{ name: 'Semis ETF', K: M }, { name: 'Nasdaq 100', K: N }]) : [];
+  return res;
 }
 function renderRev() {
   var sec = $('secRev'); if (!REV || !REV.label) { sec.style.display = 'none'; return } sec.style.display = '';
   var r = REV, down = r.s.dir > 0, tone = /sustainable reversal$|Broad recovery/.test(r.label) ? 'g' : /lower|Broad fade/.test(r.label) ? 'r' : 'a';
-  $('revasof').textContent = 'S&P perp, ' + r.win;
-  $('rev').innerHTML = '<div class="r full"><span class="pill ' + tone + '">' + esc(r.label) + '</span> <span class="k">' + (down ? 'Turn began at the low, ' : 'Turn began at the high, ') + tET(r.s.et, true) + '. ' + (r.s.rec * 100).toFixed(0) + '% of the ' + sg(r.s.move) + ' move retraced.</span></div>' + r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('') + '<div class="r full k">Rules: under 38% retraced is a bounce, 38 to 62% partial, over 62% with the VWAP reclaimed, semis at least half back, 60% of stock perps up and 30 minutes held is a potential sustainable reversal. Volume, VIX and yields are not live here, and nothing here shows who was buying or why. Deep mode lists the evidence.</div>';
+  $('revasof').textContent = 'S&P perp, ' + r.win + ', ' + r.n + ' completed candles';
+  var h = '<div class="r full"><span class="pill ' + tone + '">' + esc(r.label) + '</span> <span class="k">' + (r.s.rec * 100).toFixed(0) + '% of the ' + sg(r.s.move) + ' move retraced since the ' + (down ? 'low' : 'high') + ' at ' + tET(r.s.et, true) + '. Confirmation ' + r.conf + ' of 5' + (r.why.length ? ': ' + esc(r.why.join(', ')) : '') + '.</span></div>';
+  if (r.exh && r.exh.length) h += '<div class="r full"><b>Exhaustion signs, ' + r.exh.length + ' of 6</b><div class="k">' + r.exh.map(esc).join('. ') + '. These suggest the ' + (down ? 'selling' : 'buying') + ' is losing force; none of them is a reversal by itself.</div></div>';
+  h += r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('');
+  if (r.prov) h += '<div class="r xd k">Current candle (' + tET(+r.prov.t) + ') is still forming and is not used above.</div>';
+  h += '<div class="r full k">Rules: retraced under 38% is a bounce, 38 to 62% partial. Above 62%, 4 of 5 confirmations (higher low, structure break, VWAP held, semis half back, perp sample breadth) and 30 minutes held is a potential sustainable reversal. The order of a high and low inside one candle is unknown, so a peak and trough in the same candle are not counted. Nothing here shows who was buying or why.</div>';
+  $('rev').innerHTML = h;
 }
 var _allLevels = allLevels;
 allLevels = function () { var L = _allLevels(); if (PS.hi) { L.push(['Prior session high', PS.hi, 'Perp, ' + baseDay() + ' cash hours']); L.push(['Prior session low', PS.lo, 'Perp, ' + baseDay() + ' cash hours']); L.sort(function (a, b) { return b[1] - a[1] }) } return L };
@@ -1567,6 +1744,21 @@ $('memlist').addEventListener('click', function (e) { var b = e.target.closest('
 var _applyBrief3 = applyBrief;
 applyBrief = function (nb) { _applyBrief3(nb); try { renderStories(); loadRev() } catch (e) { } };
 setInterval(function () { loadRev() }, 60e3);
+
+/* ---------- Outlook: the active scenario, the nearest levels and what invalidates it ---------- */
+function renderOutlook() {
+  var s = px('xyz:SP500'); if (!s) return; var zn = zoneOf(s), name = zn === 'Bull' ? 'Bullish' : zn === 'Range' ? 'Neutral' : 'Bearish';
+  var sc = (B.scenarios || []).filter(function (x) { return x.n === name })[0] || { n: name, cond: zn === 'Bull' ? 'Holds above ' + f(B.ladder.bull, 0) : zn === 'Range' ? 'Between ' + f(B.ladder.floor, 0) + ' and ' + f(B.ladder.bull, 0) : 'Below ' + f(B.ladder.floor, 0), inval: zn === 'Bull' ? 'Back below ' + f(B.ladder.bull, 0) : zn === 'Risk' ? 'Back above ' + f(B.ladder.floor, 0) : 'A close outside ' + f(B.ladder.floor, 0) + ' to ' + f(B.ladder.bull, 0), text: zn === 'Bull' ? B.ladder.bullText : zn === 'Range' ? B.ladder.rangeText : B.ladder.riskText };
+  var L = allLevels(), up = L.filter(function (l) { return l[1] > s }).slice(-2).reverse(), dn = L.filter(function (l) { return l[1] < s }).slice(0, 2), e0 = B.opt.em && B.opt.em[0], h = '';
+  h += '<div class="r full"><span class="pill ' + (zn === 'Bull' ? 'g' : zn === 'Range' ? 'a' : 'r') + '">' + name + ' scenario active</span> <span class="k">S&amp;P perp ' + f(s, 0) + ', ' + freshTxt('xyz:SP500') + '</span><div style="margin-top:4px">' + lite(sc.text || sc.cond) + '</div></div>';
+  h += '<div class="r"><span>Next above</span><b class="num">' + up.map(function (l) { return esc(l[0]) + (/\d/.test(l[0]) ? '' : ' ' + f(l[1], 0)) + ' (' + pts(l[1] - s) + ')' }).join(', ') + '</b></div><div class="r"><span>Next below</span><b class="num">' + dn.map(function (l) { return esc(l[0]) + (/\d/.test(l[0]) ? '' : ' ' + f(l[1], 0)) + ' (' + pts(l[1] - s) + ')' }).join(', ') + '</b></div>';
+  if (e0) { var u = CORE.emUsed(B.opt.base, e0[1], s); h += '<div class="r"><span>Priced in to ' + esc(e0[2]) + '</span><b class="num">±' + e0[1].toFixed(2) + '%, ' + Math.abs(u.used).toFixed(0) + '% of the ' + (u.used >= 0 ? 'up' : 'down') + ' move used</b></div>' }
+  if (sc.confirm) h += '<div class="r"><span>Confirms</span><span>' + lite(sc.confirm) + '</span></div>';
+  h += '<div class="r full"><b class="dn">Invalid if</b> ' + lite(sc.inval || 'not set in this brief') + (sc.risk ? '<div class="k">Risk: ' + lite(sc.risk) + '</div>' : '') + '</div>';
+  $('outlook').innerHTML = h; $('outasof').textContent = 'Levels from ' + (B.updatedLabel || '');
+}
+var _render2 = render;
+render = function () { _render2(); try { renderOutlook() } catch (e) { } };
 
 /* ---------- Start ---------- */
 setTheme(THEME); setMode(MODE); sectors(); applyBrief(DEF); BRIEF_V = '';

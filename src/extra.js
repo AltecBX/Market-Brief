@@ -5,7 +5,7 @@ function topicRe() { TOPRE = TOPICS.length ? new RegExp('(' + TOPICS.map(functio
 topicRe();
 var _scoreNews = scoreNews;
 scoreNews = function (n) { var s = _scoreNews(n); if (s > -9 && TOPRE && TOPRE.test(n.h)) { s += 3; n.pin = 1 } return s };
-var SECS = [['secRev', 'Reversal watch'], ['sinceSec', 'Since your last visit'], ['autoSec', 'Comparable history'], ['secTop3', 'What matters most'], ['secRead', 'Readings'], ['secDrv', 'What is driving it'], ['secRisk', 'Risks and catalysts'], ['secCal7', 'Next 7 trading days'], ['secPriced', 'What is priced in'], ['secScen', 'Scenarios'], ['secLvl', 'Levels']];
+var SECS = [['secOutlook', 'Outlook'], ['secRev', 'Reversal watch'], ['sinceSec', 'Since your last visit'], ['autoSec', 'Comparable history'], ['secTop3', 'What matters most'], ['secRead', 'Readings'], ['secDrv', 'What is driving it'], ['secRisk', 'Risks and catalysts'], ['secCal7', 'Next 7 trading days'], ['secPriced', 'What is priced in'], ['secScen', 'Scenarios'], ['secLvl', 'Levels']];
 function applyHide() { SECS.forEach(function (s) { var el = $(s[0]); if (el) el.classList.toggle('uhide', HIDE.indexOf(s[0]) >= 0) }) }
 function renderCustom() {
   var h = '<div class="k">Pinned instruments (the Board\'s first filter and the change list)</div><div class="pills" id="cpins">' + INS.map(function (r) { return '<button class="chipb' + (KEY.indexOf(r[0]) >= 0 ? ' on' : '') + '" data-pin="' + r[0] + '">' + esc(r[1]) + '</button>' }).join('') + '</div>';
@@ -43,9 +43,9 @@ function cal7() {
   return out.filter(function (e) { return e[0] >= ymdKey(et(t)) });
 }
 function renderCal7() {
-  var ev = cal7(), lim = MODE === 'deep' ? 40 : 6, byRank = ev.slice().sort(function (a, b) { return b.rank - a.rank || (a[0] < b[0] ? -1 : 1) }).slice(0, lim).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0 });
+  var ev = cal7(), lim = MODE === 'deep' ? 40 : 3, byRank = ev.slice().sort(function (a, b) { return b.rank - a.rank || (a[0] < b[0] ? -1 : 1) }).slice(0, lim).sort(function (a, b) { return a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0 });
   $('cal7').innerHTML = byRank.map(function (e) { var nums = (e[7] != null || e[8] != null || e[9] != null) ? '<div class="k">' + (e[9] != null && e[9] !== '' ? 'Actual ' + esc(e[9]) + ' · ' : '') + 'Forecast ' + esc(e[7] == null ? 'n/a' : e[7]) + ' · Prior ' + esc(e[8] == null ? 'n/a' : e[8]) + '</div>' : ''; return '<div class="r"><span>' + esc(e[1]) + '<div class="k">' + esc(e[2]) + '</div></span><span>' + (e[4] >= 3 ? '<b>' : '') + lite(e[3]) + (e[4] >= 3 ? '</b>' : '') + (e[6] ? ' <span class="cat">' + esc(e[6]) + '</span>' : '') + nums + '</span></div>' }).join('') || '<div class="r mut">Nothing scheduled.</div>';
-  $('cal7note').textContent = (MODE === 'deep' ? 'All events.' : 'Top 6 by importance, with chips, the Fed and your pinned names ranked higher.') + ' Holidays, half days and expirations are computed; data releases, Fed events, auctions and earnings come from the brief' + (B.events7 ? ' (' + B.updatedLabel + ').' : ', which has none yet.');
+  $('cal7note').textContent = (MODE === 'deep' ? 'All events.' : 'Top 3 by importance; Deep shows all.') + ' Holidays, half days and expirations are computed; data releases, Fed events, auctions and earnings come from the brief' + (B.events7 ? ' (' + B.updatedLabel + ').' : ', which has none yet.');
 }
 
 /* ---------- What is priced in ---------- */
@@ -92,7 +92,7 @@ $('askchips').addEventListener('click', function (e) { var b = e.target.closest(
 function lastRet(S, back) { var n = S.c.length - 1 - (back || 0); return (S.c[n] / S.c[n - 1] - 1) * 100 }
 function renderInternals() {
   var b = breadth('perp'), h = '';
-  if (b.n) h += '<div class="r"><span>Stock perps up <span class="k">vs ' + basisDef('perp')[1].toLowerCase() + ', live</span></span><b class="num">' + b.up + ' of ' + b.n + ' (' + b.pct.toFixed(0) + '%)</b></div><div class="r"><span>Median stock perp vs S&amp;P perp</span><b class="num">' + (isNum(b.med) && isNum(chgOf('xyz:SP500', 'perp')) ? sg(b.med - chgOf('xyz:SP500', 'perp')) : 'n/a') + '</b></div>';
+  if (b.n) h += '<div class="r"><span>Perp sample: stock perps up <span class="k">' + b.n + ' US listed stocks, not exchange breadth, vs ' + basisDef('perp')[1].toLowerCase() + ', live</span></span><b class="num">' + b.up + ' of ' + b.n + ' (' + b.pct.toFixed(0) + '%)</b></div><div class="r"><span>Perp sample median vs S&amp;P perp</span><b class="num">' + (isNum(b.med) && isNum(chgOf('xyz:SP500', 'perp')) ? sg(b.med - chgOf('xyz:SP500', 'perp')) : 'n/a') + '</b></div>';
   (B.internals || []).forEach(function (r) { h += '<div class="r"><span>' + esc(r[0]) + ' <span class="k">' + esc(r[2] || B.updatedLabel) + '</span></span><b class="num">' + esc(r[1]) + '</b></div>' });
   loadHist(['SPY', 'RSP', 'IWM', 'QQQ', 'SMH']).then(function () {
     var S = HIST, pairs = [['Equal weight minus S&P (RSP vs SPY)', 'RSP', 'SPY'], ['Small caps minus S&P (IWM vs SPY)', 'IWM', 'SPY'], ['Semis minus Nasdaq (SMH vs QQQ)', 'SMH', 'QQQ']], x = '', last = S.SPY.d[S.SPY.d.length - 1];
@@ -104,7 +104,7 @@ function renderInternals() {
     });
     var verdict = '';
     var spx = chgOf('xyz:SP500', 'perp');
-    if (b.n >= 30 && isNum(spx)) verdict = spx > 0 && b.pct < 50 ? 'Weaker underneath than the index: the S&P perp is up but most stock perps are not.' : spx < 0 && b.pct > 55 ? 'Healthier underneath than the index: most stock perps are up while the S&P perp is down.' : b.pct >= 65 && spx > 0 ? 'Participation is broad, consistent with the index move.' : b.pct <= 35 && spx < 0 ? 'Selling is broad, consistent with the index move.' : 'Underneath roughly matches the index.';
+    if (b.n >= 30 && isNum(spx)) verdict = (spx > 0 && b.pct < 50 ? 'In the perp sample, fewer than half of stocks are up while the S&P perp is up.' : spx < 0 && b.pct > 55 ? 'In the perp sample, most stocks are up while the S&P perp is down.' : b.pct >= 65 && spx > 0 ? 'In the perp sample, participation is broad.' : b.pct <= 35 && spx < 0 ? 'In the perp sample, selling is broad.' : 'The perp sample roughly matches the index.') + (B.internals && B.internals.length ? '' : ' Exchange breadth is not in this brief, so the whole market is not measured here.');
     $('internals').innerHTML = h + x + (verdict ? '<div class="r full"><b>' + verdict + '</b><div class="k">Perp breadth uses ' + b.n + ' US listed stocks that trade as live perps, not the whole exchange; ETF spreads are last session closes. Exchange advance and decline counts appear here when the brief includes them.</div></div>' : '');
   }).catch(function () { $('internals').innerHTML = h });
 }
@@ -128,28 +128,17 @@ function renderCross() {
 /* ---------- Forecast accountability ---------- */
 var SC = null;
 function parseExp(note, upd) { var m = String(note).match(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\w*\s+(\d{1,2})/); if (!m) return null; var mo = 'JanFebMarAprMayJunJulAugSepOctNovDec'.indexOf(m[1]) / 3 + 1, y = +String(upd).slice(0, 4), um = +String(upd).slice(5, 7); if (mo < um - 6) y++; return y * 10000 + mo * 100 + +m[2] }
+function etCloseMs(iso) { var y = +iso.slice(0, 4), m = +iso.slice(5, 7), d = +iso.slice(8, 10); return etMs(y, m, d, HALF[iso] ? 13 : 16, 0) }
 function scorecard() {
   if (!MEM) return;
-  var briefs = MEM.filter(function (e) { return e.kind === 'brief' }).slice(0, 120);
+  var briefs = MEM.filter(function (e) { return e.kind === 'brief' }).slice(0, 200);
   Promise.all([loadHist(['SPX'])].concat(briefs.map(function (e) { return fetch('archive/' + e.file, { cache: 'force-cache' }).then(function (r) { return r.ok ? r.json() : null }).catch(function () { return null }) }))).then(function (res) {
-    var S = HIST.SPX, docs = res.slice(1).filter(Boolean), em = { done: 0, hit: 0, pend: 0, byH: {} }, dir = { done: 0, hit: 0, pend: 0, base: 0 }, lv = { done: 0, held: 0, pend: 0 };
-    docs.forEach(function (d) {
-      (d.opt && d.opt.em || []).forEach(function (e, i) { var x = e[4] ? +String(e[4]).replace(/-/g, '') : parseExp(e[2], d.updated); if (!x) return; var j = S.ix[x], b = d.opt.base, m = b * e[1] / 100, k = (e[0] || '') + ''; em.byH[k] = em.byH[k] || { done: 0, hit: 0 }; if (j == null) { if (x > S.asof) em.pend++; return } em.done++; em.byH[k].done++; if (S.c[j] >= b - m && S.c[j] <= b + m) { em.hit++; em.byH[k].hit++ } });
-      var F = d.forecast; if (F && F.dir && F.date && isNum(F.ref)) { var fd = +String(F.date).replace(/-/g, ''), j2 = S.ix[fd]; if (j2 == null) { if (fd > S.asof) dir.pend++ } else { dir.done++; var up = S.c[j2] > F.ref; if ((F.dir === 'up') === up) dir.hit++; if (up) dir.base++ } }
-    });
-    var zone = { Bull: 0, Range: 0, Risk: 0, n: 0 }, br = { n: 0, x: 0 }, rg = {};
-    docs.forEach(function (d) { if (!d.ladder || !d.updated) return; var u = new Date(d.updated).getTime(), nx = null, pv = null;
-      for (var i = 0; i < S.d.length; i++) { var s = String(S.d[i]), ct = etMs(+s.slice(0, 4), +s.slice(4, 6), +s.slice(6), HALF[dstr(S.d[i])] ? 13 : 16, 0); if (ct > u) { nx = i; break } pv = i }
-      if (nx == null || pv == null) return; var c = S.c[nx], p = S.c[pv]; zone.n++; zone[c > d.ladder.bull ? 'Bull' : c >= d.ladder.floor ? 'Range' : 'Risk']++;
-      (d.opt && d.opt.levels || []).forEach(function (l) { br.n++; if ((p - l[1]) * (c - l[1]) < 0) br.x++ });
-      if (d.forecast && d.forecast.regime && d.forecast.dir) { var k = d.forecast.regime, j2 = S.ix[+String(d.forecast.date).replace(/-/g, '')]; if (j2 != null) { rg[k] = rg[k] || [0, 0]; rg[k][0]++; if ((d.forecast.dir === 'up') === (S.c[j2] > d.forecast.ref)) rg[k][1]++ } } });
-    var hz = Object.keys(em.byH).filter(function (k) { return em.byH[k].done }).map(function (k) { return esc(k) + ' ' + em.byH[k].hit + ' of ' + em.byH[k].done }).join(', ');
-    var h = '<div class="r"><b>Expected move coverage</b><div class="k">' + (em.done ? em.hit + ' of ' + em.done + ' SPX closes landed inside the implied move (' + (em.hit / em.done * 100).toFixed(0) + '%). About 68% is what a one standard deviation move implies. ' : 'No implied move has reached its expiry yet. ') + (em.pend ? em.pend + ' waiting for their expiry.' : '') + '</div></div>';
-    h += '<div class="r"><b>Directional calls</b><div class="k">' + (dir.done ? dir.hit + ' of ' + dir.done + ' correct (' + (dir.hit / dir.done * 100).toFixed(0) + '%). Baseline of always calling up: ' + (dir.base / dir.done * 100).toFixed(0) + '%. ' : 'None scored yet. Briefs record a forecast from now on; earlier briefs had none. ') + (dir.pend ? dir.pend + ' pending.' : '') + '</div></div>';
-    if (hz) h += '<div class="r k">By horizon: ' + hz + '</div>';
-    h += '<div class="r"><b>Scenario outcomes</b><div class="k">' + (zone.n ? 'Next S&P close after each brief landed in the bull zone ' + zone.Bull + ', range ' + zone.Range + ', risk ' + zone.Risk + ' times (' + zone.n + ' briefs). Option levels crossed by that close: ' + br.x + ' of ' + br.n + '.' : 'No brief has reached its next close yet.') + '</div></div>';
-    var rk = Object.keys(rg); if (rk.length) h += '<div class="r"><b>Directional calls by regime</b><div class="k">' + rk.map(function (k) { return esc(k) + ' ' + rg[k][1] + ' of ' + rg[k][0] }).join(', ') + '</div></div>';
-    h += '<div class="r k">Scores read the archive exactly as published and Cboe S&P closes. Nothing is rescored after the fact. Fewer than 20 scored forecasts says little.</div>';
+    var S = HIST.SPX, docs = res.slice(1).filter(Boolean), sc = CORE.scoreForecasts(docs, S, etCloseMs), dir = sc.dir, cov = sc.cov, h = '';
+    h += '<div class="r"><b>Directional calls</b><div class="k">' + (dir.n ? dir.hit + ' of ' + dir.n + ' sessions called right (' + (dir.hit / dir.n * 100).toFixed(0) + '%, range ' + (CORE.wilson(dir.hit, dir.n)[0] * 100).toFixed(0) + ' to ' + (CORE.wilson(dir.hit, dir.n)[1] * 100).toFixed(0) + '%). Calling up every time: ' + (dir.up / dir.n * 100).toFixed(0) + '%. ' : 'No session scored yet. Briefs record one call per session from now on. ') + (dir.revisions ? dir.revisions + ' later briefs revised a call for the same session; only the last call made before that session closed is scored, so revisions do not inflate the count. ' : '') + (dir.pend ? dir.pend + ' sessions pending.' : '') + '</div></div>';
+    var byR = {}; dir.rows.forEach(function (r) { if (!r.regime) return; byR[r.regime] = byR[r.regime] || [0, 0]; byR[r.regime][0]++; if (r.hit) byR[r.regime][1]++ });
+    if (Object.keys(byR).length) h += '<div class="r k">By regime: ' + Object.keys(byR).map(function (k) { return esc(k) + ' ' + byR[k][1] + ' of ' + byR[k][0] }).join(', ') + '</div>';
+    h += '<div class="r"><b>Implied move coverage</b><div class="k">' + (cov.n ? cov.hit + ' of ' + cov.n + ' expiries closed inside the implied move (' + (cov.hit / cov.n * 100).toFixed(0) + '%); about 68% is what a one standard deviation move implies. ' : 'No expiry has passed yet. ') + (cov.dup ? cov.dup + ' repeat copies of the same option data were collapsed. ' : '') + (cov.pend ? cov.pend + ' expiries pending.' : '') + '</div></div>';
+    h += '<div class="r k">Scores read the archive exactly as published and Cboe S&P closes. Fewer than 20 scored sessions says little.</div>';
     $('score').innerHTML = h;
   });
 }
@@ -199,62 +188,57 @@ function renderOptExtra() {
 var _applyBrief2 = applyBrief;
 applyBrief = function (nb) { _applyBrief2(nb); try { renderOptExtra() } catch (e) { } };
 
-/* ---------- Reversal watch: measured from live perp candles ---------- */
+/* ---------- Reversal watch and exhaustion, from completed 5 minute perp candles ---------- */
 var REV = null, PS = {};
 function loadRev() {
   if (document.hidden) return;
   var bt = B.base && B.base.ts ? new Date(B.base.ts).getTime() : Date.now() - 864e5, coins = ['xyz:SP500', 'xyz:XYZ100', 'xyz:SMH'];
-  Promise.all(coins.map(function (c) { return post({ type: 'candleSnapshot', req: { coin: c, interval: '5m', startTime: bt - 8 * 36e5, endTime: Date.now() } }) })).then(function (rs) { REV = analyzeRev(rs, bt); renderRev(); soon() }).catch(function () { });
+  Promise.all(coins.map(function (c) { return post({ type: 'candleSnapshot', req: { coin: c, interval: '5m', startTime: bt - 8 * 36e5, endTime: Date.now() } }) })).then(function (rs) { REV = analyzeRev(rs, bt, Date.now()); renderRev(); soon() }).catch(function () { });
 }
-function vwapOf(K) { var pv = 0, vv = 0; K.forEach(function (c) { var tp = (+c.h + +c.l + +c.c) / 3; pv += tp * +c.v; vv += +c.v }); return vv ? pv / vv : null }
-function swing(K, dir) {
-  /* dir 1: drop then recovery (peak before trough). dir -1: rally then fade */
-  var best = null;
-  K.forEach(function (c, i) { var x = dir > 0 ? +c.l : +c.h; if (!best || (dir > 0 ? x < best.x : x > best.x)) best = { x: x, i: i } });
-  if (!best) return null; var pk = null;
-  for (var j = 0; j <= best.i; j++) { var y = dir > 0 ? +K[j].h : +K[j].l; if (!pk || (dir > 0 ? y > pk.x : y < pk.x)) pk = { x: y, i: j } }
-  var last = +K[K.length - 1].c, move = (best.x / pk.x - 1) * 100, rec = (last - best.x) / (pk.x - best.x);
-  return { dir: dir, peak: pk.x, pt: +K[pk.i].t, ext: best.x, et: +K[best.i].t, last: last, move: move, rec: rec };
-}
-function analyzeRev(rs, bt) {
-  var now = Date.now(), ss = session(now).st, o = lastOpenMs(now), from = (ss === 'open' || ss === 'post') && o > bt ? o : bt;
-  var cut = function (k) { return (k || []).filter(function (c) { return +c.t >= from && +c.t + 3e5 <= now + 3e5 }) };
+function analyzeRev(rs, bt, now) {
+  var ss = session(now).st, o = lastOpenMs(now), from = (ss === 'open' || ss === 'post') && o > bt ? o : bt;
+  var all0 = (rs[0] || []).filter(function (c) { return +c.t >= from }), prov = all0.filter(function (c) { return +c.t + 3e5 > now })[0];
+  var cut = function (k) { return CORE.completed((k || []).filter(function (c) { return +c.t >= from }), now, 3e5) };
   var K = cut(rs[0]), N = cut(rs[1]), M = cut(rs[2]); if (K.length < 12) return null;
-  var bo = (rs[0] || []).filter(function (c) { return +c.t >= bt - 6.5 * 36e5 && +c.t < bt });
-  if (bo.length >= 20) { PS = { hi: Math.max.apply(0, bo.map(function (c) { return +c.h })), lo: Math.min.apply(0, bo.map(function (c) { return +c.l })) } }
+  var bo = CORE.completed((rs[0] || []).filter(function (c) { return +c.t >= bt - 6.5 * 36e5 && +c.t < bt }), now, 3e5);
+  if (bo.length >= 20) PS = { hi: Math.max.apply(0, bo.map(function (c) { return +c.h })), lo: Math.min.apply(0, bo.map(function (c) { return +c.l })) };
   var em = B.opt && B.opt.em && B.opt.em[0] ? B.opt.em[0][1] : 1, need = Math.max(0.8, em * 0.5);
-  var d = swing(K, 1), u = swing(K, -1), s = Math.abs(d.move) >= Math.abs(u.move) ? d : u;
-  var res = { from: from, win: from === bt ? 'since the ' + baseDay() + ' close' : 'since the 9:30am open', s: s, need: need };
-  if (Math.abs(s.move) < need) { res.label = null; return res }
-  if (s.rec < 0.15 && s.dir < 0) { res.label = null; return res }
-  var vw = vwapOf(K), ev = [], down = s.dir > 0;
+  var d = CORE.swing(K, 1), u = CORE.swing(K, -1); if (!d || !u) return null;
+  var cands = [d, u].filter(function (s) { return !s.ambiguous }); if (!cands.length) return { ambiguous: true };
+  var s = cands.sort(function (a, b) { return Math.abs(b.move) - Math.abs(a.move) })[0];
+  var res = { from: from, win: from === bt ? 'since the ' + baseDay() + ' close' : 'since the 9:30am open', s: s, need: need, prov: prov, n: K.length };
+  if (Math.abs(s.move) < need || (s.rec < 0.15 && s.dir < 0)) { res.label = null; return res }
+  var st = CORE.structure(K, s), br = breadth('perp'), gs = Object.keys(br.groups || {}).map(function (k) { return br.groups[k] });
+  var semi = null; if (M.length >= 12) { var sm = CORE.swing(M, s.dir); if (sm && !sm.ambiguous) semi = sm }
+  var nd = null; if (N.length >= 12) { var nn = CORE.swing(N, s.dir); if (nn && !nn.ambiguous) nd = nn }
+  var cl = CORE.classify(s, st, { semiRec: semi ? semi.rec : null, breadthPct: br.n >= 30 ? br.pct : null, mins: (now - s.et) / 60e3, groupSpread: gs.length >= 3 ? Math.max.apply(0, gs) - Math.min.apply(0, gs) : 0 });
+  var down = s.dir > 0, ev = [];
   ev.push([down ? 'Decline from the high' : 'Rally from the low', sg(s.move) + ', ' + f(s.peak, 0) + ' to ' + f(s.ext, 0)]);
-  ev.push([down ? 'Low at' : 'High at', tET(s.et, true) + ', ' + ago(now - s.et) + ' ago']);
+  ev.push([down ? 'Low in the candle at' : 'High in the candle at', tET(s.et, true) + ', ' + ago(now - s.et) + ' ago']);
   ev.push(['Share of the move retraced', (s.rec * 100).toFixed(0) + '%']);
-  if (vw) ev.push(['Perp VWAP ' + res.win, f(vw, 0) + (down ? (s.last > vw ? ', reclaimed' : ', still below') : (s.last < vw ? ', lost' : ', still above'))]);
-  var semi = null; if (M.length >= 12) { var sm = swing(M, s.dir); semi = sm.rec; ev.push(['Semis ETF retraced', (sm.rec * 100).toFixed(0) + '% of its ' + sg(sm.move) + ' move']) }
-  if (N.length >= 12) { var nn = swing(N, s.dir); ev.push(['Nasdaq 100 retraced', (nn.rec * 100).toFixed(0) + '% of its ' + sg(nn.move) + ' move']) }
-  var orr = null; if (from !== bt && K.length >= 6) { var ok = K.slice(0, 6), oh = Math.max.apply(0, ok.map(function (c) { return +c.h })), ol = Math.min.apply(0, ok.map(function (c) { return +c.l })); orr = down ? (s.ext < ol && s.last > ol) : (s.ext > oh && s.last < oh); ev.push(['Opening range', f(ol, 0) + ' to ' + f(oh, 0) + (orr ? (down ? ', broke below then reclaimed' : ', broke above then lost') : '')]) }
+  ev.push([down ? 'Higher lows since' : 'Lower highs since', String(st.higherLows)]);
+  if (st.lastLowerHigh != null) ev.push([down ? 'Last lower high' : 'Last higher low', f(st.lastLowerHigh, 0) + (st.structureBreak ? ', broken' : ', not broken')]);
+  if (st.vwap) ev.push(['Perp VWAP ' + res.win, f(st.vwap, 0) + (st.vwapHeld && st.vwapNow ? ', reclaimed and held' : st.vwapNow ? ', above but not yet held 2 candles' : ', not reclaimed')]);
+  if (st.volRatio != null) ev.push(['Volume, recovery vs decline candles', (st.volRatio * 100).toFixed(0) + '%, perp volume']);
+  if (semi) ev.push(['Semis ETF retraced', (semi.rec * 100).toFixed(0) + '% of ' + sg(semi.move)]);
+  if (nd) ev.push(['Nasdaq 100 retraced', (nd.rec * 100).toFixed(0) + '% of ' + sg(nd.move)]);
   var fl = []; (B.opt.levels || []).concat([['Prior session low', PS.lo], ['Prior session high', PS.hi], ['Bull trigger', B.ladder.bull], ['Range floor', B.ladder.floor]]).forEach(function (l) { if (!isNum(l[1])) return; if (down && s.ext < l[1] && s.last > l[1]) fl.push(l[0] + ' ' + f(l[1], 0)); if (!down && s.ext > l[1] && s.last < l[1]) fl.push(l[0] + ' ' + f(l[1], 0)) });
   if (fl.length) ev.push([down ? 'Failed breakdown below' : 'Failed breakout above', fl.slice(0, 3).join(', ')]);
-  var br = breadth('perp'); if (br.n) ev.push(['Stock perps up now', br.pct.toFixed(0) + '% of ' + br.n]);
-  var gf = gammaFlip(); if (gf && ((s.ext - gf) * (s.last - gf) < 0)) ev.push(['Crossed the gamma flip ' + f(gf, 0), 'dealer hedging effects may change on either side; an estimate from open interest']);
-  var mins = (now - s.et) / 60e3, gs = Object.keys(br.groups || {}).map(function (k) { return br.groups[k] }), spread = gs.length >= 3 ? Math.max.apply(0, gs) - Math.min.apply(0, gs) : 0, l;
-  if (s.rec < 0.15) l = 'No reversal yet, near the low';
-  else if (s.rec < 0.382) l = down ? 'Temporary bounce so far' : 'Pullback so far';
-  else if (s.rec < 0.618) l = 'Partial ' + (down ? 'recovery' : 'fade');
-  else if (down && vw && s.last > vw && (semi == null || semi >= 0.5) && br.pct >= 60 && mins >= 30) l = 'Potential sustainable reversal';
-  else if (!down && vw && s.last < vw && br.pct <= 40 && mins >= 30) l = 'Potential sustainable reversal lower';
-  else if (br.n && (down ? br.pct >= 60 : br.pct <= 40)) l = down ? 'Broad recovery' : 'Broad fade';
-  else if (spread > 1.5) l = 'Sector rotation';
-  else l = down ? 'Narrow recovery' : 'Narrow fade';
-  res.label = l; res.ev = ev; res.mins = mins; return res;
+  if (br.n) ev.push(['Perp sample up now', br.pct.toFixed(0) + '% of ' + br.n + ' stock perps, not exchange breadth']);
+  res.label = cl.label; res.conf = cl.conf; res.why = cl.why; res.ev = ev; res.mins = (now - s.et) / 60e3;
+  res.exh = s.rec < 0.382 ? CORE.exhaustion(K, s, [{ name: 'Semis ETF', K: M }, { name: 'Nasdaq 100', K: N }]) : [];
+  return res;
 }
 function renderRev() {
   var sec = $('secRev'); if (!REV || !REV.label) { sec.style.display = 'none'; return } sec.style.display = '';
   var r = REV, down = r.s.dir > 0, tone = /sustainable reversal$|Broad recovery/.test(r.label) ? 'g' : /lower|Broad fade/.test(r.label) ? 'r' : 'a';
-  $('revasof').textContent = 'S&P perp, ' + r.win;
-  $('rev').innerHTML = '<div class="r full"><span class="pill ' + tone + '">' + esc(r.label) + '</span> <span class="k">' + (down ? 'Turn began at the low, ' : 'Turn began at the high, ') + tET(r.s.et, true) + '. ' + (r.s.rec * 100).toFixed(0) + '% of the ' + sg(r.s.move) + ' move retraced.</span></div>' + r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('') + '<div class="r full k">Rules: under 38% retraced is a bounce, 38 to 62% partial, over 62% with the VWAP reclaimed, semis at least half back, 60% of stock perps up and 30 minutes held is a potential sustainable reversal. Volume, VIX and yields are not live here, and nothing here shows who was buying or why. Deep mode lists the evidence.</div>';
+  $('revasof').textContent = 'S&P perp, ' + r.win + ', ' + r.n + ' completed candles';
+  var h = '<div class="r full"><span class="pill ' + tone + '">' + esc(r.label) + '</span> <span class="k">' + (r.s.rec * 100).toFixed(0) + '% of the ' + sg(r.s.move) + ' move retraced since the ' + (down ? 'low' : 'high') + ' at ' + tET(r.s.et, true) + '. Confirmation ' + r.conf + ' of 5' + (r.why.length ? ': ' + esc(r.why.join(', ')) : '') + '.</span></div>';
+  if (r.exh && r.exh.length) h += '<div class="r full"><b>Exhaustion signs, ' + r.exh.length + ' of 6</b><div class="k">' + r.exh.map(esc).join('. ') + '. These suggest the ' + (down ? 'selling' : 'buying') + ' is losing force; none of them is a reversal by itself.</div></div>';
+  h += r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('');
+  if (r.prov) h += '<div class="r xd k">Current candle (' + tET(+r.prov.t) + ') is still forming and is not used above.</div>';
+  h += '<div class="r full k">Rules: retraced under 38% is a bounce, 38 to 62% partial. Above 62%, 4 of 5 confirmations (higher low, structure break, VWAP held, semis half back, perp sample breadth) and 30 minutes held is a potential sustainable reversal. The order of a high and low inside one candle is unknown, so a peak and trough in the same candle are not counted. Nothing here shows who was buying or why.</div>';
+  $('rev').innerHTML = h;
 }
 var _allLevels = allLevels;
 allLevels = function () { var L = _allLevels(); if (PS.hi) { L.push(['Prior session high', PS.hi, 'Perp, ' + baseDay() + ' cash hours']); L.push(['Prior session low', PS.lo, 'Perp, ' + baseDay() + ' cash hours']); L.sort(function (a, b) { return b[1] - a[1] }) } return L };
@@ -279,3 +263,18 @@ $('memlist').addEventListener('click', function (e) { var b = e.target.closest('
 var _applyBrief3 = applyBrief;
 applyBrief = function (nb) { _applyBrief3(nb); try { renderStories(); loadRev() } catch (e) { } };
 setInterval(function () { loadRev() }, 60e3);
+
+/* ---------- Outlook: the active scenario, the nearest levels and what invalidates it ---------- */
+function renderOutlook() {
+  var s = px('xyz:SP500'); if (!s) return; var zn = zoneOf(s), name = zn === 'Bull' ? 'Bullish' : zn === 'Range' ? 'Neutral' : 'Bearish';
+  var sc = (B.scenarios || []).filter(function (x) { return x.n === name })[0] || { n: name, cond: zn === 'Bull' ? 'Holds above ' + f(B.ladder.bull, 0) : zn === 'Range' ? 'Between ' + f(B.ladder.floor, 0) + ' and ' + f(B.ladder.bull, 0) : 'Below ' + f(B.ladder.floor, 0), inval: zn === 'Bull' ? 'Back below ' + f(B.ladder.bull, 0) : zn === 'Risk' ? 'Back above ' + f(B.ladder.floor, 0) : 'A close outside ' + f(B.ladder.floor, 0) + ' to ' + f(B.ladder.bull, 0), text: zn === 'Bull' ? B.ladder.bullText : zn === 'Range' ? B.ladder.rangeText : B.ladder.riskText };
+  var L = allLevels(), up = L.filter(function (l) { return l[1] > s }).slice(-2).reverse(), dn = L.filter(function (l) { return l[1] < s }).slice(0, 2), e0 = B.opt.em && B.opt.em[0], h = '';
+  h += '<div class="r full"><span class="pill ' + (zn === 'Bull' ? 'g' : zn === 'Range' ? 'a' : 'r') + '">' + name + ' scenario active</span> <span class="k">S&amp;P perp ' + f(s, 0) + ', ' + freshTxt('xyz:SP500') + '</span><div style="margin-top:4px">' + lite(sc.text || sc.cond) + '</div></div>';
+  h += '<div class="r"><span>Next above</span><b class="num">' + up.map(function (l) { return esc(l[0]) + (/\d/.test(l[0]) ? '' : ' ' + f(l[1], 0)) + ' (' + pts(l[1] - s) + ')' }).join(', ') + '</b></div><div class="r"><span>Next below</span><b class="num">' + dn.map(function (l) { return esc(l[0]) + (/\d/.test(l[0]) ? '' : ' ' + f(l[1], 0)) + ' (' + pts(l[1] - s) + ')' }).join(', ') + '</b></div>';
+  if (e0) { var u = CORE.emUsed(B.opt.base, e0[1], s); h += '<div class="r"><span>Priced in to ' + esc(e0[2]) + '</span><b class="num">±' + e0[1].toFixed(2) + '%, ' + Math.abs(u.used).toFixed(0) + '% of the ' + (u.used >= 0 ? 'up' : 'down') + ' move used</b></div>' }
+  if (sc.confirm) h += '<div class="r"><span>Confirms</span><span>' + lite(sc.confirm) + '</span></div>';
+  h += '<div class="r full"><b class="dn">Invalid if</b> ' + lite(sc.inval || 'not set in this brief') + (sc.risk ? '<div class="k">Risk: ' + lite(sc.risk) + '</div>' : '') + '</div>';
+  $('outlook').innerHTML = h; $('outasof').textContent = 'Levels from ' + (B.updatedLabel || '');
+}
+var _render2 = render;
+render = function () { _render2(); try { renderOutlook() } catch (e) { } };

@@ -165,6 +165,14 @@ function renderStatus() {
   else { el.className = 'st'; t.textContent = 'Loading' }
   $('sess').textContent = session(Date.now()).txt;
 }
+function lastCloseMs(ms) { for (var i = 0; i < 10; i++) { var p = et(ms - i * 864e5); if (!isTradingDay(p)) continue; var t = etMs(p.y, p.m, p.d, HALF[p.key] ? 13 : 16, 0); if (t <= ms) return t } return null }
+/* Freshness: 'session' means the data must come from the latest completed cash session. A number means hours. */
+function freshness(ts, rule) {
+  var t = ts ? new Date(ts).getTime() : NaN; if (!isFinite(t)) return { ok: false, txt: 'time unknown' };
+  if (rule === 'session') { var lc = lastCloseMs(Date.now()); return { ok: !lc || t >= lc - 45 * 60e3, txt: tET(t, true) } }
+  return { ok: Date.now() - t <= rule * 36e5, txt: tET(t, true) };
+}
+function freshTag(ts, rule, label) { var fr = freshness(ts, rule); return fr.ok ? esc(label || fr.txt) : '<span class="am">Stale: ' + esc(label || fr.txt) + ', a newer session has closed</span>' }
 function vixClose() { try { return B.opt.vix.idx.filter(function (x) { return x[0] === 'VIX' })[0][2] } catch (e) { return null } }
 function renderStrip() {
   var T = [['S&P 500', 'xyz:SP500'], ['Nasdaq 100', 'xyz:XYZ100'], ['Semis ETF', 'xyz:SMH'], ['VIX', 'VIX'], ['Gold', 'xyz:GOLD'], ['Brent', 'xyz:BRENTOIL'], ['USD/JPY', 'xyz:JPY'], ['Bitcoin', 'BTC']], h = '';
@@ -195,7 +203,7 @@ function renderBoard() {
   $('tb').innerHTML = h;
   var bd = basisDef(BASIS), miss = visibleIds().filter(function (id) { return LISTED[id] === 'ok' && !isNum(chgOf(id)) }).length;
   $('boardnote').innerHTML = 'Change is ' + esc(bd[2]) + '.' + (miss ? ' ' + miss + ' rows show n/a because that basis has no price for them.' : '') + ' Prices are Hyperliquid perps, the feed Liquid uses, not cash prices. Not on the provider: ' + NOT_ON_PROVIDER.join(', ') + '. Tap a row for funding, open interest and spread.';
-  var b = breadth('perp'); $('breadth').textContent = b.n ? b.up + ' of ' + b.n + ' stock perps up' : '';
+  var b = breadth('perp'); $('breadth').textContent = b.n ? 'Perp sample: ' + b.up + ' of ' + b.n + ' up' : '';
 }
 function setSPX(v) {
   var BS = B.base.spx, c = (v / BS - 1) * 100, e = $('spxchg');
@@ -229,8 +237,8 @@ function regime() {
   var bl = basisDef(k)[1].toLowerCase();
   ev.push(['S&P 500 perp', sg(spx), bl]);
   if (isNum(ndx)) ev.push(['Nasdaq 100 perp', sg(ndx), bl]);
-  if (br.n) ev.push(['Stock perps up', br.up + ' of ' + br.n + ' (' + br.pct.toFixed(0) + '%)', bl]);
-  if (isNum(br.med)) ev.push(['Median stock perp', sg(br.med), bl]);
+  if (br.n) ev.push(['Perp sample up', br.up + ' of ' + br.n + ' (' + br.pct.toFixed(0) + '%)', bl + ', ' + br.n + ' stock perps, not exchange breadth']);
+  if (isNum(br.med)) ev.push(['Perp sample median', sg(br.med), bl]);
   var gs = Object.keys(br.groups).map(function (n) { return [n, br.groups[n]] }).sort(function (a, b) { return b[1] - a[1] });
   gs.forEach(function (g) { ev.push([g[0] + ' median', sg(g[1]), bl]) });
   if (isNum(smh) && isNum(ndx)) ev.push(['Semis ETF vs Nasdaq 100', sg(smh - ndx), 'relative, ' + bl]);
@@ -245,12 +253,12 @@ function regime() {
   if (!conf) label = spx >= 0 ? 'Index up, breadth unmeasured' : 'Index down, breadth unmeasured';
   else if (spx <= -2 && P < 15) { label = 'Capitulation risk'; tone = 'r' }
   else if (spx <= -0.5 && P < 40 && ((isNum(gold) && gold > 0) || (isNum(jpy) && jpy < 0))) { label = 'Risk off'; tone = 'r' }
-  else if (spx >= 0.3 && P >= 65 && isNum(M) && M >= 0.5 * spx) { label = 'Broad rally'; tone = 'g' }
-  else if (spx >= 0.3 && (P < 50 || (isNum(mega) && isNum(M) && mega - M > 1))) { label = 'Narrow megacap rally'; tone = 'a' }
+  else if (spx >= 0.3 && P >= 65 && isNum(M) && M >= 0.5 * spx) { label = 'Broad rally in the perp sample'; tone = 'g' }
+  else if (spx >= 0.3 && (P < 50 || (isNum(mega) && isNum(M) && mega - M > 1))) { label = 'Narrow rally in the perp sample'; tone = 'a' }
   else if (spx >= 0.5 && isNum(B.base.prevChg) && B.base.prevChg <= -1) { label = 'Relief rally'; tone = 'g' }
   else if (spx >= 0.5 && P >= 55) { label = 'Risk on'; tone = 'g' }
   else if (Math.abs(spx) < 0.4 && spread > 1.5) { label = 'Sector rotation'; tone = 'b' }
-  else if (spx <= -0.3 && P < 45) { label = 'Broad selling'; tone = 'r' }
+  else if (spx <= -0.3 && P < 45) { label = 'Broad selling in the perp sample'; tone = 'r' }
   else if (Math.abs(spx) < 0.3) { label = 'Consolidation'; tone = 'b' }
   else conf = false;
   var tags = [];
@@ -267,7 +275,7 @@ function renderRegime() {
   if (ref && isNum(r.score)) { var d = r.score - ref.s; trend = (d > 0.15 ? '<span class="pill g">Improving</span>' : d < -0.15 ? '<span class="pill r">Deteriorating</span>' : '<span class="pill">Steady</span>') + '<span class="k">vs ' + tET(ref.t, true) + (ref.l !== r.label ? ', was ' + esc(ref.l) : '') + '</span>' }
   $('regime').innerHTML = '<span class="pill ' + (r.tone || '') + '">' + esc(r.label) + (r.conf || r.label === 'Unconfirmed' ? '' : ', unconfirmed') + '</span>' + (r.tags || []).map(function (t) { return '<span class="pill ' + t[1] + '">' + esc(t[0]) + '</span>' }).join('') + trend;
   $('regev').innerHTML = (r.ev || []).map(function (e) { return '<div class="r"><span>' + esc(e[0]) + ' <span class="k">' + esc(e[2]) + '</span></span><b class="num">' + esc(e[1]) + '</b></div>' }).join('') || '<div class="r mut">' + esc(r.why || 'Waiting for data') + '</div>';
-  $('regnot').textContent = 'Rules are fixed and shown here so the label can be checked. Breadth uses ' + BREADTH.length + ' US listed stocks that trade as perps, not the full exchange. Not measured yet: ' + r.miss.join(', ') + '.';
+  $('regnot').textContent = 'Rules are fixed and shown here so the label can be checked. Breadth here is a sample of up to ' + BREADTH.length + ' US listed stocks that trade as perps. It is not exchange breadth and does not represent the whole market. Not measured yet: ' + r.miss.join(', ') + '.';
   $('regasof').textContent = LASTOK ? tET(LASTOK) : '';
 }
 
@@ -310,6 +318,7 @@ function renderSince() {
   if (nw.length) { h += '<div class="r full">' + nw.length + ' new market moving headline' + (nw.length > 1 ? 's' : '') + '<div class="k">' + nw.slice(0, 3).map(function (n) { return fmtT(n.ts) + ' ' + esc(n.h) }).join('<br>') + '</div></div>'; items++ }
   else if (!getKey()) h += '<div class="r full k">Headlines since then need the live wire. Connect it in News.</div>';
   if (!items) h += '<div class="r full">Nothing material changed.</div>';
+  if (MODE !== 'deep') { var parts = h.split('<div class="r'); if (parts.length > 9) h = parts.slice(0, 9).join('<div class="r') + '<div class="r full k">' + (parts.length - 9) + ' more in Deep.</div>' }
   $('since').innerHTML = h;
 }
 
@@ -338,10 +347,15 @@ function applyBrief(nb) {
   $('impnote').textContent = B.impNote || '';
   $('impsub').textContent = 'S&P 500 PERP VS ' + String(B.base.label).toUpperCase();
   $('chtitle').textContent = (B.chart && B.chart.title) || 'Overnight path';
-  $('optasof').textContent = 'From ' + (B.opt.asof || '') + (B.next ? ', next update ' + B.next : '');
+  $('optasof').innerHTML = 'From ' + freshTag(B.opt.asofTs, 'session', B.opt.asof || '');
   $('recaptab').textContent = B.recapLabel || 'Recap';
   $('picksasof').textContent = B.updatedLabel || '';
   $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (B.next ? ', next ' + esc(B.next) : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
+  var hl = [['Brief', B.updated, 6], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
+  if (B.semis) hl.push(['Chip notes', B.semis.asofTs, 72]); if (B.priced) hl.push(['Priced in', B.priced.asofTs, 24]);
+  var bad = hl.filter(function (x) { return !freshness(x[1], x[2]).ok });
+  $('health').innerHTML = hl.map(function (x) { var fr = freshness(x[1], x[2]); return '<span class="pill ' + (fr.ok ? '' : 'a') + '">' + esc(x[0]) + ' ' + esc(fr.txt) + (fr.ok ? '' : ', stale') + '</span>' }).join('');
+  $('healthSec').style.display = bad.length || MODE === 'deep' ? '' : 'none';
   if (B.sources && B.sources.length) $('srcbox').innerHTML = B.sources.map(function (s) { return /^https:\/\//.test(s[1]) ? '<a href="' + esc(s[1]) + '" rel="noopener noreferrer" target="_blank">' + esc(s[0]) + '</a>' : esc(s[0]) }).join(' · ');
   NEWS = B.picks || []; feed(WIRE.cat || 'all'); basisChips(); renderVix(); render(); loadChart(); ensureBases();
 }
@@ -420,7 +434,7 @@ function renderVix() {
   if (V.fut && V.fut.length > 1) { var f1 = V.fut[0][2], f2 = V.fut[1][2]; tags += '<span class="pill ' + (f1 > f2 ? 'r' : 'g') + '">Futures ' + (f1 > f2 ? 'backwardation' : 'contango') + '</span>'; tags += '<span class="pill ' + (i30 > f1 ? 'r' : 'g') + '">Spot ' + (i30 > f1 ? 'above' : 'below') + ' front future</span>'; note = 'Futures: ' + esc(V.fut[0][0]) + ' ' + f1 + ' vs ' + esc(V.fut[1][0]) + ' ' + f2 + ' (' + (f1 > f2 ? 'front above second is backwardation' : 'front below second is contango') + '). ' }
   $('vixtags').innerHTML = tags;
   $('vixnote').innerHTML = '<span class="dn">Red</span> is the VIX index term structure (9 day, 30 day, 3 month): VIX/VIX3M ' + (i30 / i3m).toFixed(2) + '. <span class="bl">Blue</span> is VIX futures settlements, a separate market. ' + note + 'These are ' + esc(V.asof || B.opt.asof) + ' readings. A live VIX is not available on this page.';
-  $('vixasof').textContent = V.asof || B.opt.asof || '';
+  $('vixasof').innerHTML = freshTag(V.asofTs || B.opt.asofTs, 'session', V.asof || B.opt.asof || '');
 }
 
 /* ---------- Overnight chart and session levels ---------- */
@@ -519,8 +533,7 @@ function impacts() {
       var want = [post({ type: 'candleSnapshot', req: { coin: p[0], interval: '1m', startTime: st, endTime: en } })];
       if (p[0] !== 'xyz:SP500') want.push(post({ type: 'candleSnapshot', req: { coin: 'xyz:SP500', interval: '1m', startTime: st, endTime: en } }));
       Promise.all(want).then(function (rs) {
-        var calc = function (k) { var by = {}; (k || []).forEach(function (c) { by[+c.t] = c }); var b0 = by[t0 - 60e3]; if (!b0) return null; var base = +b0.c, pre0 = by[t0 - 15 * 60e3], o = { base: base, pre: pre0 ? (base / +pre0.o - 1) * 100 : null, w: {} };
-          [5, 15, 30, 60].forEach(function (w) { var c = by[t0 + (w - 1) * 60e3]; if (c && t0 + w * 60e3 <= Date.now() - 5e3) o.w[w] = (+c.c / base - 1) * 100 }); return o };
+        var calc = function (k) { return CORE.impactCalc(k, n.ts, Date.now()) };
         var a = calc(rs[0]); if (!a) return; var res = { lbl: p[1], pre: a.pre, w: a.w, final: isNum(a.w[60]) };
         if (rs[1]) { var s = calc(rs[1]); if (s) { var lw = [60, 30, 15, 5].filter(function (w) { return isNum(a.w[w]) && isNum(s.w[w]) })[0]; if (lw) { res.rel = a.w[lw] - s.w[lw]; res.relw = lw } } }
         WIRE.imp[key] = res; var ks = Object.keys(WIRE.imp); if (ks.length > 60) ks.sort().slice(0, ks.length - 60).forEach(function (x) { delete WIRE.imp[x] }); LS('mb_imp', WIRE.imp); drawWire();

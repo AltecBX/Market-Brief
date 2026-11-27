@@ -83,7 +83,7 @@ for k in ("asof","base","em","vix","levels","gex"):
     if k not in o: err.append("opt." + k + " missing")
 if num(o.get("base")) and num(b.get("spx")) and abs(o["base"] - b["spx"]) > 0.01: warn.append("opt.base differs from base.spx (fine only if the options data is from an older close)")
 for e in o.get("em", []):
-    if len(e) != 4 or not num(e[1]) or not 0 < e[1] < 15 or e[3] not in ("SPX","SPXW"): err.append("opt.em rows must be [label, pct 0 to 15, expiry, SPX or SPXW]: " + str(e)[:60])
+    if len(e) not in (4, 5) or not num(e[1]) or not 0 < e[1] < 15 or e[3] not in ("SPX","SPXW"): err.append("opt.em rows must be [label, pct 0 to 15, expiry, SPX or SPXW, ISO expiry]: " + str(e)[:60])
 for e in o.get("emSpy", []):
     if len(e) != 3 or not num(e[1]) or not 0 < e[1] < 15: err.append("bad opt.emSpy row: " + str(e)[:60])
 if o.get("emSpy") and not num(o.get("spyBase")): err.append("opt.spyBase needed with opt.emSpy")
@@ -94,6 +94,15 @@ for l in o.get("levels", []):
     if len(l) != 3 or not num(l[1]) or (num(ob) and abs(l[1] / ob - 1) > 0.15): err.append("bad or far level: " + str(l)[:60])
 for g in o.get("gex", []):
     if len(g) != 3 or not all(num(x) for x in g) or g[1] < 0 or g[2] > 0: err.append("gex rows must be [strike, call_gex >= 0, put_gex <= 0]: " + str(g)[:60])
+for blk, val in (("opt.asofTs", o.get("asofTs")), ("opt.vix.asofTs", (o.get("vix") or {}).get("asofTs"))):
+    if val is None: err.append(blk + " missing: the time the options or VIX data is from")
+    else:
+        d0 = iso(val, blk)
+        if d0 and up and d0 > up: err.append(blk + " is after updated")
+for blk in ("semis", "priced"):
+    if B.get(blk) is not None and "asofTs" not in B[blk]: err.append(blk + ".asofTs missing")
+for r in B.get("internals", []):
+    if len(r) < 4: err.append("internals rows need [label, value, source, asofTs]")
 v = o.get("vix", {})
 for row in v.get("idx", []) + v.get("fut", []):
     if len(row) != 3 or not num(row[1]) or not num(row[2]) or not 5 < row[2] < 150: err.append("bad VIX row: " + str(row)[:60])
@@ -188,5 +197,14 @@ if os.path.isdir("data/hist"):
         except Exception as e:
             err.append("data/hist/" + fn + " unreadable: " + str(e)[:60])
 
+# research outputs used by the page
+for fn, keys in (("fingerprint.json", ("models", "alwaysUp", "horizon")), ("seasonality.json", ("conds", "slots", "days")), ("semis.json", ("tests", "days", "note"))):
+    p = os.path.join("data", "research", fn)
+    if os.path.exists(p):
+        try:
+            j = json.load(open(p))
+            for k in keys:
+                if k not in j: err.append("data/research/" + fn + " missing " + k)
+        except Exception as e: err.append("data/research/" + fn + " unreadable")
 for w in warn: print("warning: " + w)
 print("OK" if not err else "\n".join(err)); sys.exit(1 if err else 0)

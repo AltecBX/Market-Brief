@@ -405,19 +405,22 @@
     "Friday, half day",
     1.1731,
     "Nov 27 expiry",
-    "SPXW"
+    "SPXW",
+    "2026-11-27"
    ],
    [
     "Through next Friday",
     2.7342,
     "Dec 4 expiry",
-    "SPXW"
+    "SPXW",
+    "2026-12-04"
    ],
    [
     "December monthly",
     4.0254,
     "Dec 18 expiry",
-    "SPX"
+    "SPX",
+    "2026-12-18"
    ]
   ],
   "vix": {
@@ -475,7 +478,8 @@
      23.1
     ]
    ],
-   "asof": "Wed close"
+   "asof": "Wed close",
+   "asofTs": "2026-11-25T16:15:00-05:00"
   },
   "levels": [
    [
@@ -579,7 +583,8 @@
    ]
   ],
   "spyBase": 716.7,
-  "emSrc": "Unusual Whales implied move from the Wed Nov 25 close. SPX rows use SPX and SPXW options, SPY rows use SPY options."
+  "emSrc": "Unusual Whales implied move from the Wed Nov 25 close. SPX rows use SPX and SPXW options, SPY rows use SPY options.",
+  "asofTs": "2026-11-25T16:15:00-05:00"
  },
  "recapLabel": "Wed recap",
  "sources": [

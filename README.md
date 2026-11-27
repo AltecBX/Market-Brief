@@ -3,7 +3,7 @@
 Phone market brief. Open it any time to see where markets are trading, what is driving them, and what to watch next.
 
 **Link:** https://altecbx.github.io/Market-Brief/
-On iPhone: open the link in Safari, tap Share, then Add to Home Screen. It opens full screen like an app, follows light and dark mode, and refreshes each time you open it.
+On iPhone: open the link in Safari, tap Share, then Add to Home Screen. It opens full screen like an app, follows light and dark mode (or tap the sun and moon button to pick Light, Dark or Auto), and refreshes each time you open it.
 
 ## What updates and how often
 

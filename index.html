@@ -8,8 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Markets">
 <meta name="format-detection" content="telephone=no">
-<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f2f7" id="tc1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#000000" id="tc2" media="(prefers-color-scheme: dark)">
+<script>try{var th=localStorage.getItem('theme');if(th==='light'||th==='dark')document.documentElement.setAttribute('data-theme',th)}catch(e){}</script>
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
 <link rel="manifest" href="manifest.json">
@@ -21,14 +22,19 @@
 --green:#248a3d;--red:#d70015;--orange:#c93400;--blue:#007aff;--yellow:#b25000;
 --gfill:#34c759;--rfill:#ff3b30;--ofill:#ff9500;--bfill:#007aff;
 --gtint:rgba(52,199,89,.14);--rtint:rgba(255,59,48,.12);--otint:rgba(255,149,0,.14);--btint:rgba(0,122,255,.12);
---bar:rgba(242,242,247,.78);--shadow:0 1px 2px rgba(0,0,0,.04)}
-@media (prefers-color-scheme:dark){:root{
---bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);
+--bar:rgba(242,242,247,.78);--shadow:0 1px 2px rgba(0,0,0,.04);--segon:#fff;color-scheme:light}
+html[data-theme=dark]{--bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);
 --ink:#fff;--ink2:rgba(235,235,245,.6);--ink3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);
 --green:#30d158;--red:#ff453a;--orange:#ff9f0a;--blue:#0a84ff;--yellow:#ffd60a;
 --gfill:#30d158;--rfill:#ff453a;--ofill:#ff9f0a;--bfill:#0a84ff;
 --gtint:rgba(48,209,88,.16);--rtint:rgba(255,69,58,.16);--otint:rgba(255,159,10,.16);--btint:rgba(10,132,255,.18);
---bar:rgba(0,0,0,.72);--shadow:none}}
+--bar:rgba(0,0,0,.72);--shadow:none;--segon:#636366;color-scheme:dark}
+@media (prefers-color-scheme:dark){html:not([data-theme=light]){--bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);
+--ink:#fff;--ink2:rgba(235,235,245,.6);--ink3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);
+--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--blue:#0a84ff;--yellow:#ffd60a;
+--gfill:#30d158;--rfill:#ff453a;--ofill:#ff9f0a;--bfill:#0a84ff;
+--gtint:rgba(48,209,88,.16);--rtint:rgba(255,69,58,.16);--otint:rgba(255,159,10,.16);--btint:rgba(10,132,255,.18);
+--bar:rgba(0,0,0,.72);--shadow:none;--segon:#636366;color-scheme:dark}}
 *{box-sizing:border-box;min-width:0}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.4 -apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Helvetica Neue",Arial,sans-serif;letter-spacing:-.01em;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
@@ -50,8 +56,8 @@ a{color:var(--blue);text-decoration:none}
 @keyframes sp{to{transform:rotate(360deg)}}
 .seg{grid-column:1/-1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill);border-radius:9px;padding:2px;gap:2px}
 .seg button{border:0;background:transparent;border-radius:7px;padding:6px 8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);min-height:32px}
-.seg button.on{background:var(--card);box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
-@media (prefers-color-scheme:dark){.seg button.on{background:#636366}}
+.seg button.on{background:var(--segon);box-shadow:0 3px 8px rgba(0,0,0,.12),0 3px 1px rgba(0,0,0,.04)}
+
 /* layout */
 .wrap{max-width:1100px;margin:0 auto;padding:0 max(16px,env(safe-area-inset-left)) 40px max(16px,env(safe-area-inset-right))}
 .panel{display:none}.panel.on{display:block}
@@ -78,7 +84,7 @@ h2 span,.h2sub{font-size:13px;font-weight:500;color:var(--ink2);letter-spacing:0
 .pill.g{background:var(--gtint);color:var(--green)}.pill.r{background:var(--rtint);color:var(--red)}.pill.a{background:var(--otint);color:var(--orange)}.pill.b{background:var(--btint);color:var(--blue)}
 .chg{display:inline-block;min-width:74px;text-align:right;padding:4px 8px;border-radius:7px;font-size:15px;font-weight:600;color:var(--ink2);background:var(--fill);font-variant-numeric:tabular-nums}
 .chg.u{background:var(--gfill);color:#fff}.chg.d{background:var(--rfill);color:#fff}
-@media (prefers-color-scheme:light){.chg.u{background:#34c759}}
+
 .chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px 12px;padding:0 16px}
 .chips::-webkit-scrollbar{display:none}
 .chipb{flex:none;border:0;background:var(--fill);color:var(--ink);font-size:14px;font-weight:500;padding:7px 14px;border-radius:999px;cursor:pointer;min-height:34px}
@@ -103,8 +109,8 @@ h2 span,.h2sub{font-size:13px;font-weight:500;color:var(--ink2);letter-spacing:0
 .zone{margin-top:12px;font-size:15px;padding:10px 12px;border-radius:12px;background:var(--fill)}
 .sw{display:flex;gap:4px;background:var(--fill);border-radius:8px;padding:2px}
 .sw .chipb{min-height:28px;padding:4px 10px;font-size:13px;border-radius:6px;background:transparent}
-.sw .chipb.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
-@media (prefers-color-scheme:dark){.sw .chipb.on{background:#636366}}
+.sw .chipb.on{background:var(--segon);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.15)}
+
 .fig{position:relative;height:210px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
 svg text{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif}
 /* drivers */
@@ -215,6 +221,7 @@ body.quick .detail{display:none}
 <header class="nav"><div class="navin">
 <div class="ttl">Market Brief <span class="st" id="status"><i></i><span id="stxt">Snapshot</span></span></div>
 <div style="display:flex;gap:8px;align-items:center">
+<button class="iconbtn" id="thbtn" aria-label="Appearance: Auto" title="Appearance: Auto"><svg viewBox="0 0 24 24" id="thico"></svg></button>
 <button class="iconbtn" id="qbtn" aria-label="Quick scan"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h6"/></svg></button>
 <button class="iconbtn" id="refresh" aria-label="Refresh"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg></button>
 </div>
@@ -1039,7 +1046,15 @@ $('qbtn').onclick=function(){document.body.classList.toggle('quick');this.style.
 $('refresh').onclick=function(){var b=this;b.classList.remove('spin');void b.offsetWidth;b.classList.add('spin');refreshAll()};
 document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible')refreshAll()});
 var ro=new ResizeObserver(function(){var s=$('ovn');if(s._pts)drawChart(s._pts);renderVix()});ro.observe($('ovn'));ro.observe($('vixc'));
-sectors();applyBrief(DEF);BRIEF_V='';pull();pullBrief();pullWire();pullVix();
+
+var TH_ICO={auto:'<circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z" fill="var(--blue)" stroke="none"/>',light:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',dark:'<path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/>'};
+function setTheme(m){var h=document.documentElement;if(m==='auto')h.removeAttribute('data-theme');else h.setAttribute('data-theme',m);try{m==='auto'?localStorage.removeItem('theme'):localStorage.setItem('theme',m)}catch(e){}
+$('thico').innerHTML=TH_ICO[m];var nm={auto:'Auto',light:'Light',dark:'Dark'}[m];$('thbtn').setAttribute('aria-label','Appearance: '+nm);$('thbtn').title='Appearance: '+nm;
+var c1=$('tc1'),c2=$('tc2');if(m==='auto'){c1.content='#f2f2f7';c1.media='(prefers-color-scheme: light)';c2.content='#000000';c2.media='(prefers-color-scheme: dark)'}else{var col=m==='dark'?'#000000':'#f2f2f7';c1.content=col;c2.content=col;c1.media='all';c2.media='all'}
+var s=$('ovn');if(s&&s._pts)drawChart(s._pts)}
+var THEME=(function(){try{return localStorage.getItem('theme')||'auto'}catch(e){return 'auto'}})();
+$('thbtn').onclick=function(){THEME={auto:'light',light:'dark',dark:'auto'}[THEME];setTheme(THEME)};
+setTheme(THEME);sectors();applyBrief(DEF);BRIEF_V='';pull();pullBrief();pullWire();pullVix();
 setInterval(pull,15000);setInterval(pullWire,60000);setInterval(pullVix,30000);setInterval(pullBrief,300000);setInterval(loadChart,300000);
 }
 </script>

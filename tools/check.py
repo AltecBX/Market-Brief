@@ -35,6 +35,12 @@ if newer:
     for k in ("daily", "top3", "risks", "scenarios", "events7", "priced", "stories", "semis", "forecast", "qa"):
         v = B.get(k)
         if (v is None or v == [] or v == {}) and k not in GAPS: err.append("missing or empty " + k + " (add it, or list it in gaps with the reason)")
+    if not (B.get("opt") or {}).get("skew") and "skew" not in GAPS: err.append("missing opt.skew and opt.ivchg (pull SPX chains, or list skew in gaps with the reason)")
+    try:
+        hr = _dt.fromisoformat(str(B.get("updated"))).hour
+    except Exception:
+        hr = 0
+    if 12 <= hr <= 16 and not B.get("internals") and "internals" not in GAPS: err.append("missing internals on the Midday, Afternoon and Close rows (or list internals in gaps)")
 DY = B.get("daily")
 if DY is not None:
     for k in ("happened", "cause", "since", "priced", "invalid"):

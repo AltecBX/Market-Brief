@@ -22,7 +22,7 @@ def iso(s, name):
 need = ["updated","updatedLabel","next","kicker","headline","lede","pills","drivers","picks","planTitle","means",
         "calTitle","calendar","impNote","base","anchor","ladder","chart","opt","recapLabel","sources"]
 err += ["missing key: " + k for k in need if k not in B]
-# From the 9:02am run on Nov 27 2026 every structured block must be present. A block may be empty only when "gaps" says why
+# From the 9:12am run on Nov 27 2026 every structured block must be present. A block may be empty only when "gaps" says why
 # ([[block, reason]]), so the page can say "not in this update" instead of showing an empty component.
 CUT = "2026-11-27T09:00:00-05:00"
 try:

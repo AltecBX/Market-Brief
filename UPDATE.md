@@ -8,12 +8,12 @@ A scheduled run rewrites `brief.json` (and `recap.html` on the close run), archi
 One scheduled task, "Market Brief updates", starts at 7:02am, 9:02am, 12:02pm, 3:02pm, 4:02pm and 8:02pm ET (cron `2 7,9,12,15,16,20 * * 1-5`). Each run is live about 15 minutes after it starts. The run picks its row from the current ET hour.
 | Starts | Name | Lead with | anchor ("Since" basis) | base (last cash close) |
 |---|---|---|---|---|
-| 7:02am | Morning | Overnight: futures, Asia close, Europe, overnight news, today's data and earnings | 4pm yesterday | Last cash close |
-| 9:02am | Pre open | Futures vs base, 8:30 data result vs consensus, premarket movers, what to watch at the open | 7:00am today | Last cash close |
-| 12:02pm | Midday | What the morning did and why, leaders and laggards, levels hit | 9:30am open | Last cash close |
-| 3:02pm | Afternoon | Afternoon moves, setup into the close | 12:00pm | Last cash close |
-| 4:02pm | Close | Close recap. Also write `recap.html` | 9:30am open | Today's close |
-| 8:02pm | Evening | After hours earnings, futures open at 6pm, Asia open at 7pm | 4pm today | Today's close |
+| 7:02am | Morning (also called the 7:30am row) | Overnight: futures, Asia close, Europe, overnight news, today's data and earnings | 4pm yesterday | Last cash close |
+| 9:02am | Pre open (9:15am row) | Futures vs base, 8:30 data result vs consensus, premarket movers, what to watch at the open | 7:00am today | Last cash close |
+| 12:02pm | Midday (12pm row) | What the morning did and why, leaders and laggards, levels hit | 9:30am open | Last cash close |
+| 3:02pm | Afternoon (3pm row) | Afternoon moves, setup into the close | 12:00pm | Last cash close |
+| 4:02pm | Close (4:30pm row) | Close recap. Also write `recap.html` | 9:30am open | Today's close |
+| 8:02pm | Evening (8pm row) | After hours earnings, futures open at 6pm, Asia open at 7pm | 4pm today | Today's close |
 
 On market holidays and half days, say so in `kicker` and adjust the calendar. At the 4:02pm run, Unusual Whales end of day option levels may not be final: if they still show the prior session, keep the previous `opt` block and its `asof`.
 
@@ -44,6 +44,6 @@ On market holidays and half days, say so in `kicker` and adjust the calendar. At
 5. Close run only: write `recap.html` as an HTML fragment (no `<script>`, `<style>`, handlers or non https links), same structure and class names as the recap built into the page (hero, kicker, pills, three, k, grid, idx, card, two, why, tag, strip, cell, mv, qa, q). Sector bars: `<div id="sectors" data-sectors='[["Materials",2.07],["Technology",-0.83]]'></div>`. Set `recapLabel` like "Fri recap".
 6. This repo and page are public. Never write personal names, accounts, positions, API tokens or other private details into any file or commit message.
 7. Style: plain English, short. No hyphens or dashes in text. Use the % symbol. Numerals for times like 4:30pm. Minus sign "−" for negatives.
-8. `python3 tools/check.py` must print OK. Then `python3 tools/archive.py` (add `--recap` on the close run), then `python3 tools/check.py` again. Never edit or delete anything already in `archive/`.
+8. `python3 tools/check.py` must print OK. Then `python3 tools/archive.py` (new files under `archive/` are part of every run, alongside brief.json and recap.html) (add `--recap` on the close run), then `python3 tools/check.py` again. Never edit or delete anything already in `archive/`.
 9. Commit with a short message and push to `main` with `git -c push.negotiate=true push origin main`. Pages updates in about a minute; an open page reloads `brief.json` every 5 minutes.
 10. If a source fails, keep the last verified values for that part, leave its `asof` showing when it is from, push what is verified, and say what was skipped in the commit message. If `check.py` cannot pass, push nothing.

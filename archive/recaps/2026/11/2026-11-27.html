@@ -1,0 +1,382 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Fri Recap 2026-11-27</title><style>
+:root{--bg:#f2f2f7;--card:#fff;--card2:#f2f2f7;--fill:rgba(118,118,128,.12);--fill2:rgba(118,118,128,.2);--ink:#000;--ink2:rgba(60,60,67,.62);--ink3:rgba(60,60,67,.3);--sep:rgba(60,60,67,.18);
+--green:#248a3d;--red:#d70015;--orange:#c93400;--blue:#007aff;--gfill:#34c759;--rfill:#ff3b30;--ofill:#ff9500;--bfill:#007aff;
+--gtint:rgba(52,199,89,.14);--rtint:rgba(255,59,48,.12);--otint:rgba(255,149,0,.15);--btint:rgba(0,122,255,.11);--bar:rgba(242,242,247,.8);--segon:#fff;color-scheme:light}
+html[data-theme=dark]{--bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);--ink:#fff;--ink2:rgba(235,235,245,.6);--ink3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--blue:#0a84ff;--gfill:#30d158;--rfill:#ff453a;--ofill:#ff9f0a;--bfill:#0a84ff;--gtint:rgba(48,209,88,.16);--rtint:rgba(255,69,58,.16);--otint:rgba(255,159,10,.16);--btint:rgba(10,132,255,.18);--bar:rgba(0,0,0,.74);--segon:#636366;color-scheme:dark}
+@media (prefers-color-scheme:dark){html:not([data-theme=light]){--bg:#000;--card:#1c1c1e;--card2:#2c2c2e;--fill:rgba(118,118,128,.24);--fill2:rgba(118,118,128,.36);--ink:#fff;--ink2:rgba(235,235,245,.6);--ink3:rgba(235,235,245,.3);--sep:rgba(84,84,88,.6);--green:#30d158;--red:#ff453a;--orange:#ff9f0a;--blue:#0a84ff;--gfill:#30d158;--rfill:#ff453a;--ofill:#ff9f0a;--bfill:#0a84ff;--gtint:rgba(48,209,88,.16);--rtint:rgba(255,69,58,.16);--otint:rgba(255,159,10,.16);--btint:rgba(10,132,255,.18);--bar:rgba(0,0,0,.74);--segon:#636366;color-scheme:dark}}
+*{box-sizing:border-box;min-width:0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.38 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif;letter-spacing:-.005em;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden;padding-bottom:env(safe-area-inset-bottom)}
+button,input{font:inherit;color:inherit;touch-action:manipulation}
+a{color:var(--blue);text-decoration:none}
+b{font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+.up{color:var(--green)}.dn{color:var(--red)}.am{color:var(--orange)}.bl{color:var(--blue)}.mut{color:var(--ink2)}
+.nav{position:sticky;top:0;z-index:20;background:var(--bar);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:.5px solid var(--sep);padding-top:env(safe-area-inset-top)}
+.navin{max-width:1100px;margin:0 auto;padding:6px max(14px,env(safe-area-inset-left)) 0}
+.row1{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:40px}
+.ttl{font-size:17px;font-weight:600;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.st{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--ink2);white-space:nowrap}
+.st i{width:7px;height:7px;border-radius:50%;background:var(--ink3);flex:none}
+.st.on i{background:var(--gfill)}.st.warn i{background:var(--ofill)}.st.bad i{background:var(--rfill)}
+.btns{display:flex;gap:6px}
+.iconbtn{width:34px;height:34px;border-radius:50%;border:0;background:var(--fill);display:grid;place-items:center;cursor:pointer}
+.iconbtn svg{width:17px;height:17px;stroke:var(--blue);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.iconbtn.spin svg{animation:sp .7s linear}@keyframes sp{to{transform:rotate(360deg)}}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;margin:4px -14px 0;padding:0 14px}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{flex:none;border:0;background:none;padding:9px 11px 10px;font-size:14px;font-weight:600;color:var(--ink2);cursor:pointer;border-bottom:2px solid transparent}
+.tabs button.on{color:var(--ink);border-bottom-color:var(--ink)}
+.wrap{max-width:1100px;margin:0 auto;padding:0 max(14px,env(safe-area-inset-left)) 40px max(14px,env(safe-area-inset-right))}
+.panel{display:none}.panel.on{display:block}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:var(--fill);border-radius:9px;padding:2px;gap:2px}
+.seg button{border:0;background:transparent;border-radius:7px;padding:5px 6px;font-size:13px;font-weight:600;cursor:pointer;min-height:30px;white-space:nowrap}
+.seg button.on{background:var(--segon);box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.sec{margin:18px 0 0}
+.sh{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin:0 2px 6px}
+.sh h2{font-size:13px;font-weight:600;letter-spacing:.02em;text-transform:uppercase;color:var(--ink2);margin:0}
+.sh span{font-size:12px;color:var(--ink2);text-align:right}
+.grp{background:var(--card);border-radius:12px;overflow:hidden}
+.grp>.r{padding:10px 14px;position:relative}
+.grp>.r+.r::before{content:"";position:absolute;top:0;left:14px;right:0;border-top:.5px solid var(--sep)}
+.pad{padding:12px 14px}
+.note{font-size:12px;color:var(--ink2);margin:6px 2px 0;line-height:1.35}
+.k{font-size:12px;color:var(--ink2)}
+h1{font-size:22px;line-height:1.18;font-weight:700;letter-spacing:-.02em;margin:4px 0 4px;text-wrap:balance}
+.lede{color:var(--ink2);margin:0;text-wrap:pretty}
+.kick{font-size:12px;font-weight:600;color:var(--orange);margin-top:12px}
+.regime{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.pill{font-size:12px;font-weight:600;padding:3px 9px;border-radius:999px;background:var(--fill);white-space:nowrap;display:inline-block}
+.pill.g{background:var(--gtint);color:var(--green)}.pill.r{background:var(--rtint);color:var(--red)}.pill.a{background:var(--otint);color:var(--orange)}.pill.b{background:var(--btint);color:var(--blue)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chg{display:inline-block;min-width:66px;text-align:right;padding:3px 7px;border-radius:6px;font-size:14px;font-weight:600;color:var(--ink2);background:var(--fill);font-variant-numeric:tabular-nums;white-space:nowrap}
+.chg.u{background:var(--gfill);color:#fff}.chg.d{background:var(--rfill);color:#fff}
+.chg.sm{min-width:0;font-size:12px;padding:1px 6px;border-radius:5px}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media (max-width:600px){.strip{grid-template-columns:repeat(4,1fr)}}
+.tile{background:var(--card);border-radius:12px;padding:8px 9px;cursor:pointer}
+.tile .l{font-size:11px;font-weight:600;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .v{font-size:16px;font-weight:700;letter-spacing:-.02em;margin:1px 0 3px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .chg{font-size:11px;min-width:0;padding:1px 5px;border-radius:5px}
+.tile.stale .v{color:var(--ink2)}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr));gap:12px}
+.imp{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.imp .big{font-size:30px;font-weight:700;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1.05}
+.lad{position:relative;height:50px;margin:10px 6px 0}
+.lad .rail{position:absolute;left:0;right:0;top:21px;height:4px;border-radius:2px;background:var(--fill2)}
+.lad .tk{position:absolute;top:17px;width:1.5px;height:12px;background:var(--ink3)}
+.lad .tl{position:absolute;top:34px;font-size:10px;color:var(--ink2);transform:translateX(-50%);white-space:nowrap}
+.lad .tl.u{top:2px}
+.lad .dot{position:absolute;top:16px;width:14px;height:14px;border-radius:50%;background:var(--bfill);border:2.5px solid var(--card);box-shadow:0 0 0 1px var(--bfill);transform:translateX(-50%);transition:left .5s}
+.zone{margin-top:8px;font-size:14px;padding:8px 10px;border-radius:9px;background:var(--fill)}
+.since .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:baseline;font-size:14px}
+.since .r.full{display:block}
+.since .from{color:var(--ink2);font-variant-numeric:tabular-nums}
+.top3 .r{display:grid;grid-template-columns:20px minmax(0,1fr);gap:6px;font-size:14px}
+.top3 .r b.n{color:var(--ink2);font-variant-numeric:tabular-nums}
+.drv .r p{margin:2px 0 0;font-size:14px}
+.drv h4{margin:0;font-size:12px;font-weight:700;letter-spacing:.01em;display:flex;align-items:center;gap:6px}
+.drv h4::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.scen .r h4{margin:0 0 3px;font-size:14px}
+.scen dl{margin:0;display:grid;grid-template-columns:74px minmax(0,1fr);gap:2px 8px;font-size:13px}
+.scen dt{color:var(--ink2)}.scen dd{margin:0}
+.lvl .r{display:grid;grid-template-columns:minmax(0,1fr) 66px 70px;gap:8px;font-size:13px;align-items:baseline;padding-top:7px;padding-bottom:7px}
+.lvl .r .num{text-align:right}
+.lvl .r.now{background:var(--btint);font-weight:600}
+.ev .r{font-size:13px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.board .r{display:grid;grid-template-columns:minmax(0,1fr) 56px auto;gap:10px;align-items:center;padding-top:8px;padding-bottom:8px;cursor:pointer}
+.board .n{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board .t{font-size:11px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.board .t.old{color:var(--orange)}
+.board .rr{text-align:right}
+.board .p{font-size:15px;font-weight:500;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.board .stale .p{color:var(--ink2)}
+.board .det{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:4px 12px;font-size:12px;color:var(--ink2);padding-top:4px}
+.board .det b{color:var(--ink);font-weight:500;font-variant-numeric:tabular-nums}
+.spark{width:56px;height:24px}
+.chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:0 -14px 8px;padding:0 14px}
+.chips::-webkit-scrollbar{display:none}
+.chipb{flex:none;border:0;background:var(--fill);font-size:13px;font-weight:500;padding:6px 12px;border-radius:999px;cursor:pointer;min-height:32px}
+.chipb.on{background:var(--ink);color:var(--bg)}
+.btn{border:0;background:var(--fill);color:var(--blue);font-size:14px;font-weight:600;padding:7px 13px;border-radius:999px;cursor:pointer;min-height:34px}
+.btn.on{background:var(--blue);color:#fff}
+.fig{position:relative;height:190px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+svg text{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",sans-serif}
+.em .r{font-size:13px}
+.em .h{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.bar2{position:relative;height:22px;margin:4px 0 0}
+.bar2 .rail{position:absolute;left:0;right:0;top:9px;height:4px;border-radius:2px;background:var(--fill)}
+.bar2 .rng{position:absolute;top:6px;height:10px;border-radius:5px;background:var(--btint);box-shadow:inset 0 0 0 1.5px var(--bfill)}
+.bar2 .ctr{position:absolute;top:3px;width:1.5px;height:16px;background:var(--ink3)}
+.bar2 .ld{position:absolute;top:5px;width:12px;height:12px;border-radius:50%;background:var(--bfill);border:2px solid var(--card);transform:translateX(-50%)}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.gx{display:grid;grid-template-columns:52px 1fr 104px;gap:8px;align-items:center;font-size:13px;padding:5px 14px}
+.gx.near{background:var(--btint)}
+.gx .gb{height:8px;display:flex;border-radius:4px;overflow:hidden;background:var(--fill)}
+.gx .lb{font-size:11px;color:var(--ink2);text-align:right}
+.sim input[type=range]{width:100%;accent-color:var(--blue);height:30px}
+.feed .r{display:grid;grid-template-columns:58px minmax(0,1fr);gap:10px;font-size:14px;line-height:1.35}
+.feed .r.fresh{background:var(--otint)}
+.feed .tm{color:var(--ink2);font-size:12px;font-variant-numeric:tabular-nums;padding-top:1px}
+.cat{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.03em;padding:1px 5px;border-radius:4px;margin-right:5px;background:var(--fill);color:var(--ink2);vertical-align:1px}
+.cat.new{background:var(--btint);color:var(--blue)}
+.ich{display:inline-block;font-size:11px;font-weight:600;padding:1px 5px;border-radius:5px;margin:3px 4px 0 0;white-space:nowrap;background:var(--fill);color:var(--ink2);font-variant-numeric:tabular-nums}
+.ich.u{color:var(--green);background:var(--gtint)}.ich.d{color:var(--red);background:var(--rtint)}
+.wsrc{font-size:11px;color:var(--ink2)}
+.bk{background:var(--rtint);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:14px}
+.keyp{background:var(--card2);border-radius:10px;padding:12px;margin:8px 0}
+.keyp input,.search{width:100%;font-size:16px;padding:9px 11px;border-radius:9px;border:0;background:var(--card);margin:6px 0;outline:none;box-shadow:inset 0 0 0 1px var(--sep)}
+.search{background:var(--card)}
+.cal .r{display:grid;grid-template-columns:88px minmax(0,1fr);gap:10px;font-size:14px}
+.cal .r span:first-child{color:var(--ink2);font-variant-numeric:tabular-nums;font-size:13px}
+.vtag{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:11px;color:var(--ink2);margin:6px 14px 10px}
+.legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px}
+.mem .r{cursor:pointer;font-size:14px}
+.mem .r .k{display:block}
+details.d>summary{list-style:none;cursor:pointer}
+details.d>summary::-webkit-details-marker{display:none}
+details.d>summary .sh h2::after{content:" \203A";color:var(--ink3)}
+details.d[open]>summary .sh h2::after{content:" \2039"}
+.foot{font-size:11px;color:var(--ink2);margin:22px 2px 0;line-height:1.6}
+.foot a{color:var(--ink2);text-decoration:underline;text-decoration-color:var(--ink3)}
+html.m30 .x2,html.m30 .xd,html.m2 .xd{display:none!important}
+#rcal .cal{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:8px 0}#rcal .cal span{font-size:11px;color:var(--ink2);text-align:center}#rcal .cal button{border:0;border-radius:9px;padding:8px 0 6px;background:var(--fill);color:var(--ink3);font:inherit;font-size:14px;font-variant-numeric:tabular-nums}#rcal .cal button.has{background:var(--card2);color:var(--ink);font-weight:600;box-shadow:inset 0 0 0 1.5px var(--blue,#0a84ff)}#rcal .cal button.off{opacity:.35}#rcal .cal button i{display:block;height:4px;margin:3px auto 0;width:4px;border-radius:2px;background:var(--orange,#ff9f0a)}#rcal .cal button:not(.has) i{visibility:hidden}#rcal .rl{padding:8px 2px;border-top:.5px solid var(--sep);cursor:pointer}#rcal .rl .tg{font-size:11px;color:var(--ink2)}
+#p-hist .sec.fold>.sh{cursor:pointer}#p-hist .sec.fold>.sh h2::after{content:' \25BE';opacity:.5}#p-hist .sec.fold.closed>.sh h2::after{content:' \25B8'}#p-hist .sec.fold.closed>:not(.sh){display:none!important}
+html.m30 .x30h{display:none!important}
+.hist .hrow{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr) 70px;gap:8px;font-size:13px;align-items:baseline}
+.hist .hrow span:nth-child(n+2),.hist .hrow b:nth-child(n+2){text-align:right;font-variant-numeric:tabular-nums}
+.hist .head{font-size:11px;color:var(--ink2)}
+.hist .hev{display:grid;grid-template-columns:minmax(0,1fr) 60px 60px 60px;gap:6px;font-size:13px;cursor:pointer;align-items:baseline}
+.hist .hev>.num,.hist .hev>b{text-align:right}
+.hist .hdet{grid-column:1/-1}
+.hp{display:grid;grid-template-columns:minmax(0,1fr) 92px 22px;gap:8px;align-items:center;font-size:13px;margin:4px 0}
+.hp input,.hp select{font-size:16px;padding:5px 8px;border-radius:8px;border:0;background:var(--fill);width:100%;text-align:right}
+.hauto{cursor:pointer;font-size:13px}
+.uhide{display:none!important}
+#outlook .r:not(.full){display:grid;grid-template-columns:92px minmax(0,1fr);gap:8px;align-items:baseline}#outlook .r:not(.full)>span:first-child{color:var(--ink2);font-size:13px}#outlook .r:not(.full)>b{font-weight:500;text-align:left}
+.sbar{display:inline-block;height:7px;border-radius:2px;margin-right:2px;vertical-align:1px;min-width:1px}
+.sdl{margin:6px 0 4px;display:grid;grid-template-columns:96px minmax(0,1fr);gap:3px 8px;font-size:13px}.sdl dt{color:var(--ink2)}.sdl dd{margin:0}
+#askout .r{font-size:14px}
+.ev .r.full{display:block}
+#cross .r{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;font-size:13px}
+/* recap legacy */
+.recap .hero h1{font-size:22px}.recap .kicker{font-size:12px;font-weight:600;color:var(--orange);margin-top:12px}
+.recap .three,.recap .qa{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:10px}
+.recap .k,.recap .q,.recap .card,.recap .idx,.recap .cell{background:var(--card);border-radius:12px;padding:12px 14px;color:var(--ink);font-size:14px}
+.recap .k h4{margin:0 0 4px;font-size:12px}.recap .k p{margin:0}
+.recap h2{font-size:13px;text-transform:uppercase;letter-spacing:.02em;color:var(--ink2);margin:20px 2px 6px}.recap h2 b{display:none}
+.recap .grid,.recap .strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.recap .idx .n{font-size:12px;color:var(--ink2);display:flex;justify-content:space-between}.recap .idx .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.recap .idx .s,.recap .cell .s,.recap .cell .l{font-size:11px;color:var(--ink2)}.recap .cell .v{font-size:17px;font-weight:700}
+.recap .bar{position:relative;height:5px;background:var(--fill);border-radius:3px;margin:8px 0 5px;overflow:hidden}.recap .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--gfill)}
+.recap .two{gap:10px}.recap .tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:5px;margin-right:5px}
+.recap .tag.c{color:var(--green);background:var(--gtint)}.recap .tag.l{color:var(--blue);background:var(--btint)}.recap .tag.p{color:var(--orange);background:var(--otint)}.recap .tag.x{color:var(--red);background:var(--rtint)}
+.recap .why ul{margin:0;padding:0}.recap .why li{list-style:none;margin:6px 0}
+.recap .hb{display:grid;grid-template-columns:104px 1fr 56px;gap:8px;align-items:center;font-size:13px;padding:3px 0}
+.recap .hb .t{height:8px;background:var(--fill);border-radius:4px;position:relative}.recap .hb .t i{position:absolute;top:0;bottom:0;border-radius:4px}.recap .hb .p{text-align:right;font-weight:600}
+.recap .mv{display:grid;grid-template-columns:60px 66px minmax(0,1fr);gap:8px;font-size:13px;padding:6px 0;border-top:.5px solid var(--sep)}
+.recap table{width:100%;border-collapse:collapse;font-size:14px}.recap td{padding:8px 6px;border-top:.5px solid var(--sep);vertical-align:top}.recap td:first-child{color:var(--ink2);width:96px;font-size:12px}
+.recap .q b{display:block;margin-bottom:3px}.recap .q span{color:var(--ink2)}
+.recap .pills{margin:8px 0}.recap .lede{margin-bottom:6px}.recap .chartnote{font-size:12px;color:var(--ink2)}
+.recap .ladder .r{display:grid;grid-template-columns:72px minmax(0,1fr) auto;gap:8px;padding:7px 8px;border-radius:8px;font-size:13px}.recap .ladder .hi{background:var(--otint)}
+@media (min-width:760px){h1{font-size:28px}.strip{grid-template-columns:repeat(8,1fr)}}
+@media (max-width:380px){.tile .v{font-size:14px}.gx{grid-template-columns:48px 1fr 84px}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+body{padding:12px 14px 40px;max-width:980px;margin:0 auto}</style><script>try{var t=(location.hash||'').slice(1);if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script></head><body><div class="k" style="font-size:12px;color:var(--ink2);margin-bottom:6px">Fri Recap for Fri Nov 27 2026. Published Nov 27 2026, 1:44pm ET. Original, never edited.</div><div class="recap"><section class="hero" data-session="2026-11-27">
+<div class="kicker">BLACK FRIDAY HALF DAY · STOCKS CLOSED 1:00PM ET · BONDS 2:00PM</div>
+<h1>Memory leads a 1.6% half day rally. Nvidia sits it out.</h1>
+<p class="lede">The S&amp;P 500 closed at 7,298.34, +1.61%, past the ±1.17% options priced. Sandisk +16% and Micron +7.6% led a broad bounce; Nvidia rose only 0.8%.</p>
+<div class="pills">
+<span class="pill g">S&amp;P +1.61% · Nasdaq +2.31%</span>
+<span class="pill g">11 of 11 sector ETFs up</span>
+<span class="pill g">Sandisk +15.96%</span>
+<span class="pill a">Nvidia +0.80% only</span>
+<span class="pill a">Beat the ±1.17% implied move</span>
+<span class="pill r">Dec 9 hike near fully priced</span>
+</div>
+<div class="three">
+<div class="k"><h4>WHAT HAPPENED</h4><p>Stocks opened higher, dipped to an S&amp;P low of 7,211.46 around 10:05am, then climbed into the 1:00pm close. S&amp;P +1.61%, Nasdaq +2.31%, Dow +1.19%. All three gained on the week.</p></div>
+<div class="k"><h4>WHY</h4><p>Reuters: investors returning from Thanksgiving flocked to hard hit AI shares, and a strategist called the market oversold. Volume was thin. No source explains the last minute push.</p></div>
+<div class="k"><h4>WHAT IT MEANS</h4><p>The rebound now has chip leadership that Wednesday lacked, but Nvidia did not join. The close sits just under the 7,304 gamma flip. A Dec 9 hike is still almost fully priced.</p></div>
+</div>
+</section>
+
+<h2 id="score"><b>01</b> SCOREBOARD <span style="font-weight:500;letter-spacing:0">· Friday close vs Wednesday</span></h2>
+<div class="grid">
+<div class="idx"><div class="n"><span>S&amp;P 500</span><span class="mono">SPX</span></div><div class="v num">7,298.34</div><div class="c up num">+1.61%</div><div class="s num">+115.56 pts · low 7,211.46</div></div>
+<div class="idx"><div class="n"><span>Nasdaq Comp</span><span class="mono">IXIC</span></div><div class="v num">24,129.50</div><div class="c up num">+2.31%</div><div class="s num">+543.70 pts</div></div>
+<div class="idx"><div class="n"><span>Dow</span><span class="mono">DJI</span></div><div class="v num">50,780.64</div><div class="c up num">+1.19%</div><div class="s num">+597.69 pts</div></div>
+<div class="idx"><div class="n"><span>Nasdaq 100</span><span class="mono">QQQ</span></div><div class="v num">$650.99</div><div class="c up num">+2.69%</div><div class="s num">Low $636.72</div></div>
+<div class="idx"><div class="n"><span>Small caps</span><span class="mono">IWM</span></div><div class="v num">$273.79</div><div class="c up num">+1.83%</div><div class="s" style="margin-top:8px">Beat the S&amp;P again</div></div>
+<div class="idx"><div class="n"><span>Semis</span><span class="mono">SOXX</span></div><div class="v num">$134.07</div><div class="c up num">+4.76%</div><div class="s num" style="margin-top:8px">SMH +4.17%</div></div>
+<div class="idx"><div class="n"><span>Equal weight S&amp;P</span><span class="mono">RSP</span></div><div class="v num">+1.22%</div><div class="c num">vs SPY +1.62%</div><div class="s" style="margin-top:8px">Big caps led this time</div></div>
+<div class="idx"><div class="n"><span>Week</span><span class="mono">4 DAYS</span></div><div class="v num up">+5.61%</div><div class="c num">S&amp;P</div><div class="s num" style="margin-top:8px">QQQ +6.99% · Nov so far −3.72%</div></div>
+</div>
+
+<h2 id="day"><b>02</b> HOW THE DAY UNFOLDED <span style="font-weight:500;letter-spacing:0">· SPY 5 minute bars, ET</span></h2>
+<div class="two">
+<div class="card">
+<svg viewBox="0 0 560 270" width="100%" role="img" aria-label="SPY 5 minute closes on Nov 27 2026">
+<line x1="44" x2="545" y1="210.8" y2="210.8" stroke="var(--mute)" stroke-dasharray="4 4" opacity=".6"/>
+<text x="545" y="224.8" text-anchor="end" font-size="10.5" fill="var(--mute)">Wed close 716.70</text>
+<g font-size="10" fill="var(--mute)"><text x="2" y="36.6">730</text><text x="2" y="102.1">725</text><text x="2" y="167.6">720</text></g>
+<g stroke="var(--mute)" opacity=".25"><line x1="44" x2="545" y1="36.6" y2="36.6"/><line x1="44" x2="545" y1="102.1" y2="102.1"/><line x1="44" x2="545" y1="167.6" y2="167.6"/></g>
+<path d="M44.0,90.5 L55.9,125.2 L67.9,145.8 L79.8,133.0 L91.7,153.0 L103.6,148.1 L115.6,166.5 L127.5,160.9 L139.4,153.4 L151.4,138.6 L163.3,133.1 L175.2,119.8 L187.1,127.7 L199.1,124.6 L211.0,98.9 L222.9,94.3 L234.9,99.4 L246.8,103.0 L258.7,101.5 L270.6,95.0 L282.6,100.2 L294.5,109.4 L306.4,105.5 L318.4,102.9 L330.3,97.3 L342.2,81.8 L354.1,97.9 L366.1,85.3 L378.0,75.8 L389.9,67.3 L401.9,82.9 L413.8,88.0 L425.7,84.8 L437.6,89.4 L449.6,82.2 L461.5,76.5 L473.4,76.9 L485.4,75.6 L497.3,85.8 L509.2,85.2 L521.1,93.8 L533.1,82.1 L545.0,53.2" fill="none" stroke="var(--blue)" stroke-width="2.2"/>
+<circle cx="44.0" cy="90.5" r="4.5" fill="var(--green)"/><text x="52.0" y="82.5" font-size="11" fill="var(--ink)">Open 725.89</text>
+<circle cx="133.5" cy="172.6" r="5" fill="var(--red)"/><text x="141.5" y="186.6" font-size="11" fill="var(--red)" font-weight="700">Low 719.62 · 10:05</text>
+<circle cx="539.0" cy="47.7" r="5" fill="var(--green)"/><text x="531.0" y="39.7" text-anchor="end" font-size="11" fill="var(--green)" font-weight="700">High 729.15 · last bar</text>
+<g font-size="10" fill="var(--mute)"><text x="44.0" y="262">9:30</text><text x="177.1" y="262">10:30</text><text x="320.3" y="262">11:30</text><text x="463.4" y="262">12:30</text><text x="525.0" y="262">1:00</text></g>
+</svg>
+<div class="chartnote">SPY 5 minute closes from Unusual Whales, 42 bars, 9:30am to 1:00pm. SPY tracks the S&amp;P 500.</div>
+</div>
+<div class="card" style="padding:6px 14px">
+<table>
+<tr><td>Overnight</td><td>Asia rallied: Kospi +4.34%, Nikkei +2.11%. US futures up on chips.</td></tr>
+<tr><td class="num">8:30am</td><td><b class="dn">Goods deficit $149.5B</b> vs $133.1B expected. No visible reaction in futures.</td></tr>
+<tr><td class="num">9:30am</td><td>Open with a gap: S&amp;P near 7,262. Nvidia up about 2% at the open (Yahoo).</td></tr>
+<tr><td class="num">10:05am</td><td><b class="dn">Low.</b> SPY 719.62; S&amp;P 7,211.46, still +0.40% on the day.</td></tr>
+<tr class="detail"><td class="num">11:36am</td><td>S&amp;P +1.38%, Nasdaq +1.86% (Motley Fool). Amazon up on Black Friday demand.</td></tr>
+<tr><td class="num">12:50pm</td><td>SPY 726.52, then a last bar jump.</td></tr>
+<tr><td class="num">1:00pm</td><td><b class="up">Close near the high.</b> SPY high 729.15 in the final bar. S&amp;P 7,298.34.</td></tr>
+</table>
+</div>
+</div>
+
+<h2 id="why"><b>03</b> WHAT MOVED IT <span style="font-weight:500;letter-spacing:0">· evidence graded</span></h2>
+<div class="two why">
+<div class="card"><div class="sub up">THE RALLY</div><ul>
+<li><span class="tag c">CONFIRMED</span><b>Return to AI shares.</b> Reuters: investors back from Thanksgiving flocked to hard hit AI linked stocks. Sandisk +15.96%, Micron +7.60%.</li>
+<li><span class="tag c">CONFIRMED</span><b>Oversold.</b> Harris Financial's Jamie Cox to Reuters: the market was so oversold a bounce was inevitable.</li>
+<li><span class="tag l">LIKELY</span><b>Thin volume.</b> Reuters says volumes were thin after the holiday, which can exaggerate moves.</li>
+<li class="detail"><span class="tag p">POSSIBLE</span><b>Fast money repositioning.</b> Morgan Stanley IM's Slimmon said fast money had delevered out of tech, so the bounce could persist.</li>
+</ul></div>
+<div class="card"><div class="sub dn">THE DRAGS</div><ul>
+<li><span class="tag c">CONFIRMED</span><b>Nvidia export headline.</b> FT: Nvidia told Dell and Supermicro to halt AI server shipments to Malaysia, Singapore, Thailand and Indonesia. Nvidia closed +0.80% after a 2% open; no source ties the move to it.</li>
+<li><span class="tag c">CONFIRMED</span><b>Rates.</b> Traders almost fully price a December hike after Q3 GDP was revised to 4.3% (Reuters).</li>
+<li><span class="tag c">CONFIRMED</span><b>Vertex.</b> About −5% after the FDA extended its kidney drug review by up to three months.</li>
+<li class="detail"><span class="tag c">CONFIRMED</span><b>Memory outlook.</b> TrendForce flagged DRAM contract price decline risk in 2028. Memory stocks rallied anyway.</li>
+</ul></div>
+</div>
+
+<h2 id="assets"><b>04</b> CROSS ASSET <span style="font-weight:500;letter-spacing:0">· late quotes, bonds trade to 2:00pm</span></h2>
+<div class="strip">
+<div class="cell"><div class="l">10Y TREASURY</div><div class="v num dn">4.93%</div><div class="s num">+8.7 bp · 2Y 4.70%</div></div>
+<div class="cell"><div class="l">VIX</div><div class="v num up">24.16</div><div class="s num">−9.9% vs Thu 26.80</div></div>
+<div class="cell"><div class="l">WTI / BRENT</div><div class="v num">$83.02</div><div class="s num">−0.8% · Brent $90.31 −1.5%</div></div>
+<div class="cell"><div class="l">GOLD</div><div class="v num up">$3,650</div><div class="s num">+3.2% futures · silver +7.4%</div></div>
+<div class="cell"><div class="l">BITCOIN</div><div class="v num">$59,929</div><div class="s num">Perp at 1:00pm</div></div>
+<div class="cell"><div class="l">DOLLAR (DXY)</div><div class="v num">103.98</div><div class="s num">+0.4%</div></div>
+<div class="cell"><div class="l">FED DEC 9 HIKE</div><div class="v num am">98.9%</div><div class="s">CME FedWatch, Fri am</div></div>
+<div class="cell"><div class="l">GOODS DEFICIT</div><div class="v num dn">$149.5B</div><div class="s num">vs $133.1B expected</div></div>
+</div>
+<p class="detail" style="color:var(--mute);font-size:13px;margin:8px 2px 0">Yields, VIX, oil, gold and the dollar are Reuters quotes from late in the session, not final settlements. The VIX change is measured from Cboe's Thursday close of 26.80.</p>
+
+<h2 id="rotation"><b>05</b> ROTATION · SECTORS AND MOVERS</h2>
+<div class="two">
+<div class="card">
+<div class="sub">11 SECTOR ETFS</div>
+<div id="sectors" data-sectors='[["Technology", 2.8], ["Discretionary", 2.11], ["Comm Services", 1.99], ["Materials", 1.84], ["Industrials", 1.6], ["Energy", 1.26], ["Financials", 1.15], ["Real Estate", 0.64], ["Staples", 0.41], ["Health Care", 0.28], ["Utilities", 0.28]]'></div>
+<div class="chartnote">SPDR sector ETFs vs Wednesday (Unusual Whales). 11 of 11 up; tech led, defensives lagged.</div>
+</div>
+<div class="card">
+<div class="sub">MOVERS AND WHY</div>
+<div class="mv"><span class="mono">SNDK</span><span class="num up">+15.96%</span><span class="why2">Memory rebound, led the chips</span></div>
+<div class="mv"><span class="mono">MU</span><span class="num up">+7.60%</span><span class="why2">Memory rebound</span></div>
+<div class="mv"><span class="mono">WDC</span><span class="num up">+7.22%</span><span class="why2">Storage rebound</span></div>
+<div class="mv"><span class="mono">TSLA</span><span class="num up">+5.22%</span><span class="why2">Surged (Reuters)</span></div>
+<div class="mv"><span class="mono">AMD</span><span class="num up">+4.56%</span><span class="why2">AI chips bounce</span></div>
+<div class="mv"><span class="mono">LRCX</span><span class="num up">+4.15%</span><span class="why2">Chip equipment, worst Wednesday</span></div>
+<div class="mv"><span class="mono">AMZN</span><span class="num up">+3.96%</span><span class="why2">Strong Black Friday demand (Motley Fool)</span></div>
+<div class="mv detail"><span class="mono">AVGO</span><span class="num up">+3.82%</span><span class="why2">AI chips bounce</span></div>
+<div class="mv detail"><span class="mono">META · ORCL</span><span class="num up">+3.13 · +3.13</span><span class="why2">Hyperscalers gained (Reuters)</span></div>
+<div class="mv"><span class="mono">NVDA</span><span class="num up">+0.80%</span><span class="why2">Faded a 2% open; FT shipment halt report</span></div>
+<div class="mv detail"><span class="mono">MSFT · GOOGL</span><span class="num up">+0.60 · +0.68</span><span class="why2">Lagged the tech rally</span></div>
+<div class="mv"><span class="mono">VRTX</span><span class="num dn">about −5%</span><span class="why2">FDA extended its kidney drug review</span></div>
+</div>
+</div>
+
+<h2 id="options"><b>06</b> OPTIONS INTELLIGENCE</h2>
+<div class="two">
+<div class="card">
+<div class="sub">IMPLIED VS REALIZED</div>
+<table>
+<tr><td>Priced</td><td>SPXW options priced <b>±1.17%</b> for Friday from Wednesday's 7,182.78, a range of about 7,099 to 7,267.</td></tr>
+<tr><td>Realized</td><td>Close <b class="up">+1.61%</b>, past the top. The low, 7,211.46, was +0.40%, so the day never traded below Wednesday's close.</td></tr>
+<tr><td>Levels hit</td><td>Wednesday's flow call wall 7,200 and gamma flip 7,186.58 were cleared at the open. Close 7,298 sits on the new OI put wall 7,290 and under the 7,303.7 flip.</td></tr>
+<tr><td>Next</td><td>SPXW prices <b>±1.00%</b> for Monday, <b>±2.03%</b> through Dec 4; the Dec 18 monthly ±3.31%.</td></tr>
+</table>
+</div>
+<div class="card">
+<div class="sub">GAMMA, SKEW, VIX</div>
+<table>
+<tr><td>Gamma</td><td>OI: magnet 7,250, put wall 7,290, flip 7,303.7. Flow: put wall 7,285, call wall 7,310, flip 7,270. Net GEX within 4% of spot is negative, so dealers are still short gamma.</td></tr>
+<tr><td>Skew</td><td>Dec 4: 25 delta put 24.9%, ATM 21.5%, call 18.6%, from 31.0 / 25.7 / 21.7 Wednesday. Dec 18: 24.5 / 20.3 / 17.1, from 29.5 / 23.7 / 19.6.</td></tr>
+<tr><td>0DTE</td><td>Friday's SPXW expiry settled at the close; Monday's daily expiry prices ±1.00%. No same day positioning snapshot this run.</td></tr>
+<tr><td>VIX</td><td>Wednesday's curve was inverted: 9D 29.6, VIX 28.29, 3M 26.3. Thursday VIX 26.80 (Cboe), about 24.2 late Friday (Reuters quote).</td></tr>
+</table>
+</div>
+</div>
+
+<h2 id="ask"><b>07</b> KEY QUESTIONS</h2>
+<div class="qa">
+<div class="q"><b>Why did stocks jump?</b><span>Reuters says investors back from Thanksgiving flocked to beaten down AI shares and one strategist called the market oversold. Volume was thin, which can exaggerate moves.</span></div>
+<div class="q"><b>Was it broad?</b><span>Yes by sector: all 11 sector ETFs rose. But the equal weight S&amp;P (+1.22%) trailed SPY (+1.62%), so big tech led, unlike Wednesday.</span></div>
+<div class="q"><b>Why did Nvidia lag?</b><span>Not established. It opened near +2% and closed +0.80%. The FT reported Thursday that Nvidia halted AI server shipments to four Southeast Asian countries; no source ties the stock move to it.</span></div>
+<div class="q"><b>Is the bottom in?</b><span>Not confirmed. The S&amp;P is +5.6% this week but still −3.7% for November, and the close sits just under the 7,304 gamma flip.</span></div>
+<div class="q"><b>What about the Fed?</b><span>A Dec 9 hike is almost fully priced (CME FedWatch 98.9% Friday morning). Yields rose, with the 10 year near 4.93%.</span></div>
+<div class="q detail"><b>Are memory prices still a worry?</b><span>Yes for 2027 and 2028: TrendForce sees NAND prices falling and flags DRAM contract decline risk. Stocks ignored it Friday.</span></div>
+</div>
+
+<h2 id="next" data-outlook='{"bull": 7310, "bear": 7211, "call": "Bull"}'><b>08</b> WHAT'S NEXT AND THE OUTLOOK</h2>
+<div class="two">
+<div class="card">
+<div class="sub">S&amp;P LEVELS</div>
+<div class="ladder">
+<div class="r"><span class="num">7,400.00</span><span>Dec max pain</span><span class="tag c">BULL</span></div>
+<div class="r"><span class="num">7,310.00</span><span>Flow call wall. Above it = bullish confirmation</span><span class="tag c">BULL</span></div>
+<div class="r hi"><span class="num">7,303.70</span><span>OI gamma flip</span><span class="tag p">RANGE</span></div>
+<div class="r hi"><span class="num">7,298.34</span><span>Friday close</span><span class="tag p">RANGE</span></div>
+<div class="r hi"><span class="num">7,250.00</span><span>OI gamma magnet</span><span class="tag p">RANGE</span></div>
+<div class="r"><span class="num">7,211.46</span><span>Friday low. Break = rebound fails</span><span class="tag x">BEAR</span></div>
+<div class="r"><span class="num">7,182.78</span><span>Wednesday close</span><span class="tag x">BEAR</span></div>
+</div>
+<div class="chartnote">52 week high 7,844.52 on Oct 6. S&amp;P is 7.0% below it.</div>
+</div>
+<div class="card">
+<div class="sub">CALENDAR</div>
+<div class="cal">
+<div class="r"><span class="num">Sun Nov 29</span><span>OPEC+ meets</span></div>
+<div class="r"><span class="num">Tue 10:00am</span><span>ISM manufacturing, 55.2 expected. JOLTS. Bowman testifies</span></div>
+<div class="r"><span class="num">Tue after close</span><span>Marvell and Credo earnings</span></div>
+<div class="r"><span class="num">Thu Dec 3</span><span>ISM services, 54.5 expected. Huang before Senate Banking</span></div>
+<div class="r"><span class="num">Fri Dec 4</span><span>Jobs report, 90K expected</span></div>
+<div class="r"><span class="num">Dec 8 to 9</span><span>FOMC, hike expected</span></div>
+</div>
+</div>
+</div>
+<div class="sc" style="margin-top:10px">
+<div class="k" style="border-top-color:var(--green)"><h4 class="up">BULL · ABOVE 7,310</h4><p>The call: chips keep leading, Nvidia joins and dealers flip to long gamma above 7,304. VIX under 25.</p></div>
+<div class="k" style="border-top-color:var(--amber)"><h4 class="am">BASE · 7,211 TO 7,310</h4><p>Chop into ISM, Marvell and jobs data with a hike priced. Range trading around the 7,250 magnet.</p></div>
+<div class="k" style="border-top-color:var(--red)"><h4 class="dn">BEAR · BELOW 7,211</h4><p>Friday's low breaks, memory gives back its gains and yields push the 10 year toward 5%.</p></div>
+</div>
+<p class="detail" style="color:var(--mute);font-size:13px;margin:10px 2px 0">What would invalidate the bull call: a close back under 7,211, or a hot jobs report that lifts January hike odds.</p>
+
+<h2 id="sources"><b>09</b> SOURCES</h2>
+<div class="card" style="padding:8px 14px">
+<ul>
+<li><a href="https://ca.investing.com/news/economy-news/wall-street-ends-higher-as-battered-ai-stocks-gain-in-volatile-week-4983613">Reuters via Investing.com: Wall Street ends higher as battered AI stocks gain</a></li>
+<li><a href="https://seekingalpha.com/news/4677074-us-equities-close-on-top-on-black-friday">Seeking Alpha: U.S. equities close on top on Black Friday</a></li>
+<li><a href="https://www.fool.com/coverage/stock-market-today/2026/11/27/stock-market-midday-nov-27-tech-stocks-recover-and-amazon-posts-black-friday-gains/">Motley Fool: Stock market midday, Nov 27</a></li>
+<li><a href="https://finance.yahoo.com/markets/live/stock-market-today-firday-november-27-dow-sp-500-nasdaq-black-friday-holiday-091152065.html">Yahoo Finance live: Stock market today, Nov 27</a></li>
+<li><a href="https://www.trendforce.com/news/2026/11/26/news-nvidia-reportedly-suspends-ai-server-shipments-to-four-southeast-asian-countries-as-u-s-targets-chinese-ai-access">TrendForce: Nvidia reportedly suspends AI server shipments to four Southeast Asian countries</a></li>
+<li><a href="https://www.trendforce.com/presscenter/news/20261127-13327.html">TrendForce: risk of DRAM contract price declines in 2028</a></li>
+<li><a href="https://www.forbes.com/sites/siladityaray/2026/11/27/stock-futures-surge-as-battered-ai-shares-rebound-ahead-of-shorterned-friday-trading/">Forbes: CME FedWatch odds, Friday morning</a></li>
+<li><a href="https://finviz.com/calendar/economic?dateFrom=2026-11-30">Finviz economic calendar, week of Nov 30</a></li>
+<li><a href="https://eurasiabusinessnews.com/2026/11/27/u-s-stock-market-today-november-27-2026-tech-rebounds-in-shortened-black-friday-session/">Eurasia Business News: opening levels, Nov 27</a></li>
+<li><a href="https://unusualwhales.com/">Unusual Whales: cash closes, sector ETFs, SPX options, SPY bars</a></li>
+<li><a href="https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv">Cboe VIX and SPX daily history</a></li>
+</ul>
+</div>
+</div><script>function $(i){return document.getElementById(i)}function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}function sg(v){return (v>=0?'+':'\u2212')+Math.abs(v).toFixed(2)+'%'}function sectors() { var el = $('sectors'); if (!el) return; var a = null, raw = el.getAttribute('data-sectors'); if (raw) { try { a = JSON.parse(raw) } catch (e) { } } if (!a || !a.length) { el.innerHTML = '<div class="k">Sector data is not in this recap.</div>'; return } var m = Math.max.apply(0, a.map(function (r) { return Math.abs(r[1]) })) * 1.05 || 1; el.innerHTML = a.map(function (r) { var v = +r[1], w = Math.abs(v) / m * 50, p = v >= 0; return '<div class="hb"><span>' + esc(r[0]) + '</span><span class="t"><i style="' + (p ? 'left:50%;width:' + w + '%;background:var(--gfill)' : 'right:50%;width:' + w + '%;background:var(--rfill)') + '"></i></span><span class="p ' + (p ? 'up' : 'dn') + '">' + sg(v) + '</span></div>' }).join('') };sectors();function tell(){try{parent.postMessage({recapHeight:document.documentElement.scrollHeight},'*')}catch(e){}}window.addEventListener('load',tell);setTimeout(tell,300)</script></body></html>

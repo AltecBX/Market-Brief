@@ -1,0 +1,1251 @@
+{
+ "updated": "2026-11-27T13:42:44-05:00",
+ "updatedLabel": "Fri 1:42pm ET",
+ "next": "8:12pm",
+ "kicker": "BLACK FRIDAY HALF DAY · STOCKS CLOSED 1:00PM ET · CLOSE BRIEF",
+ "headline": "Memory stocks lead a 1.6% half day rally; Nvidia lags.",
+ "lede": "The S&P 500 closed at 7,298.34, +1.61%, and the Nasdaq rose 2.31% (Reuters), past the ±1.17% options had priced. Sandisk +16% and Micron +7.6% led while Nvidia added only 0.8%.",
+ "pills": [
+  [
+   "g",
+   "S&P +1.61% · Nasdaq +2.31%"
+  ],
+  [
+   "g",
+   "Sandisk +16% · Micron +7.6%"
+  ],
+  [
+   "a",
+   "Nvidia +0.8% only"
+  ],
+  [
+   "a",
+   "Beat the ±1.17% implied move"
+  ],
+  [
+   "r",
+   "Dec 9 hike near fully priced"
+  ],
+  [
+   "b",
+   "Week: S&P +5.6%"
+  ]
+ ],
+ "drivers": [
+  [
+   "g",
+   "MEMORY LEADS THE BOUNCE",
+   "Cash closes: Sandisk +15.96%, Micron +7.60%, WDC +7.22%, SOXX +4.76%, SMH +4.17%. Reuters: investors flocked back to hard hit AI shares; one strategist called the market oversold."
+  ],
+  [
+   "a",
+   "NVIDIA LAGS",
+   "Nvidia +0.80% to $150.49 after opening near +2% (Yahoo). FT reported Thursday that Nvidia told server makers to halt AI server shipments to four Southeast Asian countries."
+  ],
+  [
+   "r",
+   "HIKE STILL PRICED",
+   "Reuters: traders almost fully price a December hike after Q3 GDP was revised to 4.3%. The 10 year was near 4.93% in Reuters' late quote."
+  ],
+  [
+   "g",
+   "BROAD BUT THIN",
+   "All 11 SPDR sector ETFs rose: tech XLK +2.80% led, utilities and health care +0.28% lagged. Reuters: volumes were thin after Thanksgiving."
+  ]
+ ],
+ "picks": [
+  [
+   "Fri 1:00pm",
+   "FUT",
+   "up",
+   "Close: S&P 7,298.34 (+1.61%), Nasdaq 24,129.50 (+2.31%), Dow 50,780.64 (+1.19%), per Reuters. All three posted weekly gains."
+  ],
+  [
+   "Fri 1:00pm",
+   "AI",
+   "up",
+   "Memory led: Sandisk +15.96%, Micron +7.60%, WDC +7.22%, AMD +4.56%, SMH +4.17%. Nvidia +0.80% (Unusual Whales closes)."
+  ],
+  [
+   "Fri 12:55pm",
+   "FUT",
+   "up",
+   "SPY made its session high, 729.15, in the final 5 minute bar."
+  ],
+  [
+   "Fri 11:36am",
+   "MACRO",
+   "up",
+   "Amazon up on strong Black Friday demand (Motley Fool); it closed +3.96%. Vertex fell about 5% after the FDA extended its kidney drug review (Reuters)."
+  ],
+  [
+   "Fri 10:05am",
+   "FUT",
+   "dn",
+   "Session low: SPY 719.62 in the 10:05am bar; S&P day low 7,211.46 (Motley Fool data). Steady climb after."
+  ],
+  [
+   "Fri 9:30am",
+   "AI",
+   "dn",
+   "Nvidia opened about 2% higher, then turned lower (Yahoo). FT reported Thursday it told Dell and Supermicro to halt AI server shipments to Malaysia, Singapore, Thailand and Indonesia."
+  ],
+  [
+   "Fri",
+   "FED",
+   "dn",
+   "Reuters: traders almost fully price a Dec 9 hike. CME FedWatch was 98.9% Friday morning (Forbes). Already known."
+  ],
+  [
+   "Fri",
+   "MACRO",
+   "dn",
+   "Yields up: 10 year near 4.93%, 2 year near 4.70% in Reuters' late quotes. Bonds close 2:00pm."
+  ],
+  [
+   "Fri",
+   "OIL",
+   "",
+   "Late quotes (Reuters): WTI $83.02 (−0.8%), Brent $90.31 (−1.5%), gold futures $3,650 (+3.2%)."
+  ],
+  [
+   "Fri",
+   "AI",
+   "dn",
+   "TrendForce: limited demand visibility raises the risk of DRAM contract price declines in 2028. New."
+  ],
+  [
+   "Fri 8:30am",
+   "MACRO",
+   "dn",
+   "October goods deficit $149.5B vs $133.1B expected (ActionForex). Known since the pre open brief."
+  ],
+  [
+   "Fri 1:30am",
+   "ASIA",
+   "up",
+   "Closes: Kospi +4.34%, Nikkei +2.11%, Shanghai +3.7% after China signaled market support (AP)."
+  ]
+ ],
+ "planTitle": "NEXT SESSION GAME PLAN",
+ "means": [
+  "S&P closed at <b>7,298</b>, just under the <b>7,304</b> OI gamma flip and the <b>7,310</b> flow call wall. Above them dealers lean long gamma.",
+  "Friday ran past the ±1.17% implied move. SPXW options price <b>±1.00%</b> for Monday, about 73 points.",
+  "Leadership came from memory and chip equipment, not Nvidia. All 11 sector ETFs rose.",
+  "Back under <b>7,211</b>, Friday's low, undoes the rebound; <b>7,183</b> is Wednesday's close."
+ ],
+ "calTitle": "NEXT WEEK · ET",
+ "calendar": [
+  [
+   "Mon 9:45am",
+   "Chicago PMI (Nov), prior 55.3"
+  ],
+  [
+   "Tue 10:00am",
+   "ISM manufacturing (Nov) 55.2 consensus, prior 55.5. JOLTS 7.45M vs 7.523M prior. Fed's Bowman testifies"
+  ],
+  [
+   "Tue after close",
+   "Marvell and Credo earnings"
+  ],
+  [
+   "Wed 8:15am",
+   "ADP (Nov) 80K consensus, prior 86K. Salesforce and Snowflake after close"
+  ],
+  [
+   "Thu 10:00am",
+   "ISM services (Nov) 54.5 consensus, prior 54.5"
+  ],
+  [
+   "Fri 8:30am",
+   "Jobs (Nov): payrolls 90K consensus vs 165K prior, unemployment 4.1%"
+  ]
+ ],
+ "impNote": "Perps (the xyz market on Liquid) trade 24/7 and can differ from cash. Cash closes are from Friday's 1:00pm close; the VIX curve is from Wednesday, the last Cboe close found.",
+ "base": {
+  "label": "Fri close",
+  "spx": 7298.34,
+  "closes": {
+   "xyz:SP500": 7298.34,
+   "xyz:NVDA": 150.49,
+   "xyz:AMD": 424.54,
+   "xyz:MU": 646.95,
+   "xyz:SMH": 440.06,
+   "xyz:AVGO": 312.34,
+   "xyz:TSM": 353.34,
+   "xyz:LRCX": 192.69,
+   "xyz:SNDK": 85.36,
+   "xyz:WDC": 292.11,
+   "xyz:ASML": 1325.82,
+   "xyz:AMAT": 322.04,
+   "xyz:ORCL": 107.13,
+   "xyz:AAPL": 358.54,
+   "xyz:MSFT": 492.85,
+   "xyz:GOOGL": 274.96,
+   "xyz:AMZN": 254.12,
+   "xyz:META": 628.96,
+   "xyz:TSLA": 400.0
+  },
+  "ts": "2026-11-27T13:00:00-05:00",
+  "perp": {
+   "xyz:SP500": 7305.5,
+   "xyz:XYZ100": 26758.0,
+   "xyz:JP225": 58921.0,
+   "xyz:KR200": 763.96,
+   "xyz:NVDA": 150.78,
+   "xyz:AMD": 426.17,
+   "xyz:MU": 654.01,
+   "xyz:SNDK": 85.393,
+   "xyz:WDC": 292.29,
+   "xyz:AVGO": 312.33,
+   "xyz:TSM": 353.6,
+   "xyz:ASML": 1327.9,
+   "xyz:LRCX": 192.57,
+   "xyz:AMAT": 322.61,
+   "xyz:SMH": 439.97,
+   "xyz:SKHX": 843.32,
+   "xyz:SMSN": 135.57,
+   "xyz:KIOXIA": 52.615,
+   "xyz:ORCL": 107.5,
+   "xyz:AAPL": 358.61,
+   "xyz:MSFT": 493.25,
+   "xyz:GOOGL": 274.93,
+   "xyz:AMZN": 254.19,
+   "xyz:META": 629.56,
+   "xyz:TSLA": 400.13,
+   "xyz:GOLD": 3651.3,
+   "xyz:SILVER": 43.706,
+   "xyz:BRENTOIL": 90.073,
+   "xyz:CL": 82.84,
+   "xyz:COPPER": 5.604,
+   "xyz:JPY": 159.47,
+   "xyz:EUR": 1.0942,
+   "BTC": 59929.0,
+   "ETH": 1672.2,
+   "SOL": 72.1,
+   "xyz:HOOD": 67.94,
+   "xyz:INTC": 58.085,
+   "xyz:PLTR": 172.13,
+   "xyz:COIN": 107.14,
+   "xyz:MSTR": 81.619,
+   "xyz:CRCL": 49.361,
+   "xyz:NFLX": 60.97,
+   "xyz:COST": 1099.0,
+   "xyz:LLY": 1395.6,
+   "xyz:RIVN": 12.184,
+   "xyz:BABA": 89.86,
+   "xyz:CRWV": 44.172,
+   "xyz:GME": 26.362,
+   "xyz:HIMS": 15.019,
+   "xyz:DKNG": 17.797,
+   "xyz:LITE": 515.11,
+   "xyz:BX": 121.53,
+   "xyz:MRVL": 141.11,
+   "xyz:RKLB": 50.927,
+   "xyz:ZM": 89.577,
+   "xyz:EBAY": 113.47,
+   "xyz:ARM": 171.68,
+   "xyz:DELL": 316.97,
+   "xyz:IBM": 248.05,
+   "xyz:NOW": 92.928,
+   "xyz:NBIS": 89.521,
+   "xyz:NOK": 7.5859,
+   "xyz:BE": 163.13,
+   "xyz:QCOM": 179.34,
+   "xyz:GEV": 736.05,
+   "xyz:IREN": 13.612,
+   "xyz:NET": 295.47,
+   "xyz:CRWD": 216.38,
+   "xyz:RDDT": 93.564,
+   "xyz:AAOI": 40.865,
+   "xyz:MRNA": 228.76,
+   "xyz:UMC": 13.429,
+   "xyz:GLW": 104.94,
+   "xyz:TTWO": 230.18,
+   "xyz:ICE": 178.88,
+   "xyz:PANW": 366.59
+  },
+  "closesSrc": "S&P 500 close from Reuters (7,298.34, +1.61%). Stock and ETF closes from Unusual Whales daily rows for Nov 27. No Nasdaq 100 cash close found.",
+  "prevChg": -0.25
+ },
+ "anchor": {
+  "label": "Since 9:30am",
+  "ts": "2026-11-27T09:30:00-05:00",
+  "prices": {
+   "xyz:SP500": 7273.5,
+   "xyz:XYZ100": 26534.0,
+   "xyz:JP225": 58650.0,
+   "xyz:KR200": 753.94,
+   "xyz:NVDA": 151.98,
+   "xyz:AMD": 420.01,
+   "xyz:MU": 630.54,
+   "xyz:SNDK": 79.902,
+   "xyz:WDC": 285.88,
+   "xyz:AVGO": 306.63,
+   "xyz:TSM": 353.34,
+   "xyz:ASML": 1319.9,
+   "xyz:LRCX": 192.89,
+   "xyz:AMAT": 323.85,
+   "xyz:SMH": 435.17,
+   "xyz:SKHX": 823.66,
+   "xyz:SMSN": 133.44,
+   "xyz:KIOXIA": 52.148,
+   "xyz:ORCL": 106.74,
+   "xyz:AAPL": 358.38,
+   "xyz:MSFT": 499.41,
+   "xyz:GOOGL": 279.23,
+   "xyz:AMZN": 250.2,
+   "xyz:META": 628.38,
+   "xyz:TSLA": 391.5,
+   "xyz:GOLD": 3638.5,
+   "xyz:SILVER": 43.884,
+   "xyz:BRENTOIL": 91.28,
+   "xyz:CL": 84.13,
+   "xyz:COPPER": 5.6094,
+   "xyz:JPY": 159.48,
+   "xyz:EUR": 1.095,
+   "BTC": 61406.0,
+   "ETH": 1723.0,
+   "SOL": 72.983,
+   "xyz:HOOD": 68.827,
+   "xyz:INTC": 56.499,
+   "xyz:PLTR": 169.7,
+   "xyz:COIN": 108.47,
+   "xyz:MSTR": 84.367,
+   "xyz:CRCL": 50.295,
+   "xyz:NFLX": 60.058,
+   "xyz:COST": 1087.6,
+   "xyz:LLY": 1388.9,
+   "xyz:RIVN": 11.981,
+   "xyz:BABA": 89.933,
+   "xyz:CRWV": 43.863,
+   "xyz:GME": 26.837,
+   "xyz:HIMS": 15.255,
+   "xyz:DKNG": 17.781,
+   "xyz:LITE": 517.06,
+   "xyz:BX": 120.71,
+   "xyz:MRVL": 139.69,
+   "xyz:RKLB": 49.439,
+   "xyz:ZM": 89.379,
+   "xyz:EBAY": 116.13,
+   "xyz:ARM": 171.4,
+   "xyz:DELL": 307.11,
+   "xyz:IBM": 245.89,
+   "xyz:NOW": 93.614,
+   "xyz:NBIS": 90.026,
+   "xyz:NOK": 7.4237,
+   "xyz:BE": 161.28,
+   "xyz:QCOM": 173.05,
+   "xyz:GEV": 734.97,
+   "xyz:IREN": 13.692,
+   "xyz:NET": 291.09,
+   "xyz:CRWD": 210.0,
+   "xyz:RDDT": 93.882,
+   "xyz:AAOI": 40.734,
+   "xyz:MRNA": 224.46,
+   "xyz:CVX": 213.96,
+   "xyz:UMC": 13.26,
+   "xyz:GLW": 103.0,
+   "xyz:TTWO": 227.26,
+   "xyz:ICE": 178.2,
+   "xyz:PANW": 346.32
+  }
+ },
+ "ladder": {
+  "bull": 7303.7,
+  "floor": 7211.46,
+  "marks": [
+   [
+    7182.78,
+    "Wed 7,183",
+    0
+   ],
+   [
+    7211.46,
+    "Low 7,211",
+    1
+   ],
+   [
+    7250,
+    "Magnet 7,250",
+    0
+   ],
+   [
+    7290,
+    "Put wall 7,290",
+    1
+   ],
+   [
+    7298.34,
+    "Close 7,298",
+    0
+   ],
+   [
+    7310,
+    "Call wall 7,310",
+    1
+   ]
+  ],
+  "bullText": "Above the 7,304 gamma flip and the 7,310 flow call wall: dealers lean long gamma and the rebound can extend.",
+  "rangeText": "Between 7,211 and 7,304, Friday's range. The close sits at the top of it.",
+  "riskText": "Below Friday's 7,211 low; Wednesday's 7,183 close is next, then 7,000."
+ },
+ "chart": {
+  "title": "PATH · SINCE FRI 1PM CLOSE",
+  "start": "2026-11-27T13:00:00-05:00",
+  "startLabel": "Fri 1pm",
+  "marker": [
+   "2026-11-27T13:00:00-05:00",
+   "Cash close"
+  ]
+ },
+ "opt": {
+  "asof": "Fri close",
+  "base": 7298.34,
+  "em": [
+   [
+    "Monday",
+    1.0,
+    "Nov 30 expiry",
+    "SPXW",
+    "2026-11-30"
+   ],
+   [
+    "Through next Friday",
+    2.033,
+    "Dec 4 expiry",
+    "SPXW",
+    "2026-12-04"
+   ],
+   [
+    "December monthly",
+    3.31,
+    "Dec 18 expiry",
+    "SPX",
+    "2026-12-18"
+   ]
+  ],
+  "vix": {
+   "idx": [
+    [
+     "9D",
+     9,
+     29.6
+    ],
+    [
+     "VIX",
+     30,
+     28.29
+    ],
+    [
+     "3M",
+     91,
+     26.3
+    ]
+   ],
+   "fut": [
+    [
+     "Dec",
+     21,
+     25.03
+    ],
+    [
+     "Jan",
+     56,
+     24.29
+    ],
+    [
+     "Feb",
+     84,
+     24.0
+    ],
+    [
+     "Mar",
+     112,
+     23.6
+    ],
+    [
+     "Apr",
+     147,
+     23.4
+    ],
+    [
+     "May",
+     175,
+     23.1
+    ],
+    [
+     "Jun",
+     203,
+     23.1
+    ]
+   ],
+   "asof": "Wed close",
+   "asofTs": "2026-11-25T16:15:00-05:00"
+  },
+  "levels": [
+   [
+    "Magnet",
+    7250,
+    "a"
+   ],
+   [
+    "Flow put wall",
+    7285,
+    "r"
+   ],
+   [
+    "Put wall",
+    7290,
+    "r"
+   ],
+   [
+    "Gamma flip",
+    7303.7,
+    "b"
+   ],
+   [
+    "Flow call wall",
+    7310,
+    "g"
+   ],
+   [
+    "Dec max pain",
+    7400,
+    "b"
+   ]
+  ],
+  "gex": [
+   [
+    7000,
+    60764,
+    -67949
+   ],
+   [
+    7200,
+    7006,
+    -10810
+   ],
+   [
+    7250,
+    4619,
+    -12148
+   ],
+   [
+    7280,
+    7130,
+    -4762
+   ],
+   [
+    7285,
+    10745,
+    -10848
+   ],
+   [
+    7300,
+    14781,
+    -17278
+   ],
+   [
+    7350,
+    5918,
+    -8536
+   ],
+   [
+    7400,
+    12122,
+    -13937
+   ],
+   [
+    7450,
+    6089,
+    -6463
+   ],
+   [
+    7500,
+    12547,
+    -12294
+   ]
+  ],
+  "emSpy": [
+   [
+    "Monday",
+    1.014,
+    "Nov 30 expiry"
+   ],
+   [
+    "Through next Friday",
+    2.051,
+    "Dec 4 expiry"
+   ],
+   [
+    "December monthly",
+    3.421,
+    "Dec 18 expiry"
+   ]
+  ],
+  "spyBase": 728.32,
+  "emSrc": "Unusual Whales implied move from the Fri Nov 27 close. SPX rows use SPXW weeklies and the SPX monthly, SPY rows use SPY options.",
+  "asofTs": "2026-11-27T13:15:00-05:00",
+  "skew": {
+   "asof": "Fri close",
+   "asofTs": "2026-11-27T13:15:00-05:00",
+   "rows": [
+    [
+     "Dec 4 weekly",
+     24.92,
+     21.52,
+     18.59
+    ],
+    [
+     "Dec 18 monthly",
+     24.52,
+     20.3,
+     17.14
+    ]
+   ]
+  },
+  "ivchg": [
+   [
+    "Dec 4 weekly ATM",
+    21.52,
+    25.7
+   ],
+   [
+    "Dec 18 monthly ATM",
+    20.3,
+    23.7
+   ]
+  ]
+ },
+ "recapLabel": "Fri recap",
+ "sources": [
+  [
+   "Reuters via Investing.com: Wall Street ends higher as battered AI stocks gain",
+   "https://ca.investing.com/news/economy-news/wall-street-ends-higher-as-battered-ai-stocks-gain-in-volatile-week-4983613"
+  ],
+  [
+   "Seeking Alpha: U.S. equities close on top on Black Friday",
+   "https://seekingalpha.com/news/4677074-us-equities-close-on-top-on-black-friday"
+  ],
+  [
+   "Motley Fool: Stock market midday, Nov 27",
+   "https://www.fool.com/coverage/stock-market-today/2026/11/27/stock-market-midday-nov-27-tech-stocks-recover-and-amazon-posts-black-friday-gains/"
+  ],
+  [
+   "Yahoo Finance live: Stock market today, Nov 27",
+   "https://finance.yahoo.com/markets/live/stock-market-today-firday-november-27-dow-sp-500-nasdaq-black-friday-holiday-091152065.html"
+  ],
+  [
+   "TrendForce: NVIDIA reportedly suspends AI server shipments to four Southeast Asian countries",
+   "https://www.trendforce.com/news/2026/11/26/news-nvidia-reportedly-suspends-ai-server-shipments-to-four-southeast-asian-countries-as-u-s-targets-chinese-ai-access"
+  ],
+  [
+   "StockAnalysis: Nvidia halts server shipments to Southeast Asia",
+   "https://stockanalysis.com/news/nvidia-halts-server-shipments-southeast-asia/"
+  ],
+  [
+   "TrendForce: risk of DRAM contract price declines in 2028",
+   "https://www.trendforce.com/presscenter/news/20261127-13327.html"
+  ],
+  [
+   "TrendForce: cuts to Chinese CSP demand weigh on price outlook",
+   "https://www.trendforce.com/presscenter/news/20261125-13321.html"
+  ],
+  [
+   "TrendForce: NAND prices set to decline in 2027",
+   "https://www.trendforce.com/presscenter/news/20261119-13314.html"
+  ],
+  [
+   "VLSI: TrendForce cuts 2027 memory outlook",
+   "https://www.vlsi.kr/en/trendforce-2027-memory-outlook-cut-en/"
+  ],
+  [
+   "Forbes: Stock futures surge as battered AI shares rebound",
+   "https://www.forbes.com/sites/siladityaray/2026/11/27/stock-futures-surge-as-battered-ai-shares-rebound-ahead-of-shorterned-friday-trading/"
+  ],
+  [
+   "Gate: CME FedWatch 97.8% December hike",
+   "https://www.gate.com/news/detail/cme-fedwatch-978-probability-of-25bp-fed-rate-hike-in-december-2026-25860188"
+  ],
+  [
+   "ActionForex: US goods trade deficit widens to $149.5B",
+   "https://www.actionforex.com/live-comments/662315-us-goods-trade-deficit-widens-to-149-5b-as-capital-goods-imports-surge/"
+  ],
+  [
+   "Finviz economic calendar, Nov 30 week",
+   "https://finviz.com/calendar/economic?dateFrom=2026-11-30"
+  ],
+  [
+   "Finviz economic calendar, Dec 7 week",
+   "https://finviz.com/calendar/economic?dateFrom=2026-12-07"
+  ],
+  [
+   "StockTitan: earnings calendar, week of Nov 30",
+   "https://www.stocktitan.net/articles/earnings-calendar-week-of-november-30-2026"
+  ],
+  [
+   "AP via KSAT: Global shares mostly rise",
+   "https://www.ksat.com/business/2026/11/27/asian-shares-mostly-rise-ahead-of-wall-streets-reopening-after-thanksgiving/"
+  ],
+  [
+   "TokenPost: U.S. stocks rebound before open",
+   "https://www.tokenpost.com/news/investing/63405"
+  ],
+  [
+   "NERO: Tokyo bought the chips",
+   "https://nerosignal.substack.com/p/tokyo-bought-the-chips-and-ignored"
+  ],
+  [
+   "Cboe SPX daily history",
+   "https://cdn.cboe.com/api/global/us_indices/daily_prices/SPX_History.csv"
+  ],
+  [
+   "Unusual Whales options data, cash closes and SPX chains",
+   "https://unusualwhales.com/"
+  ],
+  [
+   "Hyperliquid perps (tools/prices.py)",
+   "https://app.hyperliquid.xyz/"
+  ]
+ ],
+ "top3": [
+  [
+   "Memory leads a 1.6% rebound",
+   "S&P 7,298.34 (+1.61%), Nasdaq 24,129.50 (+2.31%), Dow +1.19% (Reuters). Sandisk +15.96%, Micron +7.60%, WDC +7.22%."
+  ],
+  [
+   "Nvidia lags on a quiet close",
+   "Nvidia closed +0.80% after opening near +2%. FT reported it told Dell and Supermicro to halt AI server shipments to four Southeast Asian countries; no source ties the stock move to it."
+  ],
+  [
+   "Hike still priced, yields up",
+   "Reuters: traders almost fully price a Dec 9 hike. The 10 year was near 4.93%, up about 9 bp, in Reuters' late quote."
+  ]
+ ],
+ "risks": [
+  [
+   "Below 7,211",
+   "Friday's low. Under it the rebound fails and 7,183, Wednesday's close, is next."
+  ],
+  [
+   "Tue Dec 1",
+   "ISM manufacturing at 10:00am and Marvell earnings after the close, the next chip print."
+  ],
+  [
+   "Fri Dec 4",
+   "Jobs report, 90K expected, the last payrolls before the Dec 9 FOMC."
+  ],
+  [
+   "Export rules",
+   "The US remote access chip rule took effect Nov 19; cloud providers serving Chinese firms have 90 days to get licenses (StockAnalysis)."
+  ],
+  [
+   "Memory pricing",
+   "TrendForce sees NAND prices falling in 2027 and flags DRAM contract price decline risk in 2028."
+  ]
+ ],
+ "scenarios": [
+  {
+   "n": "Bullish",
+   "cond": "S&P holds above 7,290 and clears the 7,304 gamma flip and 7,310 call wall on Monday.",
+   "confirm": "Memory and equipment hold gains, Nvidia joins, VIX stays under 25.",
+   "risk": "Month end flows Monday and Tuesday's ISM can reverse thin holiday gains.",
+   "inval": "A move back under 7,250, the OI gamma magnet."
+  },
+  {
+   "n": "Neutral",
+   "cond": "S&P chops between 7,250 and 7,310 into ISM and Marvell.",
+   "confirm": "Mixed sector moves; Monday's range stays inside the ±1.00% implied move.",
+   "risk": "A slow drift lower if yields keep rising.",
+   "inval": "A close above 7,310 or below 7,211."
+  },
+  {
+   "n": "Bearish",
+   "cond": "Friday's 7,211 low breaks.",
+   "confirm": "Memory gives back its gains, the 10 year goes above 5%, VIX back over 28.",
+   "risk": "Oversold rebound buying returns fast.",
+   "inval": "A reclaim of 7,290."
+  }
+ ],
+ "events7": [
+  [
+   "2026-11-29",
+   "Sun",
+   "OPEC+ meeting",
+   2,
+   "OIL",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-11-30",
+   "9:45am",
+   "Chicago PMI (Nov)",
+   2,
+   "DATA",
+   "",
+   "55.3",
+   ""
+  ],
+  [
+   "2026-11-30",
+   "Night",
+   "China NBS PMIs (Nov)",
+   2,
+   "ASIA",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "ISM manufacturing PMI (Nov)",
+   3,
+   "DATA",
+   "55.2",
+   "55.5",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "JOLTS job openings (Oct)",
+   2,
+   "DATA",
+   "7.45M",
+   "7.523M",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "10:00am",
+   "Fed's Bowman testimony",
+   2,
+   "FED",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-01",
+   "After close",
+   "Marvell and Credo earnings",
+   3,
+   "EARN",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-02",
+   "8:15am",
+   "ADP employment (Nov)",
+   2,
+   "DATA",
+   "80K",
+   "86K",
+   ""
+  ],
+  [
+   "2026-12-02",
+   "After close",
+   "Salesforce and Snowflake earnings",
+   2,
+   "EARN",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "8:30am",
+   "Initial jobless claims",
+   2,
+   "DATA",
+   "193K",
+   "189K",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "10:00am",
+   "ISM services PMI (Nov)",
+   3,
+   "DATA",
+   "54.5",
+   "54.5",
+   ""
+  ],
+  [
+   "2026-12-03",
+   "TBD",
+   "Huang testifies before Senate Banking",
+   3,
+   "AI",
+   "",
+   "",
+   ""
+  ],
+  [
+   "2026-12-04",
+   "8:30am",
+   "Jobs report (Nov): payrolls, unemployment",
+   3,
+   "DATA",
+   "90K, 4.1%",
+   "165K, 4.1%",
+   ""
+  ],
+  [
+   "2026-12-04",
+   "10:00am",
+   "UMich sentiment prelim (Dec)",
+   2,
+   "DATA",
+   "52.5",
+   "51.5",
+   ""
+  ],
+  [
+   "2026-12-07",
+   "1:00pm",
+   "3 year note auction",
+   1,
+   "DATA",
+   "",
+   "4.627%",
+   ""
+  ],
+  [
+   "2026-12-08",
+   "8:30am",
+   "Unit labor costs final (Q3)",
+   1,
+   "DATA",
+   "−0.7%",
+   "1.9%",
+   ""
+  ],
+  [
+   "2026-12-08",
+   "1:00pm",
+   "10 year note auction",
+   2,
+   "DATA",
+   "",
+   "5.020%",
+   ""
+  ]
+ ],
+ "priced": {
+  "asof": "Fri close",
+  "asofTs": "2026-11-27T13:15:00-05:00",
+  "fed": [
+   [
+    "Dec 9 FOMC",
+    "98.9% odds of a 25bp hike to 4.00% to 4.25% (CME FedWatch via Forbes, Fri morning). Reuters at the close: traders almost fully price a December hike.",
+    "exp"
+   ],
+   [
+    "Jan 27 FOMC",
+    "58.4% odds of a cumulative 50bp of hikes by January (CME FedWatch via Gate, Wed).",
+    "exp"
+   ]
+  ],
+  "data": [
+   [
+    "Goods trade deficit (Oct)",
+    "Fri 8:30am",
+    "$133.1B",
+    "$135.1B",
+    "$149.5B",
+    "Wider than expected; imports +6.1%."
+   ],
+   [
+    "Wholesale inventories (Oct)",
+    "Fri 8:30am",
+    "+0.5%",
+    "+0.8%",
+    "+0.9%",
+    "Above forecast."
+   ],
+   [
+    "ISM manufacturing (Nov)",
+    "Tue 10:00am",
+    "55.2",
+    "55.5",
+    "",
+    ""
+   ],
+   [
+    "Nonfarm payrolls (Nov)",
+    "Fri Dec 4 8:30am",
+    "90K",
+    "165K",
+    "",
+    ""
+   ]
+  ],
+  "earn": [],
+  "other": [
+   [
+    "Monday's range",
+    "SPXW options price ±1.00% for Mon Nov 30 from Friday's close, about 73 S&P points.",
+    "exp"
+   ],
+   [
+    "Through Dec 18",
+    "SPXW ±2.03% through Dec 4; the Dec 18 SPX monthly ±3.31%.",
+    "exp"
+   ],
+   [
+    "BOJ Dec 18",
+    "73.5% odds of a hike (MogWatch, Fri 1:07pm JST).",
+    "exp"
+   ]
+  ]
+ },
+ "qa": [
+  [
+   "Why did stocks rally?",
+   "Reuters says investors returning from Thanksgiving flocked to hard hit AI shares, and Harris Financial's Jamie Cox called the market oversold. Volume was thin.",
+   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+  ],
+  [
+   "How big was the move?",
+   "S&P +1.61% to 7,298.34, Nasdaq +2.31% to 24,129.50, Dow +1.19%. Options had priced ±1.17% for the day, so the close ran past it.",
+   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+  ],
+  [
+   "Why did Nvidia lag?",
+   "Not established. Nvidia opened near +2% and closed +0.80%; FT reported Thursday it halted AI server shipments to four Southeast Asian countries, but no source ties the stock move to it.",
+   "https://stockanalysis.com/news/nvidia%2Dhalts%2Dserver%2Dshipments%2Dsoutheast%2Dasia/"
+  ],
+  [
+   "What about the Fed?",
+   "Reuters: traders almost fully price a December hike after Q3 GDP was revised up to 4.3% and inflation accelerated. CME FedWatch showed 98.9% Friday morning.",
+   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+  ],
+  [
+   "Where are yields?",
+   "The 10 year was near 4.93% and the 2 year near 4.70% in Reuters' late quotes, both up 7 to 9 bp. Bonds close at 2:00pm, so these are not final.",
+   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+  ],
+  [
+   "What are memory prices doing?",
+   "TrendForce sees NAND prices falling in 2027 and flags a risk of DRAM contract price declines in 2028. Memory stocks rallied anyway, led by Sandisk +16%.",
+   "https://www.trendforce.com/presscenter/news/20261127%2D13327.html"
+  ],
+  [
+   "What do options imply?",
+   "SPXW options price ±1.00% for Monday and ±2.03% through Dec 4. Put skew eased: Dec 4 25 delta put IV 24.9% vs 31.0% Wednesday.",
+   "https://unusualwhales.com/"
+  ],
+  [
+   "How was the week?",
+   "S&P +5.6% from the Nov 20 close of 6,910.39 (Cboe history). It is still down 3.7% in November from 7,580.07 on Oct 30.",
+   "https://www.cboe.com/us/indices/dashboard/spx/"
+  ],
+  [
+   "What are the biggest risks this week?",
+   "ISM manufacturing and Marvell on Tuesday, then Friday's jobs report with 90K expected. All come before the Dec 9 FOMC.",
+   "https://finviz.com/calendar/economic?dateFrom=2026%2D11%2D30"
+  ],
+  [
+   "What changed since Wednesday?",
+   "Wednesday's S&P closed −0.25% after a 3.2% intraday drop with chips lagging. Friday added 1.61% with chips leading; Reuters quoted the VIX near 24.2 late, from 26.80 Thursday.",
+   "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+  ]
+ ],
+ "stories": [
+  {
+   "t": "1:00pm",
+   "h": "Memory leads half day rally",
+   "what": "S&P +1.61% to 7,298.34. Sandisk +15.96%, Micron +7.60%, WDC +7.22%, SOXX +4.76%, SMH +4.17%.",
+   "why": "Chips led November's drop; Reuters says investors flocked back to hard hit AI shares.",
+   "assets": "SPX, SNDK, MU, WDC, SMH",
+   "impl": "bull",
+   "read": "An oversold bounce led by the hardest hit names, on thin volume.",
+   "reacted": "SPY rose from a 719.62 low at 10:05am to a 729.15 high in the last bar. The rebound began in overnight trading Thursday.",
+   "known": "new",
+   "material": false,
+   "confirm": "Memory holds gains Monday and SMH stays above 435.",
+   "invalid": "SMH back under 422.46, Wednesday's close.",
+   "src": "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613"
+  },
+  {
+   "t": "Thu",
+   "h": "Nvidia halts SE Asia server shipments",
+   "what": "FT: Nvidia told server makers including Dell and Supermicro to halt AI server deliveries to Malaysia, Singapore, Thailand and Indonesia. A US rule on remote access to advanced chips took effect Nov 19.",
+   "why": "Nvidia's Singapore unit booked $104B of 2025 revenue (FT via TrendForce). It is unclear if the halt is temporary.",
+   "assets": "NVDA, DELL, SMCI",
+   "impl": "bear",
+   "read": "Export rules now reach regional data center demand, not only China.",
+   "reacted": "First US session Friday: Nvidia opened near +2% and closed +0.80% at $150.49. No source ties the move to the report.",
+   "known": "new",
+   "material": true,
+   "changes": "Adds export risk to Nvidia's demand outlook; watch license guidance and Huang's Dec 3 testimony.",
+   "confirm": "Nvidia or Commerce confirms licensing delays.",
+   "invalid": "Shipments resume or licenses are granted quickly.",
+   "src": "https://www.trendforce.com/news/2026/11/26/news%2Dnvidia%2Dreportedly%2Dsuspends%2Dai%2Dserver%2Dshipments%2Dto%2Dfour%2Dsoutheast%2Dasian%2Dcountries%2Das%2Du%2Ds%2Dtargets%2Dchinese%2Dai%2Daccess"
+  },
+  {
+   "t": "Fri",
+   "h": "TrendForce flags 2028 DRAM risk",
+   "what": "TrendForce: limited demand visibility and supply chain caution raise the risk of DRAM contract price declines in 2028; procurement slowed slightly since early 4Q26.",
+   "why": "Memory pricing drives Micron, SK hynix and Samsung earnings.",
+   "assets": "MU, SNDK, WDC, SK hynix",
+   "impl": "bear",
+   "read": "Long range caution, not a near term price cut.",
+   "reacted": "Memory stocks rallied anyway: Micron +7.60%, Sandisk +15.96%.",
+   "known": "new",
+   "material": false,
+   "confirm": "1Q27 contract talks show declines.",
+   "invalid": "Contract prices keep rising through 2027.",
+   "src": "https://www.trendforce.com/presscenter/news/20261127%2D13327.html"
+  },
+  {
+   "t": "11:36am",
+   "h": "Amazon gains on Black Friday demand",
+   "what": "Amazon closed +3.96% at $254.12; Motley Fool cites strong Black Friday demand.",
+   "why": "Consumer spending is a key read for Q4 growth with the Fed hiking.",
+   "assets": "AMZN, XLY",
+   "impl": "bull",
+   "read": "Holiday demand looks solid so far.",
+   "reacted": "XLY +2.11%, second best sector ETF.",
+   "known": "new",
+   "material": false,
+   "confirm": "Cyber Monday sales data.",
+   "invalid": "Weak retail commentary next week.",
+   "src": "https://www.fool.com/coverage/stock%2Dmarket%2Dtoday/2026/11/27/stock%2Dmarket%2Dmidday%2Dnov%2D27%2Dtech%2Dstocks%2Drecover%2Dand%2Damazon%2Dposts%2Dblack%2Dfriday%2Dgains/"
+  }
+ ],
+ "semis": {
+  "asof": "Fri close",
+  "asofTs": "2026-11-27T13:00:00-05:00",
+  "memory": [
+   [
+    "DRAM",
+    "TrendForce Nov 27: risk of DRAM contract price declines in 2028. DDR4 8G spot averaged $43.125 on Nov 26, still easing.",
+    "https://www.trendforce.com/presscenter/news/20261127%2D13327.html"
+   ],
+   [
+    "NAND",
+    "TrendForce Nov 25: NAND enters a downward pricing cycle; 2027 NAND revenue forecast cut to about $419.3B.",
+    "https://www.trendforce.com/presscenter/news/20261125%2D13321.html"
+   ],
+   [
+    "HBM",
+    "No new pricing since Sep 29 (TrendForce: blended HBM price +121% in 2027). HBM and server DRAM stay the tightest.",
+    "https://www.vlsi.kr/en/trendforce%2D2027%2Dmemory%2Doutlook%2Dcut%2Den/"
+   ]
+  ],
+  "notes": [
+   [
+    "EXPORT",
+    "FT: Nvidia told Dell and Supermicro to halt AI server shipments to Malaysia, Singapore, Thailand and Indonesia; the US remote access rule took effect Nov 19.",
+    "https://www.trendforce.com/news/2026/11/26/news%2Dnvidia%2Dreportedly%2Dsuspends%2Dai%2Dserver%2Dshipments%2Dto%2Dfour%2Dsoutheast%2Dasian%2Dcountries%2Das%2Du%2Ds%2Dtargets%2Dchinese%2Dai%2Daccess"
+   ],
+   [
+    "PRICING",
+    "Cash closes: Sandisk +15.96%, Micron +7.60%, WDC +7.22%, AMD +4.56%, Lam +4.15%, AMAT +3.49%, TSMC +3.21%, ASML +1.75%, Nvidia +0.80%.",
+    "https://unusualwhales.com/"
+   ],
+   [
+    "DEMAND",
+    "TrendForce: cuts to Chinese cloud demand weigh on the 2027 memory price outlook.",
+    "https://www.trendforce.com/presscenter/news/20261125%2D13321.html"
+   ],
+   [
+    "KOREA",
+    "Kospi +4.34% to 4,915.68 Friday; SK hynix up over 6% premarket per TokenPost.",
+    "https://www.tokenpost.com/news/investing/63405"
+   ],
+   [
+    "JAPAN",
+    "Lasertec +10%, Kioxia +8.9%, Advantest +7.1%, Tokyo Electron +4.4% at Friday's close.",
+    "https://nerosignal.substack.com/p/tokyo%2Dbought%2Dthe%2Dchips%2Dand%2Dignored"
+   ],
+   [
+    "EARNINGS",
+    "Marvell and Credo report Tue Dec 1 after the close.",
+    "https://www.stocktitan.net/articles/earnings%2Dcalendar%2Dweek%2Dof%2Dnovember%2D30%2D2026"
+   ]
+  ]
+ },
+ "forecast": {
+  "dir": "up",
+  "date": "2026-11-30",
+  "ref": 7298.34,
+  "basis": "Close at the session high area with chips leading; Morgan Stanley IM's Slimmon told Reuters fast money had delevered out of tech, so the bounce could persist."
+ },
+ "daily": {
+  "asofTs": "2026-11-27T13:15:00-05:00",
+  "happened": "From the 9:30am open the S&P dipped to 7,211.46 (SPY low in the 10:05am bar), then climbed to close at 7,298.34, +1.61% vs Wednesday. Nasdaq +2.31% to 24,129.50, Dow +1.19% to 50,780.64 (Reuters).",
+  "cause": "Reuters: investors returning from Thanksgiving flocked to hard hit AI shares, and a strategist called the market oversold; volume was thin. No source explains the push in the last minutes.",
+  "causeSrc": "https://ca.investing.com/news/economy%2Dnews/wall%2Dstreet%2Dends%2Dhigher%2Das%2Dbattered%2Dai%2Dstocks%2Dgain%2Din%2Dvolatile%2Dweek%2D4983613",
+  "since": "Since the 9:19am brief the gap held and extended: the close at 7,298 is above the 7,267 implied top flagged then, confirming the bullish case. New: the FT Nvidia shipment halt report and TrendForce's 2028 DRAM warning. Reversed: Nvidia went from +2% at the open to +0.8%. No scheduled data since 9:19am.",
+  "expected": [],
+  "affected": [
+   [
+    "Memory (SNDK, MU, WDC)",
+    "up",
+    "Sandisk +15.96%, Micron +7.60%, WDC +7.22%, the biggest gains among chips."
+   ],
+   [
+    "Semis (SMH, SOXX, AMD, LRCX)",
+    "up",
+    "SMH +4.17%, SOXX +4.76%, AMD +4.56%, Lam +4.15%."
+   ],
+   [
+    "Nvidia",
+    "mixed",
+    "+0.80% after a 2% open; the FT shipment halt report is the main stock news."
+   ],
+   [
+    "Amazon",
+    "up",
+    "+3.96%; Motley Fool cites strong Black Friday demand."
+   ],
+   [
+    "Vertex",
+    "down",
+    "About −5% after the FDA extended its kidney drug review (Reuters)."
+   ],
+   [
+    "Treasuries",
+    "down",
+    "10 year near 4.93%, about +9 bp, in Reuters' late quote."
+   ]
+  ],
+  "priced": "SPXW options price ±1.00% for Monday and ±2.03% through Dec 4. CME FedWatch was near 99% for a Dec 9 hike Friday morning.",
+  "catalysts": [
+   [
+    "Tue 10:00am",
+    "ISM manufacturing (Nov), 55.2 expected",
+    "First big data after the rally; the prices index was 75.2."
+   ],
+   [
+    "Tue after close",
+    "Marvell earnings",
+    "Next AI chip print after the memory rebound."
+   ],
+   [
+    "Fri Dec 4 8:30am",
+    "Jobs report, 90K expected",
+    "Last payrolls before the Dec 9 FOMC."
+   ]
+  ],
+  "invalid": "A close back under 7,211, Friday's low, would undo the rebound; 7,183 is a full give back to Wednesday."
+ },
+ "gaps": [
+  [
+   "internals",
+   "No NYSE breadth (advancers, decliners, highs and lows) published for the half day by run time"
+  ]
+ ],
+ "internals": []
+}

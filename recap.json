@@ -1,16 +1,15 @@
 {
- "session": "2026-11-25",
- "label": "Wed Recap",
- "headline": "Morning flush, noon reversal. Chips still lost.",
+ "session": "2026-11-27",
+ "label": "Fri Recap",
+ "headline": "Memory leads a 1.6% half day rally. Nvidia sits it out.",
  "tags": [
-  "Inflation",
-  "Tariffs",
-  "Reversal",
-  "Chips"
+  "Chips",
+  "AI",
+  "Policy",
+  "Half day"
  ],
- "publishedAt": "2026-11-25T16:30:00-05:00",
- "publishedLabel": "Nov 25 2026, 4:30pm ET (in the page build of that day)",
- "file": "recaps/2026/11/2026-11-25.html",
- "version": 1,
- "legacy": true
+ "publishedAt": "2026-11-27T13:44:25-05:00",
+ "publishedLabel": "Nov 27 2026, 1:44pm ET",
+ "file": "recaps/2026/11/2026-11-27.html",
+ "version": 1
 }

@@ -36,5 +36,27 @@
   "label": "Fri 9:19am ET",
   "headline": "Gap up holds into the open; trade deficit widens more than expected.",
   "file": "2026-11-27/0919.json"
+ },
+ {
+  "date": "2026-11-27",
+  "time": "1342",
+  "kind": "brief",
+  "label": "Fri 1:42pm ET",
+  "headline": "Memory stocks lead a 1.6% half day rally; Nvidia lags.",
+  "file": "2026-11-27/1342.json"
+ },
+ {
+  "date": "2026-11-27",
+  "time": "1344",
+  "kind": "recap",
+  "label": "Fri Recap",
+  "headline": "Memory leads a 1.6% half day rally. Nvidia sits it out.",
+  "tags": [
+   "Chips",
+   "AI",
+   "Policy",
+   "Half day"
+  ],
+  "file": "recaps/2026/11/2026-11-27.html"
  }
 ]

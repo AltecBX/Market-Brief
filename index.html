@@ -228,7 +228,7 @@ html.m30 .x30h{display:none!important}
 <div class="pills" id="healthSec" style="display:none;margin-top:6px"><span class="k" style="align-self:center">Data as of</span><span id="health" style="display:contents"></span></div>
 
 
-<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Briefing</h2><span>Research signals only when validated</span></div><div class="grp ev" id="dec"></div></div>
+<div class="sec" id="secDec" style="display:none"><div class="sh"><h2>Briefing</h2><span id="decasof"></span></div><div class="grp ev" id="dec"></div></div>
 <div class="sec since" id="sinceSec" style="display:none">
 <div class="sh"><h2>What changed since your last visit</h2><span><button class="btn" id="markread" style="min-height:26px;padding:3px 10px;font-size:12px">Mark read</button></span></div>
 <div class="grp" id="since"></div>
@@ -266,7 +266,7 @@ html.m30 .x30h{display:none!important}
 
 <div class="sec xd"><div class="sh"><h2 id="plantitle">Game plan</h2></div><div class="grp"><div class="r" id="means"></div></div></div>
 
-<div class="sec x2" id="secAsk"><input class="search" id="askin" placeholder="Ask: why is Nvidia down, what is happening in Korea" autocomplete="off" enterkeyhint="search">
+<div class="sec x2" id="secAsk"><input class="search" id="askin" placeholder="Ask: Nvidia, oil, the Fed, Korea" autocomplete="off" enterkeyhint="search">
 <div class="chips" id="askchips" style="margin-top:2px"><button class="chipb" data-q="why did the market move">Why the move</button><button class="chipb" data-q="what changed since yesterday">What changed</button><button class="chipb" data-q="Fed rates yields">Fed and yields</button><button class="chipb" data-q="memory chips Korea">Memory and Korea</button><button class="chipb" data-q="biggest risks this week">Risks this week</button><button class="chipb" data-q="what do options imply">Options</button></div>
 <div class="grp" id="askout"></div></div>
 <details class="d sec" id="secCustom" style="margin-top:22px"><summary><div class="sh"><h2>Customize</h2><span>Saved on this device</span></div></summary><div class="grp pad" id="custom"></div></details>
@@ -969,6 +969,14 @@ var STUDIES = [
   function isHalfDay(d) { return !!HALFSET[d] }
   /* expected trading days of the Monday to Friday week containing d */
   function weekDays(d) { var m = ymdAdd(d, -ymdDow(d)), out = []; for (var i = 0; i < 5; i++) { var x = ymdAdd(m, i); if (isTradingDay(x)) out.push(x) } return out }
+  /* how many decimal or percent figures two texts share (used to skip a fallback line that repeats the line above it) */
+  function sameNumbers(a, b) { var tok = function (s) { return (String(s || '').replace(/<[^>]+>/g, '').match(/\d[\d,]*\.\d+%?|\d[\d,]*%/g) || []).map(function (x) { return x.replace(/,/g, '') }) }, A = tok(a), n = 0; tok(b).forEach(function (x) { if (A.indexOf(x) >= 0) n++ }); return n }
+  var DNAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], MNAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  /* 20261201 or '2026-12-01' to 'Tue Dec 1' */
+  function isoDay(d) { var s = String(d).replace(/-/g, ''); if (!/^\d{8}$/.test(s)) return String(d); var n = +s; return DNAMES[ymdDow(n)] + ' ' + MNAMES[+s.slice(4, 6) - 1] + ' ' + (+s.slice(6)) }
+  function dayName(d) { return DNAMES[ymdDow(+String(d).replace(/-/g, ''))] }
+  /* trading sessions left in d's week after d, and how many a full week would have left */
+  function restOfWeek(d) { var all = weekDays(d), left = all.filter(function (x) { return x > d }).length; return { left: left, normal: 4 - ymdDow(d) } }
   /* a week is complete only when every expected trading day is present and the last one has closed (asOf is the last date with data) */
   function weekComplete(W, asOf) { var exp = weekDays(W[0][0]), have = W.map(function (r) { return r[0] }); return exp.length > 0 && exp.every(function (x) { return have.indexOf(x) >= 0 }) && asOf >= exp[exp.length - 1] }
   function calendarCovered(d) { return d >= 20150101 && d <= 20271231 }
@@ -996,7 +1004,7 @@ var STUDIES = [
     return { z: z, material: (s >= 6 && z >= 2) || z >= 3 };
   }
 
-  return { materiality: materiality, iSession: iSession, isTradingDay: isTradingDay, isHalfDay: isHalfDay, weekDays: weekDays, weekComplete: weekComplete, ymdAdd: ymdAdd, calendarCovered: calendarCovered, etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
+  return { sameNumbers: sameNumbers, isoDay: isoDay, dayName: dayName, restOfWeek: restOfWeek, materiality: materiality, iSession: iSession, isTradingDay: isTradingDay, isHalfDay: isHalfDay, weekDays: weekDays, weekComplete: weekComplete, ymdAdd: ymdAdd, calendarCovered: calendarCovered, etParts: etParts, to30: to30, uwBars: uwBars, OUT2: OUT2, WFEAT: WFEAT, wkey: wkey, weeksOf: weeksOf, wstate: wstate, wctx: wctx, wpred: wpred, iDayCtx: iDayCtx, iCumv: iCumv, ymdDow: ymdDow, recovery2: recovery2, IFEAT: IFEAT, INAMES: INAMES, ifeat: ifeat, iout: iout, mlPredict: mlPredict, qLookup: qLookup, freqKey: freqKey, blockBoot: blockBoot, kaplanMeier: kaplanMeier, sigm: sigm, dayState: dayState, dayOutcome: dayOutcome, IKEYS: IKEYS, OUT: OUT, intradayPredict: intradayPredict, brierSkill: brierSkill, recovery: recovery, optionStrategies: optionStrategies, pickDelta: pickDelta, STUDIES: STUDIES, sg: sg, isNum: isNum, median: median, mean: mean, sd: sd, stats: stats, wilson: wilson, pMean: pMean, pProp: pProp, pearson: pearson, ncdf: ncdf, HZ: HZ, runStudy: runStudy, summarize: summarize, walkForward: walkForward, completed: completed, pivots: pivots, vwap: vwap, swing: swing, structure: structure, classify: classify, exhaustion: exhaustion, emRange: emRange, emUsed: emUsed, impactCalc: impactCalc, scoreForecasts: scoreForecasts, FEAT: FEAT, features: features, neighbors: neighbors, fwdRet: fwdRet };
 })();
 if (typeof module !== 'undefined') module.exports = CORE;
 
@@ -1169,8 +1177,15 @@ function renderStatus() {
 }
 function lastCloseMs(ms) { for (var i = 0; i < 10; i++) { var p = et(ms - i * 864e5); if (!isTradingDay(p)) continue; var t = etMs(p.y, p.m, p.d, HALF[p.key] ? 13 : 16, 0); if (t <= ms) return t } return null }
 /* Freshness: 'session' means the data must come from the latest completed cash session. A number means hours. */
+/* the most recent scheduled update that should have published by now (45 minutes of slack) */
+function dueRunMs(now) {
+  var e = CORE.etParts(now), d = e.d;
+  for (var k = 0; k < 10; k++, d = CORE.ymdAdd(d, -1)) { if (CORE.ymdDow(d) > 4) continue; for (var i = SLOTS.length - 1; i >= 0; i--) { var t = etMs(Math.floor(d / 1e4), Math.floor(d / 100) % 100, d % 100, Math.floor(SLOTS[i] / 100), SLOTS[i] % 100); if (t + 45 * 60e3 <= now) return t } }
+  return null;
+}
 function freshness(ts, rule) {
   var t = ts ? new Date(ts).getTime() : NaN; if (!isFinite(t)) return { ok: false, txt: 'time unknown' };
+  if (rule === 'slot') { var due = dueRunMs(Date.now()); return { ok: !due || t >= due - 20 * 60e3, txt: tET(t, true) + (due && t < due - 20 * 60e3 ? ', the ' + tET(due, true) + ' update is missing' : '') } }
   if (rule === 'session') { var lc = lastCloseMs(Date.now()); return { ok: !lc || t >= lc - 45 * 60e3, txt: tET(t, true) } }
   return { ok: Date.now() - t <= rule * 36e5, txt: tET(t, true) };
 }
@@ -1352,8 +1367,8 @@ function applyBrief(nb) {
   $('optasof').innerHTML = 'From ' + freshTag(B.opt.asofTs, 'session', B.opt.asof || '');
   $('recaptab').textContent = RECAPMETA ? RECAPMETA.label : (B.recapLabel || 'Recap');
   $('picksasof').textContent = B.updatedLabel || '';
-  $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (B.next ? ', next ' + esc(B.next) : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
-  var hl = [['Brief', B.updated, 6], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
+  $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (nextRun() ? ', next update ' + nextRun() : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
+  var hl = [['Brief', B.updated, 'slot'], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
   if (B.semis) hl.push(['Chip notes', B.semis.asofTs, 72]); if (B.priced) hl.push(['Priced in', B.priced.asofTs, 24]);
   var bad = hl.filter(function (x) { return !freshness(x[1], x[2]).ok });
   $('health').innerHTML = hl.map(function (x) { var fr = freshness(x[1], x[2]); return '<span class="pill ' + (fr.ok ? '' : 'a') + '">' + esc(x[0]) + ' ' + esc(fr.txt) + (fr.ok ? '' : ', stale') + '</span>' }).join('');
@@ -1388,7 +1403,7 @@ function renderOpt(spx) {
     var used = spx ? (spx - b) / m * 100 : null;
     h += '<div class="r"><div class="h"><b>' + esc(e[0]) + '</b><span class="num"><b>±' + f(m, 0) + ' pts</b> <span class="mut">±' + (+e[1]).toFixed(2) + '% · ' + esc(e[2]) + ' · ' + esc(e[3] || 'SPX') + '</span></span></div>' +
       '<div class="bar2"><div class="rail"></div><div class="rng" style="left:' + P(lo) + '%;width:' + (P(hi) - P(lo)) + '%"></div><div class="ctr" style="left:' + P(b) + '%"></div>' + (spx ? '<div class="ld" style="left:' + P(spx) + '%"></div>' : '') + '</div>' +
-      '<div class="ends"><span>' + f(lo, 0) + '</span><span>' + (isNum(used) ? Math.abs(used).toFixed(0) + '% of the ' + (used >= 0 ? 'up' : 'down') + ' move used · ' + f(hi - spx, 0) + ' pts to top, ' + f(spx - lo, 0) + ' to bottom' : '') + '</span><span>' + f(hi, 0) + '</span></div></div>';
+      '<div class="ends"><span>' + f(lo, 0) + '</span><span>' + (isNum(used) ? Math.abs(used).toFixed(0) + '% of the ' + (used >= 0 ? 'up' : 'down') + ' move used · ' + (spx > hi ? f(spx - hi, 0) + ' pts above the top' : spx < lo ? f(lo - spx, 0) + ' pts below the bottom' : f(hi - spx, 0) + ' pts to top, ' + f(spx - lo, 0) + ' to bottom') : '') + '</span><span>' + f(hi, 0) + '</span></div></div>';
   });
   if (O.emSpy && O.emSpy.length) h += '<div class="r"><b>SPY options, for comparison</b><div class="k">' + O.emSpy.map(function (e) { var m = O.spyBase * e[1] / 100; return esc(e[2]) + ' ±' + (+e[1]).toFixed(2) + '%, ' + f(O.spyBase - m, 2) + ' to ' + f(O.spyBase + m, 2) }).join('<br>') + '</div></div>';
   $('emrows').innerHTML = h;
@@ -1397,16 +1412,25 @@ function renderOpt(spx) {
   $('gxrows').innerHTML = (O.gex || []).map(function (g) { var tag = (O.levels || []).filter(function (l) { var best = O.gex.reduce(function (a, x) { return Math.abs(x[0] - l[1]) < Math.abs(a[0] - l[1]) ? x : a }); return best[0] === g[0] && Math.abs(l[1] - g[0]) < 15 }).map(function (l) { return l[0] }).join(', '); return '<div class="gx' + (g[0] === near ? ' near' : '') + '"><span class="num"><b>' + f(g[0], 0) + '</b></span><span class="gb"><i style="width:' + (g[1] / mx * 100) + '%;background:var(--gfill)"></i><i style="width:' + (-g[2] / mx * 100) + '%;background:var(--rfill)"></i></span><span class="lb">' + esc(tag) + '</span></div>' }).join('');
   $('lvchips').innerHTML = (O.levels || []).map(function (l) { return '<span class="pill ' + ({ r: 'r', g: 'g', a: 'a' }[l[2]] || 'b') + '">' + esc(l[0]) + ' ' + f(l[1], 0) + '</span>' }).join('');
 }
+/* the scheduled update times (ET, weekdays), the same list as tools/health.js */
+var SLOTS = [712, 912, 1312, 1512, 1612, 2012];
+function nextRun(now) {
+  var e = CORE.etParts(now || Date.now()), d = e.d, lab = function (hm) { var h = Math.floor(hm / 100), m = hm % 100; return (h % 12 || 12) + ':' + (m < 10 ? '0' : '') + m + (h < 12 ? 'am' : 'pm') };
+  if (CORE.ymdDow(d) < 5) for (var i = 0; i < SLOTS.length; i++) if (e.hm < SLOTS[i]) return lab(SLOTS[i]);
+  do { d = CORE.ymdAdd(d, 1) } while (CORE.ymdDow(d) > 4); return CORE.dayName(d) + ' ' + lab(SLOTS[0]);
+}
 function allLevels() {
   var O = B.opt, L = [];
-  (B.ladder.marks || []).forEach(function (m) { L.push([m[1], m[0], 'Brief']) });
   (O.levels || []).forEach(function (l) { L.push([l[0], l[1], 'Options, ' + O.asof]) });
   (O.em || []).slice(0, 2).forEach(function (e) { var m = O.base * e[1] / 100; L.push([e[0] + ' high', O.base + m, 'Implied move']); L.push([e[0] + ' low', O.base - m, 'Implied move']) });
   L.push([B.base.label, B.base.spx, 'Cash close']);
   if (OVN.hi) { L.push(['Overnight high', OVN.hi, 'Perp since ' + baseDay() + ' close']); L.push(['Overnight low', OVN.lo, 'Perp since ' + baseDay() + ' close']) }
   if (OVN.vwap) L.push(['Perp VWAP', OVN.vwap, 'Since ' + baseDay() + ' close']);
   if (OR.hi) { L.push(['Opening range high', OR.hi, '9:30 to 10:00 perp']); L.push(['Opening range low', OR.lo, '9:30 to 10:00 perp']) }
-  var seen = {}; return L.filter(function (l) { var k = l[0] + Math.round(l[1]); if (seen[k] || !isNum(l[1])) return false; seen[k] = 1; return true }).sort(function (a, b) { return b[1] - a[1] });
+  /* brief levels last, so a named options or price level wins a tie; a brief's "Perps 7,288" mark is a snapshot of the live price, not a level */
+  (B.ladder.marks || []).forEach(function (m) { if (/^perps?\b/i.test(m[1])) return; L.push([String(m[1]).replace(/\s*[\d,.]{3,}$/, ''), m[0], 'Brief']) });
+  var kept = []; L.forEach(function (l) { if (!isNum(l[1]) || kept.some(function (k) { return Math.abs(k[1] - l[1]) < 1 })) return; kept.push(l) });
+  return kept.sort(function (a, b) { return b[1] - a[1] });
 }
 function renderLevels(spx) {
   var L = allLevels(), h = '', placed = false;
@@ -1924,7 +1948,7 @@ function weeklyState(sym, light) {
     var cx = CORE.wctx(Wk, wi, rows, k, vm), s = CORE.wstate(w, j, cx), out = {};
     Object.keys(I.outcomes).forEach(function (o) { var q = I.outcomes[o]; if (o === 'recover' && s.c >= s.o) return; out[o] = { p: CORE.wpred(q.model, s.x), name: q.name, validated: !!q.promoted, beats: q.beatsBench, fam: q.display } });
     var rk = Math.round(s.x[3] * 4) + '|' + Math.min(2, Math.floor(s.x[1] * 3));
-    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.weekComplete(w, rows[k][0]) };
+    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.weekComplete(w, rows[k][0]), normalRest: (function (r) { return r.left === r.normal })(CORE.restOfWeek(rows[k][0])) };
   });
 }
 function renderWeekly() {
@@ -1963,7 +1987,7 @@ function renderCC() {
 var RECS = { x: 10, days: 1, syms: ['NVDA', 'MU', 'AMD', 'WDC', 'SMH', 'SOXX'] };
 function renderRecovery() {
   var el = $('rrec'), all = ['NVDA', 'MU', 'AMD', 'WDC', 'SMH', 'SOXX'];
-  Promise.all(all.map(function (s) { return Promise.all([hrows(s + '10'), hrows(s).catch(function () { return null })]) })).then(function (x) {
+  Promise.all(all.map(function (s) { return Promise.all([hrows(s + '10'), /* daily highs and lows exist only for these */ ['NVDA', 'MU', 'AMD', 'SMH'].indexOf(s) >= 0 ? hrows(s).catch(function () { return null }) : null]) })).then(function (x) {
     var L = RECS.syms.map(function (s) { var r = x[all.indexOf(s)], j = RAW['data/hist/' + s + '10.json'], o = { sym: s, d: r[0].map(function (q) { return q[0] }), c: r[0].map(function (q) { return q[q.length - 1] }), breaks: j.breaks || [] }; if (r[1]) { o.low = {}; r[1].forEach(function (q) { o.low[q[0]] = q[3] }) } return o });
     var R = CORE.recovery2(L, RECS.x, { days: RECS.days }), h = '<div class="chips" style="margin:8px 0 4px">' + all.map(function (s) { return '<button class="chipb' + (RECS.syms.indexOf(s) >= 0 ? ' on' : '') + '" data-rsym="' + s + '">' + s + '</button>' }).join('') + '</div>';
     h += '<label class="hp"><span>Decline of at least</span><input type="number" inputmode="decimal" id="recx" value="' + RECS.x + '" step="1"><span class="k">%</span></label><label class="hp"><span>Over this many sessions</span><input type="number" inputmode="numeric" id="recd" value="' + RECS.days + '"><span></span></label>';
@@ -2000,7 +2024,7 @@ function renderRegistry() {
     R.signals.filter(function (s) { return s.cls === sel }).forEach(function (s) {
       var ec = /useful|beat holding$/i.test(s.econ) && !/Not/.test(s.econ) ? 'g' : /Not economically|did not/.test(s.econ) ? 'r' : '';
       h += '<details class="r"><summary><span class="pill ' + tone[s.cls] + '">' + esc(s.cls) + '</span> <span class="pill ' + ec + '">' + esc(s.econ || 'Not tested') + '</span> <b>' + esc(s.name) + '</b></summary><div class="k">' + F.filter(function (q) { return s[q[0]] != null && s[q[0]] !== '' }).map(function (q) { var v = s[q[0]]; if (/^\d{8}$/.test(String(v))) v = dlab(v); return esc(q[1]) + ': ' + esc(String(v)) }).join('. ') + (s.why ? '. ' + esc(s.why) : '') + (s.prospective && s.prospective.sessions ? '. Prospective: ' + s.prospective.sessions + ' sessions, skill ' + s.prospective.bss : '') + '</div></details>' });
-    h += '<div class="r k">' + esc(R.rules) + ' Ledger: ' + (R.distinct || 0) + ' distinct configurations, append only. Last run ' + esc(R.asof.slice(0, 10)) + '.</div>';
+    h += '<div class="r k">' + esc(String(R.rules).replace(/\s*Multiple testing (uses|counts)[^.]*\./, '')) + ' Multiple testing counts ' + R.tests + ' configurations: ' + (R.distinct || 0) + ' in the append only ledger and ' + (R.tests - (R.distinct || 0)) + ' preset studies. Last run ' + esc(tET(Date.parse(R.asof), true)) + ' ET.</div>';
     $('rreg').innerHTML = h;
   }).catch(function () { $('rreg').innerHTML = '<div class="r mut">Registry not computed yet.</div>' });
 }
@@ -2036,7 +2060,7 @@ setInterval(function () { if (session(Date.now()).st === 'open' && $('p-hist').c
 function renderHealth() {
   loadRes('health').then(function (H) {
     var bad = H.issues || [], el = $('rhealth');
-    if (el) el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">' + bad.length + ' unresolved:</b> ' + bad.map(function (i) { return esc(i.name) + ' (' + esc(i.detail) + ')' }).join('; ') + '. ' : '') + (H.items.length - bad.length) + ' of ' + H.items.length + ' checks passed at ' + esc(H.asof.slice(0, 16).replace('T', ' ')) + ' UTC, against the last session ' + dlab(H.lastSession) + '.</div>';
+    if (el) el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">' + bad.length + ' unresolved:</b> ' + bad.map(function (i) { return esc(i.name) + ' (' + esc(i.detail) + ')' }).join('; ') + '. ' : '') + (H.items.length - bad.length) + ' of ' + H.items.length + ' checks passed at ' + esc(tET(Date.parse(H.asof), true)) + ' ET, against the last session ' + dlab(H.lastSession) + '.</div>';
     /* the Brief shows unresolved issues in one folded line, so they are visible but do not crowd the briefing */
     if (bad.length) { $('sysSec').style.display = ''; $('syssum').innerHTML = '<span class="dn">' + bad.length + ' system issue' + (bad.length > 1 ? 's' : '') + '</span> · tap for detail'; $('syslist').innerHTML = bad.map(function (i) { return '<div class="r full"><b>' + esc(i.name) + '</b> <span class="k">' + esc(i.detail) + '</span><div class="k">Next step: ' + esc(i.action) + '</div></div>' }).join('') } else $('sysSec').style.display = 'none';
   }).catch(function () { if ($('rhealth')) $('rhealth').innerHTML = '<div class="r full mut">Data health not computed yet.</div>' });
@@ -2278,7 +2302,7 @@ function analyzeRev(rs, bt, now) {
 function renderRev() {
   var sec = $('secRev'); if (!REV || !REV.label) { sec.style.display = 'none'; return } sec.style.display = '';
   var r = REV, down = r.s.dir > 0, tone = /sustainable reversal$|Broad recovery/.test(r.label) ? 'g' : /lower|Broad fade/.test(r.label) ? 'r' : 'a';
-  $('revasof').textContent = 'S&P perp, ' + r.win + ', ' + r.n + ' completed candles';
+  $('revasof').textContent = 'S&P perp, ' + r.win;
   var h = '<div class="r full"><span class="pill ' + tone + '">' + esc(r.label) + '</span> <span class="k">' + (r.s.rec * 100).toFixed(0) + '% of the ' + sg(r.s.move) + ' move retraced since the ' + (down ? 'low' : 'high') + ' at ' + tET(r.s.et, true) + '. Confirmation ' + r.conf + ' of 5' + (r.why.length ? ': ' + esc(r.why.join(', ')) : '') + '.</span></div>';
   if (r.exh && r.exh.length) h += '<div class="r full"><b>Exhaustion signs, ' + r.exh.length + ' of 6</b><div class="k">' + r.exh.map(esc).join('. ') + '. These suggest the ' + (down ? 'selling' : 'buying') + ' is losing force; none of them is a reversal by itself.</div></div>';
   h += r.ev.map(function (e) { return '<div class="r xd"><span>' + esc(e[0]) + '</span><b class="num">' + esc(e[1]) + '</b></div>' }).join('');
@@ -2368,37 +2392,42 @@ function materialItems() {
 function renderDecision() {
   var el = $('dec'); if (!el) return; var s = px('xyz:SP500') || null;
   var D = B.daily || null, GP = {}; (B.gaps || []).forEach(function (g) { GP[g[0]] = g[1] });
-  var inv = invalItems(), mats = materialItems(), h = '', missing = [], row = function (q, a, note) { if (a.indexOf('\u0001') === 0) { missing.push(q.toLowerCase() + (a.length > 1 ? ' (' + a.slice(1) + ')' : '')); return } h += '<div class="r full"><span class="k">' + q + (note ? ' <span class="mut">' + note + '</span>' : '') + '</span><div>' + a + '</div></div>' };
-  var miss = function (k) { return '\u0001' + (GP[k] ? esc(GP[k]) : '') }, der = 'derived';
+  var inv = invalItems(), mats = materialItems(), h = '', missing = [], row = function (q, a, cls) { if (a.indexOf('\u0001') === 0) { missing.push(q.toLowerCase() + (a.length > 1 ? ' (' + a.slice(1) + ')' : '')); return } h += '<div class="r full' + (cls ? ' ' + cls : '') + '"><span class="k">' + q + '</span><div>' + a + '</div></div>' };
+  var miss = function (k) { return '\u0001' + (GP[k] ? esc(GP[k]) : '') };
   /* material moves against the brief's call also invalidate it */
   var fdir = B.forecast && B.forecast.dir; mats.forEach(function (m) { if (fdir && m.z >= 2 && /SPY|SPX|QQQ|NDX/.test(m.lbl || '') && ((fdir === 'up' && m.mv < 0) || (fdir === 'down' && m.mv > 0))) inv.push('Material headline moved ' + esc(m.lbl) + ' ' + sg(m.mv) + ' against the brief\'s ' + fdir + ' call: "' + esc(m.h) + '".') });
-  row('What happened', D && D.happened ? lite(D.happened) : lite(B.lede || B.headline || ''), D && D.happened ? '' : der);
-  row('What caused it', D && D.cause ? lite(D.cause) + (D.causeSrc ? ' <a href="' + esc(D.causeSrc) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') : (B.top3 && B.top3[0] ? '<b>' + lite(B.top3[0][0]) + '.</b> ' + lite(B.top3[0][1]) : miss('daily')), D && D.cause ? '' : (B.top3 ? 'top development, no sourced cause stated' : ''));
-  var chg = s ? 'S&amp;P perp ' + f(s, 0) + ', ' + sg((s / B.base.spx - 1) * 100) + ' vs the last close' + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since this brief' : '') + '.' : 'Live prices unavailable right now.';
-  row('Since the previous briefing', (inv.length ? '<b class="dn">' + inv[0] + '</b> ' : '') + (D && D.since ? lite(D.since) + ' ' : '') + '<span class="k">' + chg + '</span>');
+  var hap = D && D.happened ? D.happened : (B.lede || B.headline || ''); row('What happened', lite(hap));
+  /* without a sourced cause, fall back to the top development only when it adds something the first row did not already say */
+  var t0 = B.top3 && B.top3[0], dup = t0 && CORE.sameNumbers ? CORE.sameNumbers(hap, t0[1]) >= 2 : false;
+  row('What caused it', D && D.cause ? lite(D.cause) + (D.causeSrc ? ' <a href="' + esc(D.causeSrc) + '" target="_blank" rel="noopener noreferrer">source</a>' : '') : (t0 && !dup ? '<b>' + lite(t0[0]) + '.</b> ' + lite(t0[1]) : miss('daily')));
+  var chg = s ? 'S&amp;P perp ' + f(s, 0) + ': ' + sg((s / ((B.base.perp && B.base.perp['xyz:SP500']) || B.base.spx) - 1) * 100) + ' vs the ' + esc(B.base.label || 'last close') + (PUB ? ', ' + sg((s / PUB.px - 1) * 100) + ' since this brief' : '') + '.' : 'Live prices unavailable right now.';
+  row('Since this brief', (inv.length ? '<b class="dn">' + inv[0] + '</b> ' : '') + (D && D.since ? lite(D.since) + ' ' : '') + '<span class="k">' + chg + '</span>');
   if (mats.length) row('Material developments', mats.map(function (m) { return '<b>' + esc(m.t) + '</b> ' + (m.src ? '<a href="' + esc(m.src) + '" target="_blank" rel="noopener noreferrer">' + esc(m.h) + '</a>' : esc(m.h)) + (m.txt ? ' <span class="k">' + (m.brief ? lite(m.txt) : m.txt) + '</span>' : '') }).join('<br>'));
   var ex = D && D.expected && D.expected.length ? D.expected : ((B.priced && B.priced.data) || []).filter(function (r) { return r[4] }).map(function (r) { return [r[0], r[2], r[4], ''] });
-  row('Expected vs actual', ex.length ? ex.slice(0, 4).map(function (r) { return esc(r[0]) + ': expected ' + esc(r[1]) + ', actual <b>' + esc(r[2]) + '</b>' }).join('<br>') : (D ? 'Nothing released since the previous brief.' : miss('daily')), D && D.expected && D.expected.length ? '' : (ex.length ? der : ''));
+  row('Expected vs actual', ex.length ? ex.slice(0, 4).map(function (r) { return esc(r[0]) + ': expected ' + esc(r[1]) + ', actual <b>' + esc(r[2]) + '</b>' }).join('<br>') : (D ? 'Nothing released since the previous brief.' : miss('daily')), 'x2');
   var af = D && D.affected && D.affected.length ? D.affected.map(function (r) { return '<span class="' + (r[1] === 'up' ? 'up' : r[1] === 'down' ? 'dn' : '') + '">' + esc(r[0]) + '</span> ' + lite(r[2]) }) : (B.stories || []).slice(0, 3).map(function (x) { return esc(x.assets) + ': ' + lite(x.h) });
-  row('Stocks and sectors affected', af.length ? af.join('<br>') : miss('daily'), D && D.affected ? '' : (af.length ? der : ''));
-  var pr = D && D.priced ? lite(D.priced) : '', e0 = B.opt.em && B.opt.em[0]; if (!pr && e0) pr = 'Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]) + '.';
-  row('Already priced in', pr || miss('priced'), D && D.priced ? '' : (pr ? der : ''));
-  var cat = D && D.catalysts && D.catalysts.length ? D.catalysts.map(function (c) { return '<b>' + esc(c[0]) + '</b> ' + lite(c[1]) + (c[2] ? ' <span class="k">' + lite(c[2]) + '</span>' : '') }) : (B.events7 || []).filter(function (e) { return e[3] >= 3 }).slice(0, 3).map(function (e) { return '<b>' + esc(e[0].slice(5) + ' ' + e[1]) + '</b> ' + esc(e[2]) });
-  row('Next catalysts', cat.length ? cat.slice(0, 3).join('<br>') : miss('events7'), D && D.catalysts ? '' : (cat.length ? der : ''));
-  var sc = s ? scenarioNow(s) : {}; row('What would invalidate the outlook', D && D.invalid ? lite(D.invalid) : (sc.inval ? lite(sc.inval) : miss('daily')), D && D.invalid ? '' : (sc.inval ? der : ''));
+  row('Stocks and sectors affected', af.length ? af.join('<br>') : miss('daily'), 'x2');
+  var pr = D && D.priced ? lite(D.priced) : '', e0 = B.opt.em && B.opt.em[0], emTxt = '';
+  if (e0) { var u = s && fresh('xyz:SP500') ? CORE.emUsed(B.opt.base, e0[1], s) : null; emTxt = 'Options priced ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]) + ' from the ' + esc(B.opt.asof || 'last close') + (u ? '; the S&amp;P perp has used <b class="' + (Math.abs(u.used) > 100 ? 'dn' : '') + '">' + Math.abs(u.used).toFixed(0) + '%</b> of the ' + (u.used >= 0 ? 'up' : 'down') + ' move' + (Math.abs(u.used) > 100 ? ', already outside it' : '') : '') + '.' }
+  row('Already priced in', (pr ? pr + (emTxt ? '<div class="k">' + emTxt + '</div>' : '') : emTxt) || miss('priced'), 'x2');
+  var cat = D && D.catalysts && D.catalysts.length ? D.catalysts.map(function (c) { return '<b>' + esc(c[0]) + '</b> ' + lite(c[1]) + (c[2] ? ' <span class="k">' + lite(c[2]) + '</span>' : '') }) : (B.events7 || []).filter(function (e) { return e[3] >= 3 }).slice(0, 3).map(function (e) { return '<b>' + esc(CORE.isoDay(e[0]) + ' ' + e[1]) + '</b> ' + esc(e[2]) });
+  row('Next catalysts', cat.length ? cat.slice(0, 3).join('<br>') : miss('events7'));
+  var sc = s ? scenarioNow(s) : {}; row('What would invalidate the outlook', D && D.invalid ? lite(D.invalid) : (sc.inval ? lite(sc.inval) : miss('daily')));
+  var rk = (B.risks || []).slice(0, 2); row('Main risks', rk.length ? rk.map(function (r) { return '<b>' + esc(r[0]) + '</b> ' + lite(r[1]) }).join('<br>') : miss('risks'));
   /* research: only promoted signals */
   var nx = [], ev = [];
   (DEC.w || []).forEach(function (W) { if (W.fri) return; var cn = I2PERP[W.sym], pb = B.base && B.base.perp && B.base.perp[cn], lv = cn && px(cn) && fresh(cn) && pb ? W.s.c * px(cn) / pb : null; Object.keys(W.out).forEach(function (o) { var q = W.out[o]; if (!q.validated || Math.abs(q.p - 0.5) < 0.15) return; if (lv && ((o === 'highSet' && lv > W.s.hi) || (o === 'lowSet' && lv < W.s.lo))) return; nx.push(W.sym + ' this week: ' + q.name.toLowerCase() + ', ' + pc(q.p)); var g = (DEC.reg && DEC.reg.signals || []).filter(function (x) { return x.name === W.sym + ' weekly: ' + q.name })[0]; if (g) ev.push(esc(g.name) + ': ' + esc(g.oos) + ', ' + esc(g.ci)) }) });
   if (DEC.i) CORE.OUT2.forEach(function (o) { var q = DEC.i.out[o]; if (q.promoted && !q.blocked) nx.push('SPY today: ' + DEC.i.W.outcomes[o].name.toLowerCase() + ' ' + pc(q.p)) });
-  row('Research signals', nx.length ? nx.slice(0, 3).join('<br>') + (ev.length ? '<div class="k">' + ev.slice(0, 2).join('<br>') + '</div>' : '') : 'None qualifies today. A signal shows here only after it beats its benchmark out of sample and makes money after costs; History has the full record.');
+  row('Research signals', nx.length ? nx.slice(0, 3).join('<br>') + (ev.length ? '<div class="k">' + ev.slice(0, 2).join('<br>') + '</div>' : '') : 'None validated. A signal appears only after it beats its benchmark out of sample and pays after costs.', 'x2');
   var dn = [];
   if (s && DEC.i && DEC.i.q && DEC.i.src !== 'perp') dn.push('Rest of today: 1 in 10 similar sessions fell another ' + Math.abs(DEC.i.q.dn[0]).toFixed(2) + '% or more (S&amp;P ' + f(s * (1 + DEC.i.q.dn[0] / 100), 0) + ')');
-  var ws = (DEC.w || []).filter(function (W) { return W.sym === 'SPY' && !W.fri && W.rng })[0]; if (ws) dn.push('Rest of this week: 1 in 10 similar weeks fell another ' + Math.abs(ws.rng.dn[0]).toFixed(2) + '% or more');
-  if (e0) dn.push('Options price ±' + e0[1].toFixed(2) + '% to ' + esc(e0[2]));
-  row('Realistic downside', dn.length ? dn.join('<br>') : 'n/a');
+  /* the weekly range is keyed by weekday, so it only applies when the rest of this week has its usual number of sessions (not in a holiday week) */
+  var ws = (DEC.w || []).filter(function (W) { return W.sym === 'SPY' && !W.fri && W.rng && W.normalRest })[0]; if (ws) dn.push('Rest of this week, from the ' + esc(CORE.dayName(ws.d)) + ' close: 1 in 10 similar weeks fell another ' + Math.abs(ws.rng.dn[0]).toFixed(2) + '% or more');
+  if (!dn.length && e0) { var lo = B.opt.base * (1 - e0[1] / 100); dn.push('Bottom of the options range to ' + esc(e0[2]) + ': S&amp;P ' + f(lo, 0) + (s ? ' (' + sg((lo / s - 1) * 100) + ' from here)' : '')) }
+  if (dn.length) row('Realistic downside', dn.join('<br>'), 'x2');
   if (missing.length) h += '<div class="r full k">Not in this update: ' + missing.join(', ') + '.</div>';
   if (inv.length > 1) h += inv.slice(1).map(function (x) { return '<div class="r full k">' + x + '</div>' }).join('');
-  if (D && D.asofTs) h += '<div class="r full k">Briefing as of ' + esc(tET(new Date(D.asofTs).getTime(), true)) + '.</div>';
+  if ($('decasof')) $('decasof').textContent = 'As of ' + (D && D.asofTs ? tET(new Date(D.asofTs).getTime(), true) : (B.updatedLabel || '').replace(/ ET$/, '')) + ', prices live';
   el.innerHTML = h; $('secDec').style.display = '';
   loadDecision();
 }

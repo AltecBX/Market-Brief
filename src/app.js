@@ -167,8 +167,15 @@ function renderStatus() {
 }
 function lastCloseMs(ms) { for (var i = 0; i < 10; i++) { var p = et(ms - i * 864e5); if (!isTradingDay(p)) continue; var t = etMs(p.y, p.m, p.d, HALF[p.key] ? 13 : 16, 0); if (t <= ms) return t } return null }
 /* Freshness: 'session' means the data must come from the latest completed cash session. A number means hours. */
+/* the most recent scheduled update that should have published by now (45 minutes of slack) */
+function dueRunMs(now) {
+  var e = CORE.etParts(now), d = e.d;
+  for (var k = 0; k < 10; k++, d = CORE.ymdAdd(d, -1)) { if (CORE.ymdDow(d) > 4) continue; for (var i = SLOTS.length - 1; i >= 0; i--) { var t = etMs(Math.floor(d / 1e4), Math.floor(d / 100) % 100, d % 100, Math.floor(SLOTS[i] / 100), SLOTS[i] % 100); if (t + 45 * 60e3 <= now) return t } }
+  return null;
+}
 function freshness(ts, rule) {
   var t = ts ? new Date(ts).getTime() : NaN; if (!isFinite(t)) return { ok: false, txt: 'time unknown' };
+  if (rule === 'slot') { var due = dueRunMs(Date.now()); return { ok: !due || t >= due - 20 * 60e3, txt: tET(t, true) + (due && t < due - 20 * 60e3 ? ', the ' + tET(due, true) + ' update is missing' : '') } }
   if (rule === 'session') { var lc = lastCloseMs(Date.now()); return { ok: !lc || t >= lc - 45 * 60e3, txt: tET(t, true) } }
   return { ok: Date.now() - t <= rule * 36e5, txt: tET(t, true) };
 }
@@ -350,8 +357,8 @@ function applyBrief(nb) {
   $('optasof').innerHTML = 'From ' + freshTag(B.opt.asofTs, 'session', B.opt.asof || '');
   $('recaptab').textContent = RECAPMETA ? RECAPMETA.label : (B.recapLabel || 'Recap');
   $('picksasof').textContent = B.updatedLabel || '';
-  $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (B.next ? ', next ' + esc(B.next) : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
-  var hl = [['Brief', B.updated, 6], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
+  $('footupd').innerHTML = 'Brief ' + esc(B.updatedLabel || '') + (nextRun() ? ', next update ' + nextRun() : '') + '. Live prices: Hyperliquid perps. News: Unusual Whales. Options: Unusual Whales, ' + esc(B.opt.asof || '') + '. ' + esc(B.base.closesSrc || '');
+  var hl = [['Brief', B.updated, 'slot'], ['Cash closes', B.base.ts, 'session'], ['Options', B.opt.asofTs, 'session'], ['VIX curve', B.opt.vix && B.opt.vix.asofTs, 'session']];
   if (B.semis) hl.push(['Chip notes', B.semis.asofTs, 72]); if (B.priced) hl.push(['Priced in', B.priced.asofTs, 24]);
   var bad = hl.filter(function (x) { return !freshness(x[1], x[2]).ok });
   $('health').innerHTML = hl.map(function (x) { var fr = freshness(x[1], x[2]); return '<span class="pill ' + (fr.ok ? '' : 'a') + '">' + esc(x[0]) + ' ' + esc(fr.txt) + (fr.ok ? '' : ', stale') + '</span>' }).join('');
@@ -386,7 +393,7 @@ function renderOpt(spx) {
     var used = spx ? (spx - b) / m * 100 : null;
     h += '<div class="r"><div class="h"><b>' + esc(e[0]) + '</b><span class="num"><b>±' + f(m, 0) + ' pts</b> <span class="mut">±' + (+e[1]).toFixed(2) + '% · ' + esc(e[2]) + ' · ' + esc(e[3] || 'SPX') + '</span></span></div>' +
       '<div class="bar2"><div class="rail"></div><div class="rng" style="left:' + P(lo) + '%;width:' + (P(hi) - P(lo)) + '%"></div><div class="ctr" style="left:' + P(b) + '%"></div>' + (spx ? '<div class="ld" style="left:' + P(spx) + '%"></div>' : '') + '</div>' +
-      '<div class="ends"><span>' + f(lo, 0) + '</span><span>' + (isNum(used) ? Math.abs(used).toFixed(0) + '% of the ' + (used >= 0 ? 'up' : 'down') + ' move used · ' + f(hi - spx, 0) + ' pts to top, ' + f(spx - lo, 0) + ' to bottom' : '') + '</span><span>' + f(hi, 0) + '</span></div></div>';
+      '<div class="ends"><span>' + f(lo, 0) + '</span><span>' + (isNum(used) ? Math.abs(used).toFixed(0) + '% of the ' + (used >= 0 ? 'up' : 'down') + ' move used · ' + (spx > hi ? f(spx - hi, 0) + ' pts above the top' : spx < lo ? f(lo - spx, 0) + ' pts below the bottom' : f(hi - spx, 0) + ' pts to top, ' + f(spx - lo, 0) + ' to bottom') : '') + '</span><span>' + f(hi, 0) + '</span></div></div>';
   });
   if (O.emSpy && O.emSpy.length) h += '<div class="r"><b>SPY options, for comparison</b><div class="k">' + O.emSpy.map(function (e) { var m = O.spyBase * e[1] / 100; return esc(e[2]) + ' ±' + (+e[1]).toFixed(2) + '%, ' + f(O.spyBase - m, 2) + ' to ' + f(O.spyBase + m, 2) }).join('<br>') + '</div></div>';
   $('emrows').innerHTML = h;
@@ -395,16 +402,25 @@ function renderOpt(spx) {
   $('gxrows').innerHTML = (O.gex || []).map(function (g) { var tag = (O.levels || []).filter(function (l) { var best = O.gex.reduce(function (a, x) { return Math.abs(x[0] - l[1]) < Math.abs(a[0] - l[1]) ? x : a }); return best[0] === g[0] && Math.abs(l[1] - g[0]) < 15 }).map(function (l) { return l[0] }).join(', '); return '<div class="gx' + (g[0] === near ? ' near' : '') + '"><span class="num"><b>' + f(g[0], 0) + '</b></span><span class="gb"><i style="width:' + (g[1] / mx * 100) + '%;background:var(--gfill)"></i><i style="width:' + (-g[2] / mx * 100) + '%;background:var(--rfill)"></i></span><span class="lb">' + esc(tag) + '</span></div>' }).join('');
   $('lvchips').innerHTML = (O.levels || []).map(function (l) { return '<span class="pill ' + ({ r: 'r', g: 'g', a: 'a' }[l[2]] || 'b') + '">' + esc(l[0]) + ' ' + f(l[1], 0) + '</span>' }).join('');
 }
+/* the scheduled update times (ET, weekdays), the same list as tools/health.js */
+var SLOTS = [712, 912, 1312, 1512, 1612, 2012];
+function nextRun(now) {
+  var e = CORE.etParts(now || Date.now()), d = e.d, lab = function (hm) { var h = Math.floor(hm / 100), m = hm % 100; return (h % 12 || 12) + ':' + (m < 10 ? '0' : '') + m + (h < 12 ? 'am' : 'pm') };
+  if (CORE.ymdDow(d) < 5) for (var i = 0; i < SLOTS.length; i++) if (e.hm < SLOTS[i]) return lab(SLOTS[i]);
+  do { d = CORE.ymdAdd(d, 1) } while (CORE.ymdDow(d) > 4); return CORE.dayName(d) + ' ' + lab(SLOTS[0]);
+}
 function allLevels() {
   var O = B.opt, L = [];
-  (B.ladder.marks || []).forEach(function (m) { L.push([m[1], m[0], 'Brief']) });
   (O.levels || []).forEach(function (l) { L.push([l[0], l[1], 'Options, ' + O.asof]) });
   (O.em || []).slice(0, 2).forEach(function (e) { var m = O.base * e[1] / 100; L.push([e[0] + ' high', O.base + m, 'Implied move']); L.push([e[0] + ' low', O.base - m, 'Implied move']) });
   L.push([B.base.label, B.base.spx, 'Cash close']);
   if (OVN.hi) { L.push(['Overnight high', OVN.hi, 'Perp since ' + baseDay() + ' close']); L.push(['Overnight low', OVN.lo, 'Perp since ' + baseDay() + ' close']) }
   if (OVN.vwap) L.push(['Perp VWAP', OVN.vwap, 'Since ' + baseDay() + ' close']);
   if (OR.hi) { L.push(['Opening range high', OR.hi, '9:30 to 10:00 perp']); L.push(['Opening range low', OR.lo, '9:30 to 10:00 perp']) }
-  var seen = {}; return L.filter(function (l) { var k = l[0] + Math.round(l[1]); if (seen[k] || !isNum(l[1])) return false; seen[k] = 1; return true }).sort(function (a, b) { return b[1] - a[1] });
+  /* brief levels last, so a named options or price level wins a tie; a brief's "Perps 7,288" mark is a snapshot of the live price, not a level */
+  (B.ladder.marks || []).forEach(function (m) { if (/^perps?\b/i.test(m[1])) return; L.push([String(m[1]).replace(/\s*[\d,.]{3,}$/, ''), m[0], 'Brief']) });
+  var kept = []; L.forEach(function (l) { if (!isNum(l[1]) || kept.some(function (k) { return Math.abs(k[1] - l[1]) < 1 })) return; kept.push(l) });
+  return kept.sort(function (a, b) { return b[1] - a[1] });
 }
 function renderLevels(spx) {
   var L = allLevels(), h = '', placed = false;

@@ -258,4 +258,15 @@ const rc = series(cl.map((v, q) => v)); rc.breaks = [rc.d[26]]; rc.sym = 'T'; co
   Hh.run();
 }
 
+/* readable dates and holiday aware week ranges */
+{
+  ok(C.isoDay('2026-12-01') === 'Tue Dec 1' && C.isoDay(20261127) === 'Fri Nov 27' && C.isoDay('TBD') === 'TBD', 'ISO dates become day labels');
+  ok(C.dayName(20261125) === 'Wed', 'weekday name');
+  const r1 = C.restOfWeek(20261125), r2 = C.restOfWeek(20261118);
+  ok(r1.left === 1 && r1.normal === 2, 'Thanksgiving week: one session left after Wednesday, not the usual two');
+  ok(r2.left === 2 && r2.normal === 2, 'a normal week has two sessions left after Wednesday');
+  ok(C.sameNumbers('S&P +1.73% and Nasdaq +2.35% at 5:43am', 'S&P futures +1.73%, Nasdaq 100 +2.35%') === 2, 'repeated figures are detected');
+  ok(C.sameNumbers('S&P +1.73%', 'Brent $97.62, WTI $86.05') === 0, 'different figures are not');
+}
+
 console.log(fails ? fails + ' of ' + n + ' failed' : 'all ' + n + ' passed'); process.exit(fails ? 1 : 0);

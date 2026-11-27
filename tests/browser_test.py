@@ -4,7 +4,7 @@
 Checks: no page errors in every scenario; iPhone 16 Pro Max layout (440 x 956) without sideways scrolling; the Briefing answers
 its questions; perp API failure; stale data (clock moved 3 days ahead); a brief with blocks missing; Thanksgiving; the Friday
 1pm early close; going offline; a refused data key."""
-import json, sys
+import re, json, sys
 from playwright.sync_api import sync_playwright
 
 import os
@@ -39,8 +39,19 @@ with sync_playwright() as pw:
     ok(not errs, "normal load has no page errors " + str(errs[:2]))
     ok(pg.evaluate("document.documentElement.scrollWidth") <= 440, "no sideways scrolling at 440 wide")
     txt = pg.inner_text("#dec") if pg.is_visible("#secDec") else ""
-    for q in ("What happened", "What caused it", "Since the previous briefing", "Expected vs actual", "Stocks and sectors affected", "Already priced in", "Next catalysts", "What would invalidate the outlook", "Research signals", "Realistic downside"):
+    for q in ("What happened", "What caused it", "Since this brief", "Expected vs actual", "Stocks and sectors affected", "Already priced in", "Next catalysts", "What would invalidate the outlook", "Main risks", "Research signals"):
         ok(q in txt or ('Not in this update' in txt and q.lower() in txt.lower()), "Briefing answers or names as missing: " + q)
+    ok(not re.search(r"\b\d{4}-\d{2}-\d{2}\b|\b\d{2}-\d{2} ", txt), "Briefing shows readable dates, no ISO dates")
+    ok("derived" not in txt, "no internal source labels in the Briefing")
+    pg.click("#mode [data-m='30']"); pg.wait_for_timeout(500)
+    t30 = pg.inner_text("#dec")
+    ok("What happened" in t30 and "Stocks and sectors affected" not in t30 and "Research signals" not in t30, "30 seconds keeps only the essential Briefing rows")
+    pg.click("#mode [data-m='2']"); pg.wait_for_timeout(300)
+    pg.click("#tabs [data-p=opts]"); pg.wait_for_timeout(1500)
+    sim = pg.inner_text("#simout")
+    ok(not re.search(r"(\d[\d,]{3,}) \1", sim) and "Perps" not in sim, "simulator levels have no repeated numbers or stale perp snapshots")
+    pg.click("#tabs [data-p=brief]"); pg.wait_for_timeout(300)
+    ok("next update" in pg.inner_text("#footupd"), "footer shows the next scheduled update")
     vis = pg.evaluate("[].filter.call(document.querySelectorAll('#p-brief .sec'), s => s.offsetHeight > 0).length")
     hgt = pg.evaluate("document.querySelector('#p-brief') ? document.querySelector('#p-brief').scrollHeight : document.body.scrollHeight")
     print("     2 minute view: %d visible sections, %d px tall (%.1f screens)" % (vis, hgt, hgt / 956))

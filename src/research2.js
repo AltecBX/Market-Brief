@@ -97,7 +97,7 @@ function weeklyState(sym, light) {
     var cx = CORE.wctx(Wk, wi, rows, k, vm), s = CORE.wstate(w, j, cx), out = {};
     Object.keys(I.outcomes).forEach(function (o) { var q = I.outcomes[o]; if (o === 'recover' && s.c >= s.o) return; out[o] = { p: CORE.wpred(q.model, s.x), name: q.name, validated: !!q.promoted, beats: q.beatsBench, fam: q.display } });
     var rk = Math.round(s.x[3] * 4) + '|' + Math.min(2, Math.floor(s.x[1] * 3));
-    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.weekComplete(w, rows[k][0]) };
+    return { sym: sym, d: rows[k][0], day: j, last: ymdOf(rows[k][0]), s: s, out: out, rng: I.ranges[rk], I: I, fri: CORE.weekComplete(w, rows[k][0]), normalRest: (function (r) { return r.left === r.normal })(CORE.restOfWeek(rows[k][0])) };
   });
 }
 function renderWeekly() {
@@ -136,7 +136,7 @@ function renderCC() {
 var RECS = { x: 10, days: 1, syms: ['NVDA', 'MU', 'AMD', 'WDC', 'SMH', 'SOXX'] };
 function renderRecovery() {
   var el = $('rrec'), all = ['NVDA', 'MU', 'AMD', 'WDC', 'SMH', 'SOXX'];
-  Promise.all(all.map(function (s) { return Promise.all([hrows(s + '10'), hrows(s).catch(function () { return null })]) })).then(function (x) {
+  Promise.all(all.map(function (s) { return Promise.all([hrows(s + '10'), /* daily highs and lows exist only for these */ ['NVDA', 'MU', 'AMD', 'SMH'].indexOf(s) >= 0 ? hrows(s).catch(function () { return null }) : null]) })).then(function (x) {
     var L = RECS.syms.map(function (s) { var r = x[all.indexOf(s)], j = RAW['data/hist/' + s + '10.json'], o = { sym: s, d: r[0].map(function (q) { return q[0] }), c: r[0].map(function (q) { return q[q.length - 1] }), breaks: j.breaks || [] }; if (r[1]) { o.low = {}; r[1].forEach(function (q) { o.low[q[0]] = q[3] }) } return o });
     var R = CORE.recovery2(L, RECS.x, { days: RECS.days }), h = '<div class="chips" style="margin:8px 0 4px">' + all.map(function (s) { return '<button class="chipb' + (RECS.syms.indexOf(s) >= 0 ? ' on' : '') + '" data-rsym="' + s + '">' + s + '</button>' }).join('') + '</div>';
     h += '<label class="hp"><span>Decline of at least</span><input type="number" inputmode="decimal" id="recx" value="' + RECS.x + '" step="1"><span class="k">%</span></label><label class="hp"><span>Over this many sessions</span><input type="number" inputmode="numeric" id="recd" value="' + RECS.days + '"><span></span></label>';
@@ -173,7 +173,7 @@ function renderRegistry() {
     R.signals.filter(function (s) { return s.cls === sel }).forEach(function (s) {
       var ec = /useful|beat holding$/i.test(s.econ) && !/Not/.test(s.econ) ? 'g' : /Not economically|did not/.test(s.econ) ? 'r' : '';
       h += '<details class="r"><summary><span class="pill ' + tone[s.cls] + '">' + esc(s.cls) + '</span> <span class="pill ' + ec + '">' + esc(s.econ || 'Not tested') + '</span> <b>' + esc(s.name) + '</b></summary><div class="k">' + F.filter(function (q) { return s[q[0]] != null && s[q[0]] !== '' }).map(function (q) { var v = s[q[0]]; if (/^\d{8}$/.test(String(v))) v = dlab(v); return esc(q[1]) + ': ' + esc(String(v)) }).join('. ') + (s.why ? '. ' + esc(s.why) : '') + (s.prospective && s.prospective.sessions ? '. Prospective: ' + s.prospective.sessions + ' sessions, skill ' + s.prospective.bss : '') + '</div></details>' });
-    h += '<div class="r k">' + esc(R.rules) + ' Ledger: ' + (R.distinct || 0) + ' distinct configurations, append only. Last run ' + esc(R.asof.slice(0, 10)) + '.</div>';
+    h += '<div class="r k">' + esc(String(R.rules).replace(/\s*Multiple testing (uses|counts)[^.]*\./, '')) + ' Multiple testing counts ' + R.tests + ' configurations: ' + (R.distinct || 0) + ' in the append only ledger and ' + (R.tests - (R.distinct || 0)) + ' preset studies. Last run ' + esc(tET(Date.parse(R.asof), true)) + ' ET.</div>';
     $('rreg').innerHTML = h;
   }).catch(function () { $('rreg').innerHTML = '<div class="r mut">Registry not computed yet.</div>' });
 }
@@ -209,7 +209,7 @@ setInterval(function () { if (session(Date.now()).st === 'open' && $('p-hist').c
 function renderHealth() {
   loadRes('health').then(function (H) {
     var bad = H.issues || [], el = $('rhealth');
-    if (el) el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">' + bad.length + ' unresolved:</b> ' + bad.map(function (i) { return esc(i.name) + ' (' + esc(i.detail) + ')' }).join('; ') + '. ' : '') + (H.items.length - bad.length) + ' of ' + H.items.length + ' checks passed at ' + esc(H.asof.slice(0, 16).replace('T', ' ')) + ' UTC, against the last session ' + dlab(H.lastSession) + '.</div>';
+    if (el) el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">' + bad.length + ' unresolved:</b> ' + bad.map(function (i) { return esc(i.name) + ' (' + esc(i.detail) + ')' }).join('; ') + '. ' : '') + (H.items.length - bad.length) + ' of ' + H.items.length + ' checks passed at ' + esc(tET(Date.parse(H.asof), true)) + ' ET, against the last session ' + dlab(H.lastSession) + '.</div>';
     /* the Brief shows unresolved issues in one folded line, so they are visible but do not crowd the briefing */
     if (bad.length) { $('sysSec').style.display = ''; $('syssum').innerHTML = '<span class="dn">' + bad.length + ' system issue' + (bad.length > 1 ? 's' : '') + '</span> · tap for detail'; $('syslist').innerHTML = bad.map(function (i) { return '<div class="r full"><b>' + esc(i.name) + '</b> <span class="k">' + esc(i.detail) + '</span><div class="k">Next step: ' + esc(i.action) + '</div></div>' }).join('') } else $('sysSec').style.display = 'none';
   }).catch(function () { if ($('rhealth')) $('rhealth').innerHTML = '<div class="r full mut">Data health not computed yet.</div>' });

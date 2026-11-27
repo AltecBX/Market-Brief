@@ -23,7 +23,7 @@ orig = open(os.path.join(tmp, "archive/recaps/2026/11/2026-11-25.html"), encodin
 code, out = run("check", "wed.html", "--session", "2026-11-25")
 ok(code != 0 and "missing section id options" in out and "sources" in out, "a recap without options intelligence and sources is not complete")
 
-full = wed.replace('<h2 id="next">', '<h2 id="options">OPTIONS</h2><p>Expected move and positioning text for the session.</p><h2 id="next">').replace("</section>", "</section>", 1)
+full = wed.replace('<h2 id="next">', '<h2 id="options">OPTIONS</h2><p>Expected move and positioning text for the session.</p><h2 id="next" data-outlook=\'{"bull": 7201.09, "bear": 6970.11, "call": "Base"}\'>')
 full += '<h2 id="sources">SOURCES</h2><p id="sources"><a href="https://www.cboe.com/">Cboe</a> <a href="https://www.reuters.com/">Reuters</a> <a href="https://www.cnbc.com/">CNBC</a></p>'
 full = full.replace('<h2 id="sources">', '<h2>')  # one id only
 open(os.path.join(tmp, "full.html"), "w").write(full)
@@ -44,6 +44,12 @@ json.dump({"session": "2026-11-30", "label": "Mon Recap", "file": "x"}, open(os.
 bad = full.replace('data-session="2026-11-25"', 'data-session="2026-11-24"'); open(os.path.join(tmp, "old.html"), "w").write(bad)
 code, out = run("install", "old.html", "--session", "2026-11-24")
 ok(code != 0 and "older than the published recap" in out, "an older recap never replaces a newer one")
+nooutlook = full.replace("data-outlook=", "data-x="); open(os.path.join(tmp, "noout.html"), "w").write(nooutlook)
+code, out = run("check", "noout.html", "--session", "2026-11-25")
+ok(code != 0 and "data-outlook" in out, "a recap without a scoreable outlook is refused")
+open(os.path.join(tmp, "late.html"), "w").write(bad)
+code, out = run("install", "late.html", "--session", "2026-11-24", "--late")
+ok(code == 0 and os.path.exists(os.path.join(tmp, "archive/recaps/2026/11/2026-11-24.html")) and json.load(open(os.path.join(tmp, "recap.json")))["session"] == "2026-11-30", "a late recap for a missed session is archived without replacing the newer recap")
 code, out = run("check", "full.html", "--session", "2026-11-24")
 ok(code != 0 and "data-session" in out, "the session in the recap must match")
 evil = full.replace("<h1>", '<h1 onclick="x()">').replace("</h1>", '</h1><script>alert(1)</script>'); open(os.path.join(tmp, "evil.html"), "w").write(evil)

@@ -2,7 +2,8 @@
 var R2 = { sym: 'SPY', bar: null, out: 'highDone', wsym: 'NVDA', csym: 'NVDA' }, RAW = {};
 var I2SYMS = ['SPY', 'QQQ', 'SMH', 'NVDA', 'MU', 'AMD', 'SNDK'], I2REF = { SPY: 'SMH', QQQ: 'SMH', SMH: 'SPY', NVDA: 'SMH', MU: 'SMH', AMD: 'SMH', SNDK: 'SMH' }, I2PERP = { SPY: 'xyz:SP500', QQQ: 'xyz:XYZ100', SMH: 'xyz:SMH', NVDA: 'xyz:NVDA', MU: 'xyz:MU', AMD: 'xyz:AMD', SNDK: 'xyz:SNDK' };
 var I2SLOTS = [[5, 'early', 1, '9:35'], [10, 'early', 2, '9:40'], [15, 'early', 3, '9:45'], [30, 'early', 6, '10:00'], [60, 'late', 2, '10:30'], [90, 'late', 3, '11:00'], [120, 'late', 4, '11:30'], [150, 'late', 5, '12:00'], [180, 'late', 6, '12:30'], [210, 'late', 7, '1:00'], [240, 'late', 8, '1:30'], [270, 'late', 9, '2:00'], [300, 'late', 10, '2:30'], [330, 'late', 11, '3:00'], [360, 'late', 12, '3:30']];
-function rawJ(p) { return RAW[p] ? Promise.resolve(RAW[p]) : fetch(p, { cache: 'default' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { RAW[p] = j; return j }) }
+var RAWP = {};
+function rawJ(p) { if (RAW[p]) return Promise.resolve(RAW[p]); if (RAWP[p]) return RAWP[p]; return RAWP[p] = fetch(p, { cache: 'default' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { RAW[p] = j; return j }).catch(function (e) { delete RAWP[p]; throw e }) }
 function hrows(s) { return rawJ('data/hist/' + s + '.json').then(function (j) { return j.rows }) }
 function ymdOf(s) { return +String(s).replace(/-/g, '') }
 function etp(ms) { return CORE.etParts(ms) }
@@ -88,8 +89,9 @@ function i2table(W) {
 }
 
 /* ---- weekly ---- */
-function weeklyState(sym) {
-  return Promise.all([hrows(sym), hrows('VIX'), loadRes('weekly')]).then(function (x) {
+function weeklyState(sym, light) {
+  /* light: ranges only (no model inputs needed), so the 300 KB VIX history is skipped */
+  return Promise.all([hrows(sym), light ? [] : hrows('VIX'), loadRes('weekly')]).then(function (x) {
     var rows = x[0], Wk = CORE.weeksOf(rows), wi = Wk.length - 1, w = Wk[wi], j = w.length - 1, k = rows.length - 1, vm = {}; x[1].forEach(function (r) { vm[r[0]] = r[4] });
     var I = x[2].inst[sym]; if (!I || I.error) return null;
     var cx = CORE.wctx(Wk, wi, rows, k, vm), s = CORE.wstate(w, j, cx), out = {};
@@ -205,8 +207,11 @@ setInterval(function () { if (session(Date.now()).st === 'open' && $('p-hist').c
     s.querySelector('.sh').addEventListener('click', function (e) { if (e.target.closest('button,input,a')) return; s.classList.toggle('closed'); if (s.classList.contains('closed')) delete open[k]; else open[k] = 1; LS('mb_hopen', open) }) });
 })();
 function renderHealth() {
-  var el = $('rhealth'); if (!el) return;
-  loadRes('health').then(function (H) { var bad = H.items.filter(function (i) { return !i.ok });
-    el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">Behind:</b> ' + bad.map(function (i) { return esc(i.name) + (i.last ? ' (through ' + dlab(i.last) + ')' : ' (' + esc(i.note || 'missing') + ')') }).join(', ') + '. ' : '') + 'Research data checked ' + esc(H.asof.slice(0, 10)) + ' against the last session ' + dlab(H.lastSession) + '; ' + (H.items.length - bad.length) + ' of ' + H.items.length + ' inputs current.</div>' })
-    .catch(function () { el.innerHTML = '<div class="r full mut">Data health not computed yet.</div>' });
+  loadRes('health').then(function (H) {
+    var bad = H.issues || [], el = $('rhealth');
+    if (el) el.innerHTML = '<div class="r full k">' + (bad.length ? '<b class="dn">' + bad.length + ' unresolved:</b> ' + bad.map(function (i) { return esc(i.name) + ' (' + esc(i.detail) + ')' }).join('; ') + '. ' : '') + (H.items.length - bad.length) + ' of ' + H.items.length + ' checks passed at ' + esc(H.asof.slice(0, 16).replace('T', ' ')) + ' UTC, against the last session ' + dlab(H.lastSession) + '.</div>';
+    /* the Brief shows unresolved issues in one folded line, so they are visible but do not crowd the briefing */
+    if (bad.length) { $('sysSec').style.display = ''; $('syssum').innerHTML = '<span class="dn">' + bad.length + ' system issue' + (bad.length > 1 ? 's' : '') + '</span> · tap for detail'; $('syslist').innerHTML = bad.map(function (i) { return '<div class="r full"><b>' + esc(i.name) + '</b> <span class="k">' + esc(i.detail) + '</span><div class="k">Next step: ' + esc(i.action) + '</div></div>' }).join('') } else $('sysSec').style.display = 'none';
+  }).catch(function () { if ($('rhealth')) $('rhealth').innerHTML = '<div class="r full mut">Data health not computed yet.</div>' });
 }
+setTimeout(renderHealth, 3000); setInterval(renderHealth, 10 * 60e3);

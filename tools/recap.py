@@ -2,6 +2,7 @@
 
   python3 tools/recap.py install <draft.html> --session YYYY-MM-DD [--tags "Fed,Tariffs"] [--correction "what was fixed"]
   python3 tools/recap.py check <draft.html> --session YYYY-MM-DD      (validate only)
+  add --late to archive a missed earlier session; it never replaces a newer recap on the Recap tab
 
 A draft is accepted only if:
   * the session is a completed NYSE trading session (its 4pm, or 1pm on half days, close passed at least 10 minutes ago),
@@ -30,7 +31,7 @@ def core(expr):
 class Scan(HTMLParser):
     BAD = {"script", "style", "iframe", "object", "embed", "link", "meta", "form", "input", "button", "textarea", "base"}
     def __init__(self):
-        super().__init__(); self.err = []; self.ids = set(); self.svg = 0; self.h1 = ""; self.inh1 = False; self.links = 0; self.sources = False; self.secdata = None; self.session = None; self.kicker = False; self.pills = 0; self.in_sources = 0
+        super().__init__(); self.err = []; self.ids = set(); self.svg = 0; self.h1 = ""; self.inh1 = False; self.links = 0; self.sources = False; self.secdata = None; self.session = None; self.kicker = False; self.pills = 0; self.in_sources = 0; self.outlook = None
     def handle_starttag(self, tag, attrs):
         a = dict(attrs)
         if tag in self.BAD: self.err.append("not allowed: <" + tag + ">")
@@ -45,6 +46,7 @@ class Scan(HTMLParser):
         if tag == "h1": self.inh1 = True
         if tag == "a" and a.get("href", "").startswith("https://") and self.in_sources: self.links += 1
         if a.get("id") == "sectors": self.secdata = a.get("data-sectors")
+        if a.get("id") == "next": self.outlook = a.get("data-outlook")
         if "data-session" in a: self.session = a["data-session"]
         cls = (a.get("class") or "").split()
         if "kicker" in cls: self.kicker = True
@@ -77,6 +79,11 @@ def validate(html, session):
     except ValueError:
         err.append("#sectors needs data-sectors with 5 or more [name, % change] rows")
     if s.links < 3: err.append("sources section needs 3 or more https links")
+    try:
+        o = json.loads(s.outlook or "null")
+        if not isinstance(o, dict) or not all(isinstance(o.get(k), (int, float)) for k in ("bull", "bear")) or o.get("call") not in ("Bull", "Base", "Bear") or o["bull"] <= o["bear"]: raise ValueError
+    except ValueError:
+        err.append("the next section needs data-outlook='{\"bull\": S&P level, \"bear\": S&P level, \"call\": \"Bull\"|\"Base\"|\"Bear\"}' so the outlook can be scored later")
     if s.session != session: err.append("hero data-session must be " + session + " (found " + str(s.session) + ")")
     if re.search(r"—|–| - ", re.sub(r"<[^>]+>", " ", html)): err.append("no hyphens or dashes in visible text")
     return err
@@ -136,7 +143,8 @@ def install(path, session, tags, correction):
     html = open(path, encoding="utf-8").read()
     err = validate(html, session)
     cur = json.load(open("recap.json")) if os.path.exists("recap.json") else None
-    if cur and cur["session"] > session: err.append("older than the published recap (" + cur["session"] + "); the published one stays")
+    late = "--late" in sys.argv
+    if cur and cur["session"] > session and not late: err.append("older than the published recap (" + cur["session"] + "); the published one stays (use --late for a missed session)")
     y, m = session[:4], session[5:7]
     base = os.path.join("archive", "recaps", y, m, session)
     v, dst = 1, base + ".html"
@@ -150,10 +158,12 @@ def install(path, session, tags, correction):
     meta = {"session": session, "label": DAYS[d.weekday()] + " Recap", "headline": s.h1.strip(), "tags": auto_tags(session, tags),
             "publishedAt": datetime.now(ET).isoformat(timespec="seconds"), "publishedLabel": when_label(datetime.now(ET)), "file": dst[len("archive/"):], "version": v}
     if correction: meta["correction"] = correction
+    if late: meta["late"] = True; meta["publishedLabel"] += " (late, the session's recap was missed)"
     os.makedirs(os.path.dirname(dst), exist_ok=True)
     open(dst, "w", encoding="utf-8").write(standalone(html, meta))
-    open("recap.html", "w", encoding="utf-8").write(html)
-    json.dump(meta, open("recap.json", "w"), indent=1, ensure_ascii=False)
+    if not (cur and cur["session"] > session):  # a late recap for an older session never replaces the newer one on the Recap tab
+        open("recap.html", "w", encoding="utf-8").write(html)
+        json.dump(meta, open("recap.json", "w"), indent=1, ensure_ascii=False)
     idxp = os.path.join("archive", "index.json"); idx = json.load(open(idxp)) if os.path.exists(idxp) else []
     idx.append({"date": session, "time": datetime.now(ET).strftime("%H%M"), "kind": "recap", "label": meta["label"] + (" (correction " + str(v) + ")" if v > 1 else ""), "headline": meta["headline"], "tags": meta["tags"], "file": meta["file"]})
     idx.sort(key=lambda e: (e["date"], e["time"], e["kind"]))

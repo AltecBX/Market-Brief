@@ -555,8 +555,12 @@ function loadMem() {
   fetch('archive/index.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (a) { MEM = Array.isArray(a) ? a.slice().reverse() : []; drawMem() }).catch(function () { $('memlist').innerHTML = '<div class="r mut">Archive not available yet.</div>'; $('rcal').innerHTML = '<div class="r mut">Archive not available yet.</div>' });
 }
 function memMatch(e, q) { return !q || (e.headline + ' ' + e.label + ' ' + e.date + ' ' + (e.tags || []).join(' ')).toLowerCase().indexOf(q) >= 0 }
+var RSTATS = null;
+function loadRecapStats(cb) { if (RSTATS) return cb(); fetch('data/research/recaps.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { RSTATS = j; cb() }).catch(function () { RSTATS = { sessions: {} }; cb() }) }
+function recapTags(e) { var s = RSTATS && RSTATS.sessions[e.date], t = (e.tags || []).slice(); if (s) s.tags.forEach(function (g) { if (t.indexOf(g) < 0) t.push(g) }); return t }
 function drawRecapCal() {
-  var q = ($('memq').value || '').toLowerCase(), R = (MEM || []).filter(function (e) { return e.kind === 'recap' }), el = $('rcal');
+  if (!RSTATS) return loadRecapStats(drawRecapCal);
+  var q = ($('memq').value || '').toLowerCase(), R = (MEM || []).filter(function (e) { return e.kind === 'recap' }).map(function (e) { return Object.assign({}, e, { tags: recapTags(e) }) }), el = $('rcal');
   if (!R.length) { el.innerHTML = '<div class="r mut">No recaps archived yet.</div>'; return }
   var byDate = {}; R.forEach(function (e) { (byDate[e.date] = byDate[e.date] || []).push(e) });
   var years = Object.keys(R.reduce(function (o, e) { o[e.date.slice(0, 4)] = 1; return o }, {})).sort().reverse(); if (!RC.y || years.indexOf(RC.y) < 0) RC.y = years[0];
@@ -576,10 +580,21 @@ function drawRecapCal() {
   h += list.slice(0, 60).map(function (e) { return '<div class="rl" data-rf="' + esc(e.file) + '" data-rl="' + esc(e.label + ', ' + dlab(+e.date.replace(/-/g, ''))) + '"><b>' + esc(e.label) + '</b> <span class="mut">' + dlab(+e.date.replace(/-/g, '')) + '</span><div>' + esc(e.headline || '') + '</div>' + (e.tags && e.tags.length ? '<div class="tg">' + esc(e.tags.join(' · ')) + '</div>' : '') + '</div>' }).join('') || '<div class="r mut">No recap matches.</div>';
   el.innerHTML = h;
 }
+function recapAfter(S) {
+  var H = RSTATS.horizons, h = '<div class="r k">Computed later from daily closes, separate from the original recap below, which is never edited.</div><div class="r hrow head" style="grid-template-columns:62px repeat(' + H.length + ',1fr)"><span>Session</span>' + H.map(function (k) { return '<b>' + k + (k === 1 ? ' day' : '') + '</b>' }).join('') + '</div>';
+  RSTATS.syms.forEach(function (s) { var f = S.fwd[s]; if (!f) return; h += '<div class="r hrow" style="grid-template-columns:62px repeat(' + H.length + ',1fr)"><span>' + s + '</span>' + H.map(function (k) { var v = f[k]; return '<span class="num ' + (v == null ? 'mut' : (s === 'VIX' ? v <= 0 : v >= 0) ? 'up' : 'dn') + '">' + (v == null ? 'later' : s === 'VIX' ? (v >= 0 ? '+' : '\u2212') + Math.abs(v).toFixed(1) : sg(v)) + '</span>' }).join('') + '</div>' });
+  h += '<div class="r k">Stocks and ETFs: % change from the session close. VIX: change in points. "later" means not enough sessions have passed.</div>';
+  var o = S.outlook;
+  if (o && o.levels) { h += '<div class="r"><b>Outlook check</b> <span class="k">' + esc(o.source) + ': bull above ' + f(o.levels.bull, 0) + ', bear below ' + f(o.levels.bear, 0) + (o.call ? ', call ' + esc(o.call) : '') + '</span>' + o.checks.map(function (c) { return '<div class="k">' + (c.k === 1 ? 'Next session' : 'Within ' + c.k + ' sessions') + ': ' + (c.pending ? 'pending' : 'S&amp;P closed ' + f(c.close, 0) + ' in the ' + c.zone + ' zone' + (c.bullHit ? ', bull level reached' : '') + (c.bearHit ? ', bear level broken' : '') + (c.callRight == null ? '' : c.callRight ? ', call right' : ', call wrong')) + '</div>' }).join('') + '</div>' }
+  else h += '<div class="r k">Outlook check: ' + esc(o ? o.source : 'not available') + '.</div>';
+  if (S.extreme && S.extreme.length) h += '<div class="r k">Extreme moves that session: ' + esc(S.extreme.join(', ')) + '</div>';
+  return h;
+}
 function openRecapArchive(file, label) {
   if (!/^recaps\/\d{4}\/\d{2}\/\d{4}-\d{2}-\d{2}(-v\d+)?\.html$/.test(file)) return;
   var th = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
   $('rvtitle').textContent = label; $('rframe').src = 'archive/' + file + '#' + th; $('rview').style.display = ''; $('rview').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  var S = null; Object.keys((RSTATS && RSTATS.sessions) || {}).forEach(function (k) { var s = RSTATS.sessions[k]; if (s.versions.indexOf(file) >= 0) S = s }); $('rafter').innerHTML = S ? recapAfter(S) : '<div class="r mut">Later performance not computed yet.</div>';
 }
 window.addEventListener('message', function (e) { if (e.data && typeof e.data.recapHeight === 'number' && e.source === $('rframe').contentWindow) $('rframe').style.height = Math.min(20000, Math.max(400, e.data.recapHeight + 20)) + 'px' });
 $('rcal').addEventListener('click', function (e) { var b = e.target.closest('[data-ry],[data-rm],[data-rt],[data-rd],[data-rf]'); if (!b) return;

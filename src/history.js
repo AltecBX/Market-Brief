@@ -80,7 +80,8 @@ function openStudy(id, P) { HS.id = id; HS.P = P || {}; HS.from = 0; HS.to = 999
 
 /* Research computed on the close by tools/research.js */
 var RES = {};
-function loadRes(n) { return RES[n] ? Promise.resolve(RES[n]) : fetch('data/research/' + n + '.json', { cache: 'default' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { RES[n] = j; return j }) }
+var RESP = {};
+function loadRes(n) { if (RES[n]) return Promise.resolve(RES[n]); if (RESP[n]) return RESP[n]; return RESP[n] = fetch('data/research/' + n + '.json', { cache: 'default' }).then(function (r) { if (!r.ok) throw 0; return r.json() }).then(function (j) { RES[n] = j; return j }).catch(function (e) { delete RESP[n]; throw e }) }
 function renderResearch() {
   loadRes('semis').then(function (m) {
     var h = '<div class="r k">' + esc(m.note) + ' ' + m.days + ' days from ' + dlab(m.from) + ' to ' + dlab(m.to) + ', ' + m.dropped + ' Asian holiday days dropped. Computed ' + esc(m.asof.slice(0, 10)) + '.</div><div class="r hrow head"><span>Asia, then US</span><b>Coefficient, adjusted p</b><b>Out of sample</b></div>';
@@ -116,7 +117,7 @@ function renderFingerprint() {
 
 /* Automatic matches: today's conditions checked against the presets, shown on the Brief */
 function autoHist() {
-  Promise.all([loadHist(['SPX', 'VIX', 'SPY']), loadRes('registry').catch(function () { return null })]).then(function (z) {
+  loadRes('registry').catch(function () { return null }).then(function (reg) { if (!reg || !reg.signals.some(function (s) { return s.id && s.cls === 'Validated' })) { $('autoSec').style.display = 'none'; return null } return Promise.all([loadHist(['SPX', 'VIX', 'SPY']), reg]) }).then(function (z) { if (!z) return;
     var VAL = {}; ((z[1] && z[1].signals) || []).forEach(function (s) { if (s.id && s.cls === 'Validated') VAL[s.id] = 1 });
     var S = HIST.SPX, V = HIST.VIX, Y = HIST.SPY, cand = [], n = S.c.length - 1;
     var dc = (S.c[n] / S.c[n - 1] - 1) * 100; if (dc <= -1.5) cand.push(['spxdown', { x: Math.floor(-dc * 2) / 2 }, 'S&P closed ' + sg(dc) + ' on ' + dlab(S.d[n])]);

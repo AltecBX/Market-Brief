@@ -245,4 +245,17 @@ const rc = series(cl.map((v, q) => v)); rc.breaks = [rc.d[26]]; rc.sym = 'T'; co
   ok(!C.materiality(9, null, 'SPY').material, 'no measured reaction, not material');
 }
 
+/* ---------- recap facts and system health ---------- */
+{
+  const RS = require('../tools/recapstats.js').run(), w = RS.sessions['2026-11-25'];
+  ok(w && w.tags.indexOf('Intraday reversal') >= 0, 'the Nov 25 session (S&P down 3.2% intraday, recovered 92%) is tagged as an intraday reversal');
+  ok(w && w.day.SPY && Math.abs(w.day.SPY.chg) < 1 && w.tags.indexOf('S&P move 1%+') < 0, 'its close to close move under 1% is not tagged as a big move');
+  ok(w && w.outlook.levels && w.outlook.levels.bull === 7201.09 && /quoted/.test(w.outlook.source), 'the Wednesday outlook levels are the ones quoted from the original, labeled as quoted');
+  ok(w && Object.values(w.fwd.SPY).every(v => v === null || Number.isFinite(v)), 'later performance is a number or pending, never invented');
+  const Hh = require('../tools/health.js'), mon = Hh.run(Date.parse('2026-11-30T23:00:00Z'));
+  ok(!mon.ok && mon.issues.some(i => i.name === 'Scheduled updates') && mon.issues.some(i => i.name === 'Recap tab') && mon.issues.some(i => /^Daily SPY/.test(i.name)), 'health catches missed runs, a missing recap and stale data on a later Monday');
+  ok(Hh.lastSession(Date.parse('2026-11-27T17:00:00Z')) === 20261125 && Hh.lastSession(Date.parse('2026-11-27T18:30:00Z')) === 20261127, 'the last completed session respects the 1pm half day close');
+  Hh.run();
+}
+
 console.log(fails ? fails + ' of ' + n + ' failed' : 'all ' + n + ' passed'); process.exit(fails ? 1 : 0);

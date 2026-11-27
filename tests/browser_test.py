@@ -51,6 +51,16 @@ with sync_playwright() as pw:
     ok(pg.is_visible("#rintra") and "Loading" not in pg.inner_text("#rintra"), "intraday panel rendered")
     ctx.close()
 
+    # performance: load time and transfer size on the phone
+    ctx, pg, errs = page(b); sizes = []
+    pg.on("response", lambda r: sizes.append(int(r.headers.get("content-length") or 0)))
+    pg.goto(URL); pg.wait_for_load_state("load")
+    nav = pg.evaluate("(() => { const n = performance.getEntriesByType('navigation')[0]; return [n.domContentLoadedEventEnd, n.loadEventEnd] })()")
+    pg.wait_for_timeout(4000)
+    print("     DOM ready %.0f ms, load %.0f ms, about %.0f KB transferred in the first 4 seconds" % (nav[0], nav[1], sum(sizes) / 1024))
+    ok(nav[1] < 4000, "the page loads in under 4 seconds")
+    ctx.close()
+
     # 2. perp API down
     ctx, pg, errs = page(b, init="window.WebSocket = class { constructor() { setTimeout(() => { this.onerror && this.onerror({}); this.onclose && this.onclose({}) }, 50) } send() {} close() {} }", route=[("**/api.hyperliquid.xyz/**", lambda r: r.abort())]); pg.goto(URL); pg.wait_for_timeout(8000)
     ok(not errs, "perp API failure: no page errors " + str(errs[:2]))
@@ -101,6 +111,10 @@ with sync_playwright() as pw:
     pg.click('#rcal [data-rd="2026-11-25"]'); pg.wait_for_timeout(3000)
     fr = pg.frame_locator("#rframe")
     ok("Morning flush" in fr.locator("h1").inner_text() and fr.locator("#sectors .hb").count() == 11 and fr.locator("svg").count() >= 1, "the original Wednesday recap opens from the calendar with its chart and sector bars")
+    aft = pg.inner_text("#rafter")
+    ok("SPY" in aft and "NVDA" in aft and "VIX" in aft and "Outlook check" in aft, "later performance and the outlook check show beside the original recap")
+    pg.click('#rcal [data-rt="Intraday reversal"]'); pg.wait_for_timeout(500)
+    ok("Wed Recap" in pg.inner_text("#rcal"), "filtering by intraday reversal finds the Nov 25 recap")
     ok(not errs, "recap archive: no page errors " + str(errs[:2]))
     ctx.close()
 

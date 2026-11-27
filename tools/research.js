@@ -217,17 +217,6 @@ function registry(fpRes, risk, I2, WK, REC) {
   save('registry.json', { asof: now, tests: total, distinct: UNIQ.size, code: CODEV, data: DATAV, rules: 'Statistical class: Validated means beating the benchmark out of sample with a 95% range above zero (intraday models must also be calibrated, hold in each VIX regime seen, and add economic value). Promising means it beat the benchmark but failed one condition, or was tested only on data already inspected. Economic class is separate and is measured with costs. Multiple testing uses ' + total + ' distinct configurations in the ledger.', signals: out });
 }
 
-/* Data health: is every input and output current? Written for the page and the runbook; nothing is hidden when stale. */
-function health() {
-  const today = +new Date().toLocaleString('en-CA', { timeZone: 'America/New_York' }).slice(0, 10).replace(/-/g, ''), lastTD = (() => { let d = today; const et = C.etParts(Date.now()); if (et.hm < 1615 || !C.isTradingDay(d)) d = C.ymdAdd(d, -1); while (!C.isTradingDay(d)) d = C.ymdAdd(d, -1); return d })();
-  const tdBetween = (a, b) => { let n = 0; for (let d = C.ymdAdd(a, 1); d <= b; d = C.ymdAdd(d, 1)) if (C.isTradingDay(d)) n++; return n };
-  const items = [], add = (name, last, maxLag, note) => items.push({ name, last, behind: last ? tdBetween(last, lastTD) : null, ok: !!last && tdBetween(last, lastTD) <= maxLag, note: note || '' });
-  ['SPX', 'VIX', 'SPY', 'QQQ', 'SMH', 'NVDA', 'MU', 'AMD', 'SNDK', 'RSP', 'IWM'].forEach(s => { try { const r = load(s); add('Daily ' + s, r.asof, 1) } catch (e) { add('Daily ' + s, null, 1, 'missing') } });
-  ['SPY', 'QQQ', 'SMH', 'NVDA', 'MU', 'AMD', 'SNDK'].forEach(s => [5, 30].forEach(r => { try { const j = JSON.parse(fs.readFileSync(path.join(D, 'intraday', s + r + '.json'))); add(r + ' minute ' + s, j.rows[j.rows.length - 1][0], 1) } catch (e) { add(r + ' minute ' + s, null, 1, 'missing') } }));
-  const cd = path.join(D, 'chains'); (fs.existsSync(cd) ? fs.readdirSync(cd) : []).forEach(t => { const f = fs.readdirSync(path.join(cd, t)).sort().pop(); add('Option chain ' + t, f ? +f.slice(0, 10).replace(/-/g, '') : null, 1) });
-  const pd = path.join(D, 'prospective', 'intraday'), pf = fs.existsSync(pd) ? fs.readdirSync(pd).sort().pop() : null; add('Prospective intraday record', pf ? +pf.slice(0, 8) : null, 1, pf ? '' : 'first full session after registration not reached yet');
-  save('health.json', { asof: now, lastSession: lastTD, items, stale: items.filter(i => !i.ok).map(i => i.name) });
-}
 function recoveryDefault() {
   const L = ['NVDA', 'MU', 'AMD', 'WDC', 'SMH', 'SOXX'].map(s => { const o = load(s + '10'); o.sym = s; try { const k = load(s); o.low = {}; k.d.forEach((d, i) => { o.low[d] = k.l[i] }) } catch (e) { } return o });
   const R = C.recovery2(L, 10, { days: 1 }), out = { asof: L[0].asof, x: 10, days: 1, events: R.ev.length, clusters: R.clusters, rec: R.rec, tmed: R.tmed, mae: R.mae, maeLow: R.maeLow, maeLowN: R.maeLowN };
@@ -241,7 +230,7 @@ function recoveryDefault() {
   const REC = recoveryDefault(); options();
   const PR = require('./prospective.js').run(); const V = JSON.parse(fs.readFileSync(path.join(D, 'prospective', 'versions.json'))), vid = {}; V.versions.forEach(v => { if (v.kind === 'intraday') vid[[v.sym, v.window, v.outcome, v.family].join('|')] = v.id });
   PROS = { vid, res: JSON.parse(fs.readFileSync(path.join(D, 'research', 'prospective.json'))) }; logExp('prospective', { versions: PR.versions }, PR, 'record');
-  registry(fpRes, risk, I2, WK, REC); health(); saveLedger();
+  registry(fpRes, risk, I2, WK, REC); saveLedger(); require('./health.js').run();
   const old = path.join(D, 'research', 'intraday.json'); if (fs.existsSync(old)) fs.unlinkSync(old);
   console.log('ledger', LIDX.total, 'entries,', LIDX.distinct, 'distinct configurations, code', CODEV, 'data', DATAV);
 })();

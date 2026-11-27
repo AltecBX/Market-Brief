@@ -116,7 +116,8 @@ function renderCross() {
   if (isNum(s) && isNum(gold) && Math.abs(gold) > 0.7) add('Gold vs S&P ' + sg(gold) + ' / ' + sg(s), 0, 0, gold > 0 && s > 0, gold > 0 && s > 0 ? 'Both up: risk appetite alongside hedging demand.' : gold > 0 ? 'Gold up while stocks fall fits a defensive move.' : 'Gold down.');
   if (isNum(s) && isNum(jpy) && Math.abs(jpy) > 0.4) add('USD/JPY vs S&P ' + sg(jpy) + ' / ' + sg(s), 0, 0, jpy < 0 && s > 0, jpy < 0 ? 'A stronger yen has often come with risk off moves.' : 'A weaker yen has often come with risk on moves.');
   if (isNum(nd) && isNum(btc) && Math.abs(btc - nd) > 2) add('Bitcoin vs Nasdaq 100 ' + sg(btc) + ' / ' + sg(nd), 0, 0, (btc > 0) !== (nd > 0), 'Bitcoin often trades with tech risk appetite.');
-  loadHist(['SPX', 'VIX', 'NDX', 'US10Y']).then(function () {
+  /* the long daily histories are only fetched once the Board tab is open, so the Brief stays light on a phone */
+  (document.getElementById('p-board') && document.getElementById('p-board').classList.contains('on') || HIST.SPX ? loadHist(['SPX', 'VIX', 'NDX', 'US10Y']) : Promise.reject()).then(function () {
     var S = HIST, sx = lastRet(S.SPX), vx = lastRet(S.VIX), nq = lastRet(S.NDX), y = S.US10Y, yd = (y.c[y.c.length - 1] - y.c[y.c.length - 2]) * 100;
     if (sx > 0 && vx > 0) add('Last session: S&P and VIX both up ' + sg(sx) + ' / ' + sg(vx, 1), 0, 0, true, 'Stocks rose while fear rose. Hedging demand into the rally.');
     else add('Last session: S&P ' + sg(sx) + ', VIX ' + sg(vx, 1), 0, 0, false, 'The usual inverse relationship held.');
@@ -306,8 +307,8 @@ function scenarioNow(s) {
 }
 function loadDecision() {
   if (Date.now() - DEC.t < 120e3) return; DEC.t = Date.now();
-  loadRes('registry').then(function (R) { DEC.reg = R; var ws = ['SPY', 'QQQ', 'SMH', 'NVDA'];
-    return Promise.all(ws.map(function (s) { return weeklyState(s).catch(function () { return null }) })).then(function (W) { DEC.w = W.filter(Boolean); renderDecision() });
+  Promise.all([loadRes('registry'), loadRes('weekly')]).then(function (z) { var R = z[0]; DEC.reg = R; var ws = ['SPY', 'QQQ', 'SMH', 'NVDA'].filter(function (s) { var I = z[1].inst[s]; return s === 'SPY' || (I && I.outcomes && Object.keys(I.outcomes).some(function (o) { return I.outcomes[o].promoted })) }); /* SPY for the downside range; other stocks with a promoted weekly model need their history on the Brief */
+    return Promise.all(ws.map(function (s) { var I = z[1].inst[s], pro = I && Object.keys(I.outcomes || {}).some(function (o) { return I.outcomes[o].promoted }); return weeklyState(s, !pro).catch(function () { return null }) })).then(function (W) { DEC.w = W.filter(Boolean); renderDecision() });
   }).catch(function () { });
   liveSession('SPY').catch(function () { return null }).then(function (live) { var sl = live ? curSlot(live) : null; if (!sl) { DEC.i = null; return } return intraState('SPY', sl, live).then(function (S) { DEC.i = S && !S.wait ? S : null; renderDecision() }) }).catch(function () { });
 }

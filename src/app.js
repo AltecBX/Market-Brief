@@ -562,7 +562,7 @@ $('filt').addEventListener('click', function (e) { var b = e.target.closest('[da
 $('tb').addEventListener('click', function (e) { var r = e.target.closest('[data-c]'); if (!r) return; openRow = openRow === r.dataset.c ? null : r.dataset.c; renderBoard() });
 $('chsw').addEventListener('click', function (e) { var b = e.target.closest('[data-c]'); if (!b) return; [].forEach.call($('chsw').children, function (x) { x.classList.toggle('on', x === b) }); chartCoin = b.dataset.c; loadChart() });
 $('nfilt').addEventListener('click', function (e) { var b = e.target.closest('[data-n]'); if (!b) return; [].forEach.call($('nfilt').children, function (x) { x.classList.toggle('on', x === b) }); WIRE.cat = b.dataset.n; feed(WIRE.cat); drawWire() });
-function showTab(p) { [].forEach.call($('tabs').children, function (x) { x.classList.toggle('on', x.dataset.p === p) }); document.querySelectorAll('.panel').forEach(function (x) { x.classList.toggle('on', x.id === 'p-' + p) }); if (p === 'mem') loadMem(); if (p === 'board') { var s = $('ovn'); if (s._pts) drawChart(s._pts) } if (p === 'opts') renderVix(); window.scrollTo(0, 0) }
+function showTab(p) { [].forEach.call($('tabs').children, function (x) { x.classList.toggle('on', x.dataset.p === p) }); document.querySelectorAll('.panel').forEach(function (x) { x.classList.toggle('on', x.id === 'p-' + p) }); if (p === 'mem') loadMem(); if (p === 'board') { var s = $('ovn'); if (s._pts) drawChart(s._pts) } if (p === 'opts') { renderVix(); vixHist() } if (p === 'hist') histUI(); window.scrollTo(0, 0) }
 $('tabs').addEventListener('click', function (e) { var b = e.target.closest('[data-p]'); if (b) showTab(b.dataset.p) });
 $('strip').addEventListener('click', function (e) { var t = e.target.closest('[data-go]'); if (t) showTab(t.dataset.go) });
 var MODE = LS('mb_mode') || '2';
@@ -591,10 +591,3 @@ window.addEventListener('pagehide', saveVisit);
 window.addEventListener('online', refreshAll);
 if (window.ResizeObserver) { var ro = new ResizeObserver(function () { var s = $('ovn'); if (s._pts) drawChart(s._pts); renderVix() }); ro.observe($('ovn')); ro.observe($('vixc')) }
 
-/* ---------- Start ---------- */
-setTheme(THEME); setMode(MODE); sectors(); applyBrief(DEF); BRIEF_V = '';
-pullRest(); wsOpen(); pullBrief(); pullWire();
-setInterval(pullRest, 15e3); setInterval(function () { pullWire() }, 60e3); setInterval(pullBrief, 5 * 60e3); setInterval(function () { if (!document.hidden) loadChart() }, 5 * 60e3);
-setInterval(function () { if (!document.hidden) { renderStatus(); if (!WSOK && !WS) wsOpen() } }, 1e3);
-setInterval(function () { if (!document.hidden) render() }, 5e3);
-setInterval(function () { if (!document.hidden) saveVisit() }, 60e3);

@@ -142,5 +142,19 @@ if os.path.exists("archive/index.json"):
     except Exception:
         pass
 
+# history files used by the probability engine
+if os.path.isdir("data/hist"):
+    for fn in sorted(os.listdir("data/hist")):
+        try:
+            h = json.load(open(os.path.join("data/hist", fn)))
+            rows = h["rows"]; nf = len(h["fields"])
+            if len(rows) < 100: err.append("data/hist/" + fn + " has too few rows")
+            ds = [r[0] for r in rows]
+            if ds != sorted(set(ds)): err.append("data/hist/" + fn + " dates not sorted or duplicated")
+            if any(len(r) != nf or any((not num(x)) or x <= 0 for x in r[1:]) for r in rows): err.append("data/hist/" + fn + " has bad rows")
+            if nf == 5 and any(not (r[3] <= min(r[1], r[4]) + 1e-9 and r[2] >= max(r[1], r[4]) - 1e-9) for r in rows[-300:]): warn.append("data/hist/" + fn + " has bars where high or low do not contain open and close")
+        except Exception as e:
+            err.append("data/hist/" + fn + " unreadable: " + str(e)[:60])
+
 for w in warn: print("warning: " + w)
 print("OK" if not err else "\n".join(err)); sys.exit(1 if err else 0)

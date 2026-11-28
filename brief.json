@@ -1,10 +1,10 @@
 {
- "updated": "2026-11-27T16:15:00-05:00",
- "updatedLabel": "Fri 4:15pm ET",
- "next": "8:12pm",
+ "updated": "2026-11-27T20:15:00-05:00",
+ "updatedLabel": "Fri 8:15pm ET",
+ "next": "Mon 7:12am",
  "kicker": "BLACK FRIDAY HALF DAY · CLOSED 1:00PM ET · EVENING BRIEF",
- "headline": "Best week since April 2025: S&P +5.6% as the VIX closes at 23.81.",
- "lede": "The S&P 500 ended Friday at 7,298.34, +1.61%, and +5.6% on the week, its strongest since April 2025 (AP). The VIX closed at 23.81, −11%, and the 10 year ended near 4.94%; futures reopen Sunday 6:00pm after OPEC+ meets.",
+ "headline": "Best week since April 2025 is in; perps ease 0.2% into the weekend.",
+ "lede": "The S&P 500 ended Friday at 7,298.34, +1.61%, and +5.6% on the week, its strongest since April 2025 (AP). By 8:14pm the S&P perp was 7,290.95, −0.2% from the 1pm close, with the Nvidia perp −1.7%; futures reopen Sunday 6:00pm after OPEC+ meets.",
  "pills": [
   [
    "g",
@@ -24,7 +24,7 @@
   ],
   [
    "a",
-   "Nvidia +0.8% only"
+   "Nvidia perp −1.7% after hours"
   ],
   [
    "b",
@@ -55,10 +55,16 @@
  ],
  "picks": [
   [
+   "Fri 8:14pm",
+   "FUT",
+   "dn",
+   "Perps since the 1pm close: S&P perp 7,290.95 vs 7,305.5 (−0.2%), Nasdaq 100 perp −0.3%, Nvidia −1.7%, Micron −1.8%, SK hynix −1.6%. No source explains the drift. Futures reopen Sunday 6:00pm."
+  ],
+  [
    "Fri 4:14pm",
    "FUT",
    "",
-   "Perps since the 1pm close: S&P perp 7,308.25 vs 7,305.5, Nvidia perp −0.6%, Micron perp −1.3%. Futures reopen Sunday 6:00pm."
+   "Perps at 4:14pm: S&P perp 7,307.5, Nvidia perp 149.95. Little changed from the 1pm close."
   ],
   [
    "Fri 2:00pm",
@@ -131,18 +137,12 @@
    "MACRO",
    "dn",
    "Yields up: 10 year near 4.93%, 2 year near 4.70% in Reuters' late quotes. Bonds close 2:00pm."
-  ],
-  [
-   "Fri",
-   "OIL",
-   "",
-   "Late quotes (Reuters): WTI $83.02 (−0.8%), Brent $90.31 (−1.5%), gold futures $3,650 (+3.2%)."
   ]
  ],
  "planTitle": "NEXT SESSION GAME PLAN",
  "means": [
   "S&P closed at <b>7,298</b>, just above the final <b>7,294</b> OI gamma flip and under the <b>7,310</b> flow call wall.",
-  "SPXW options price <b>±1.00%</b> for Monday, about 73 points, after Friday ran past its ±1.17%.",
+  "SPXW options price <b>±1.00%</b> for Monday, about 73 points; the S&P perp at <b>7,291</b> sits inside that range.",
   "The VIX closed at <b>23.81</b>, its lowest close of the week; a hold under 25 supports the rebound.",
   "Back under <b>7,211</b>, Friday's low, undoes the rebound; <b>7,183</b> is Wednesday's close."
  ],
@@ -633,6 +633,10 @@
  "recapLabel": "Fri recap",
  "sources": [
   [
+   "USTR: determinations and proposed actions in 14 Section 301 investigations",
+   "https://ustr.gov/about/policy-offices/press-office/press-releases/2026/november/ustr-makes-determinations-and-proposes-actions-14-section-301-investigations-relating-structural"
+  ],
+  [
    "AP via Pittsburgh Post Gazette: Stocks jump to close out an erratic week",
    "https://www.post-gazette.com/business/personal-finance/stock-markets-today-november-27-2026-2KMWD23HNN7BAM2FQEDY3KOQKU/"
   ],
@@ -769,12 +773,12 @@
    "Jobs report, 90K expected, the last payrolls before the Dec 9 FOMC."
   ],
   [
-   "Export rules",
-   "The US remote access chip rule took effect Nov 19; cloud providers serving Chinese firms have 90 days to get licenses (StockAnalysis)."
+   "Jan 5 to 25",
+   "USTR's proposed Section 301 tariffs (up to 15% on Korea and Taiwan, up to 20% on China) are open for comment until Jan 5, with a hearing Jan 25 (USTR)."
   ],
   [
-   "Memory pricing",
-   "TrendForce sees NAND prices falling in 2027 and flags DRAM contract price decline risk in 2028."
+   "Export rules",
+   "The US remote access chip rule took effect Nov 19; cloud providers serving Chinese firms have 90 days to get licenses (StockAnalysis)."
   ]
  ],
  "scenarios": [
@@ -1098,7 +1102,7 @@
   ],
   [
    "What happens over the weekend?",
-   "OPEC+ meets Sunday and is expected to keep output targets unchanged, per Reuters sources; futures reopen at 6:00pm ET Sunday. No weekend news yet explains a move.",
+   "OPEC+ meets Sunday and is expected to keep output targets unchanged, per Reuters sources; futures reopen at 6:00pm ET Sunday. Perps eased 0.2% Friday evening and no source explains it.",
    "https://eurasiabusinessnews.com/2026/11/27/u%2Ds%2Dstock%2Dmarket%2Dtoday%2Dnovember%2D27%2D2026%2Dtech%2Drebounds%2Din%2Dshortened%2Dblack%2Dfriday%2Dsession/"
   ]
  ],
@@ -1111,7 +1115,7 @@
    "assets": "SPX, NDX, VIX",
    "impl": "bull",
    "read": "Fear has eased fast, but yields kept rising.",
-   "reacted": "After the close the S&P perp is little changed, 7,308.25 at 4:14pm vs 7,305.5 at 1pm.",
+   "reacted": "After the close the S&P perp eased to 7,290.95 at 8:14pm from 7,305.5 at 1pm, −0.2%.",
    "known": "new",
    "material": false,
    "confirm": "VIX stays under 25 and S&P holds 7,290 Monday.",
@@ -1126,7 +1130,7 @@
    "assets": "SPX, SNDK, MU, WDC, SMH",
    "impl": "bull",
    "read": "An oversold bounce led by the hardest hit names, on thin volume.",
-   "reacted": "SPY rose from a 719.62 low at 10:05am to a 729.15 high in the last bar. The rebound began in overnight trading Thursday.",
+   "reacted": "SPY rose from a 719.62 low at 10:05am to a 729.15 high in the last bar. After hours the Micron perp is −1.8% and Sandisk −0.3% vs 1pm.",
    "known": "known",
    "material": false,
    "confirm": "Memory holds gains Monday and SMH stays above 435.",
@@ -1141,7 +1145,7 @@
    "assets": "NVDA, DELL, SMCI",
    "impl": "bear",
    "read": "Export rules now reach regional data center demand, not only China.",
-   "reacted": "First US session Friday: Nvidia opened near +2% and closed +0.80% at $150.49. No source ties the move to the report.",
+   "reacted": "First US session Friday: Nvidia opened near +2% and closed +0.80% at $150.49; the perp is −1.7% vs 1pm at 8:14pm. No source ties either move to the report.",
    "known": "known",
    "material": true,
    "changes": "Adds export risk to Nvidia's demand outlook; watch license guidance and Huang's Dec 3 testimony.",
@@ -1237,35 +1241,35 @@
   "dir": "up",
   "date": "2026-11-30",
   "ref": 7298.34,
-  "basis": "Close above the final 7,294 gamma flip with chips leading and the VIX down to 23.81; Morgan Stanley IM's Slimmon told Reuters fast money had delevered out of tech, so the bounce could persist."
+  "basis": "Close above the final 7,294 gamma flip with chips leading and the VIX down to 23.81; Morgan Stanley IM's Slimmon told Reuters fast money had delevered out of tech. Perps only −0.1% vs the cash close Friday evening."
  },
  "daily": {
-  "asofTs": "2026-11-27T16:14:00-05:00",
-  "happened": "Since the 1:00pm close, perps are flat: the S&P perp is 7,308.25 vs 7,305.5 at 1pm, Nvidia −0.6%, Micron −1.3% and AMD −0.8%. Bonds closed at 2:00pm with the 10 year near 4.94% (AP). Cash ended at 7,298.34, +1.61%, and +5.6% on the week.",
-  "cause": "Not established for the small after close drift. For the day, Reuters says investors flocked back to hard hit AI shares, and Trading Economics says haven demand for Treasuries eased as tech rebounded.",
+  "asofTs": "2026-11-27T20:14:00-05:00",
+  "happened": "Since the 1:00pm close, perps eased: the S&P perp is 7,290.95 vs 7,305.5 at 1pm (−0.2%), Nasdaq 100 perp −0.3%, Nvidia −1.7%, Micron −1.8% and AMD −0.9%. Cash ended at 7,298.34, +1.61%, and +5.6% on the week; bonds closed with the 10 year near 4.94% (AP).",
+  "cause": "Not established for the after hours drift; no source explains it. For the day, Reuters says investors flocked back to hard hit AI shares, and Trading Economics says haven demand for Treasuries eased as tech rebounded.",
   "causeSrc": "",
-  "since": "Since the 3:16pm brief: no data was released and no new market moving story was verified. Perps are little changed, Unusual Whales' OI gamma flip is still 7,294 and the VIX close of 23.81 stands. The outlook is confirmed, not changed.",
+  "since": "Since the 4:15pm brief: no data was released and no new market moving story was verified. The S&P perp slipped from 7,307.5 to 7,290.95 (−0.2%) and the Nvidia perp −1.1%. Added to risks: USTR's Nov 25 Section 301 tariff proposal, already known. The outlook is confirmed, not changed.",
   "expected": [],
   "affected": [
    [
-    "Memory (MU, SNDK)",
-    "down",
-    "After the close the Micron perp is −1.3% and Sandisk −0.3% vs 1pm, after Friday's +7.60% and +15.96% cash gains."
-   ],
-   [
     "Nvidia",
     "down",
-    "Perp −0.6% vs 1pm after a +0.80% cash close."
+    "Perp −1.7% vs 1pm at 8:14pm, after a +0.80% cash close."
+   ],
+   [
+    "Memory (MU, SK hynix)",
+    "down",
+    "Micron perp −1.8% and SK hynix perp −1.6% vs 1pm, after Friday's +7.60% Micron cash gain."
+   ],
+   [
+    "Chips (SMH)",
+    "down",
+    "SMH perp −0.6% vs 1pm after a +4.17% cash day."
    ],
    [
     "Treasuries",
     "down",
     "10 year 4.94% from 4.85% late Wednesday (AP)."
-   ],
-   [
-    "Gold",
-    "up",
-    "Gold futures 3,668.50, +2.91% (Yahoo)."
    ],
    [
     "Volatility",

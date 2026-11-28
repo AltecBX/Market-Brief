@@ -74,5 +74,13 @@
   "label": "Fri 4:15pm ET",
   "headline": "Best week since April 2025: S&P +5.6% as the VIX closes at 23.81.",
   "file": "2026-11-27/1615.json"
+ },
+ {
+  "date": "2026-11-27",
+  "time": "2015",
+  "kind": "brief",
+  "label": "Fri 8:15pm ET",
+  "headline": "Best week since April 2025 is in; perps ease 0.2% into the weekend.",
+  "file": "2026-11-27/2015.json"
  }
 ]
